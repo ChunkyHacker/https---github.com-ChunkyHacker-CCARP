@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Account</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .container {
+            text-align: center;
+            border: 2px solid #FF8C00;
+            padding: 20px;
+            width: 400px; /* Adjust the width as needed */
+            height: 200px; /* Adjust the height as needed */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+    .container1 {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 10px;
+    }
+
+    button {
+        background-color: #FF8C00;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        cursor: pointer;
+        margin: 0;
+    }
+
+    button a {
+        text-decoration: none;
+        color: white;
+    }
+
+    button:hover {
+        opacity: 0.8;
+    }
+
+    p {
+        margin: 0;
+    }
+</style>
+<body>
+    <div class="container">
+        <p>Create account for?</p>
+        <div class="container1">
+            <button><a href="signup.php">Client</a></button>
+            <p>or</p>
+            <button><a href="carsignup.php">Carpenter</a></button>
+        </div>
+    </div>
+</body>
+</html>

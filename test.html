@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        input[type="checkbox"],
+        input[type="radio"] {
+            display: inline-block;
+            margin-right: 5px;
+        }
+
+        label {
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+    </style>
+    <title>Material Selection</title>
+</head>
+
+<body>
+    <div class="container mt-4">
+        <div id="materials" style="display: none;">
+            <h2>Materials</h2>
+            <p>Select the materials you need:</p>
+
+            <!-- Living Room Materials - Filipino Traditional Living Room -->
+            <div id="livingroom-traditional" class="row">
+                <!-- Column 1 -->
+                <div class="col-md-4">
+                    <input type="checkbox" id="flooring" name="materials[]" value="Flooring" data-price="500" data-unit="sqft">
+                    <label for="flooring">Flooring - 500 per sqft</label>
+
+                    <input type="checkbox" id="dining-set" name="materials[]" value="Dining Table and Chairs" data-price="15000" data-unit="set">
+                    <label for="dining-set">Dining Table and Chairs - 15,000 per set</label>
+
+                    <input type="checkbox" id="bed-frame" name="materials[]" value="Bed Frame and Headboard" data-price="8000" data-unit="piece">
+                    <label for="bed-frame">Bed Frame and Headboard - 8,000 per piece</label><br>
+
+                    <input type="checkbox" id="wall-materials" name="materials[]" value="Wall Materials" data-price="300" data-unit="sqm">
+                    <label for="wall-materials">Wall Materials - 300 per sqm</label><br>
+
+                    <input type="checkbox" id="cabinets" name="materials[]" value="Cabinets" data-price="1200" data-unit="piece">
+                    <label for="cabinets">Cabinets - 1,200 per piece</label><br>
+
+                    <input type="checkbox" id="mattress-bedding" name="materials[]" value="Mattress and Bedding" data-price="2000" data-unit="set">
+                    <label for="mattress-bedding">Mattress and Bedding - 2,000 per set</label><br>
+
+                    <input type="checkbox" id="paint-wallpaper" name="materials[]" value="Paint or Wallpaper" data-price="100" data-unit="sqm">
+                    <label for="paint-wallpaper">Paint or Wallpaper - 100 per sqm</label><br>
+                </div>
+
+                <!-- Column 2 -->
+                <div class="col-md-4">
+                    <input type="checkbox" id="countertops" name="materials[]" value="Countertops" data-price="800" data-unit="ft">
+                    <label for="countertops">Countertops - 800 per ft</label><br>
+
+                    <input type="checkbox" id="tiles" name="materials[]" value="Tiles" data-price="30" data-unit="piece">
+                    <label for="tiles">Tiles - 30 per piece</label><br>
+
+                    <input type="checkbox" id="furniture" name="materials[]" value="Furniture" data-price="5000" data-unit="set">
+                    <label for="furniture">Furniture - 5,000 per set</label><br>
+
+                    <input type="checkbox" id="appliances" name="materials[]" value="Appliances" data-price="10000" data-unit="set">
+                    <label for="appliances">Appliances - 10,000 per set</label><br>
+
+                    <input type="checkbox" id="vanity-sink" name="materials[]" value="Vanity and Sink" data-price="1500" data-unit="piece">
+                    <label for="vanity-sink">Vanity and Sink - 1,500 per piece</label><br>
+
+                    <input type="checkbox" id="lighting" name="materials[]" value="Lighting" data-price="200" data-unit="fixture">
+                    <label for="lighting">Lighting - 200 per fixture</label><br>
+
+                    <input type="checkbox" id="backsplash" name="materials[]" value="Backsplash" data-price="50" data-unit="sqft">
+                    <label for="backsplash">Backsplash - 50 per sqft</label><br>
+                </div>
+
+                <!-- Column 3 -->
+                <div class="col-md-4">
+                    <input type="checkbox" id="toilet" name="materials[]" value="Toilet" data-price="1000" data-unit="piece">
+                    <label for="toilet">Toilet - 1,000 per piece</label><br>
+
+                    <input type="checkbox" id="window-treatments" name="materials[]" value="Window Treatments" data-price="150" data-unit="window">
+                    <label for="window-treatments">Window Treatments - 150 per window</label><br>
+
+                    <input type="checkbox" id="sink-faucet" name="materials[]" value="Sink and Faucet" data-price="300" data-unit="set">
+                    <label for="sink-faucet">Sink and Faucet - 300 per set</label><br>
+
+                    <input type="checkbox" id="shower-bathtub" name="materials[]" value="Shower or Bathtub" data-price="2000" data-unit="piece">
+                    <label for="shower-bathtub">Shower or Bathtub - 2,000 per piece</label><br>
+
+                    <input type="checkbox" id="faucets-fixtures" name="materials[]" value="Faucets and Fixtures" data-price="500" data-unit="set">
+                    <label for="faucets-fixtures">Faucets and Fixtures - 500 per set</label><br>
+
+                    <input type="checkbox" id="landing-materials" name="materials[]" value="Landing Materials" data-price="400" data-unit="sqm">
+                    <label for="landing-materials">Landing Materials - 400 per sqm</label><br>
+
+                    <input type="checkbox" id="cabinets-drawers" name="materials[]" value="Cabinets or Drawers" data-price="1200" data-unit="piece">
+                    <label for="cabinets-drawers">Cabinets or Drawers - 1,200 per piece</label><br>
+
+                    <input type="checkbox" id="mirror" name="materials[]" value="Mirror" data-price="300" data-unit="piece">
+                    <label for="mirror">Mirror - 300 per piece</label><br>
+
+                    <input type="checkbox" id="railing" name="materials[]" value="Railing" data-price="600" data-unit="ft">
+                    <label for="railing">Railing - 600 per ft</label><br>
+
+                    <input type="checkbox" id="landscaping-materials" name="materials[]" value="Landscaping Materials" data-price="200" data-unit="sqm">
+                    <label for="landscaping-materials">Landscaping Materials - 200 per sqm</label><br>
+
+                    <input type="checkbox" id="treads-risers" name="materials[]" value="Treads and Risers" data-price="100" data-unit="set">
+                    <label for="treads-risers">Treads and Risers - 100 per set</label><br>
+
+                    <input type="checkbox" id="outdoor-furniture" name="materials[]" value="Outdoor Furniture" data-price="8000" data-unit="set">
+                    <label for="outdoor-furniture">Outdoor Furniture - 8,000 per set</label><br>
+
+                    <input type="checkbox" id="plants-trees" name="materials[]" value="Plants and Trees" data-price="150" data-unit="plant">
+                    <label for="plants-trees">Plants and Trees - 150 per plant</label><br>
+
+                    <input type="checkbox" id="handrail-balusters" name="materials[]" value="Handrail and Balusters" data-price="700" data-unit="ft">
+                    <label for="handrail-balusters">Handrail and Balusters - 700 per ft</label><br>
+
+                    <input type="checkbox" id="plants-decor" name="materials[]" value="Plants and Decor" data-price="100" data-unit="piece">
+                    <label for="plants-decor">Plants and Decor - 100 per piece</label><br>
+
+                    <input type="checkbox" id="pavers-pathways" name="materials[]" value="Pavers or Pathways" data-price="50" data-unit="sqft">
+                    <label for="pavers-pathways">Pavers or Pathways - 50 per sqft</label><br>
+
+                    <input type="checkbox" id="newel-post" name="materials[]" value="Newel Post" data-price="200" data-unit="piece">
+                    <label for="newel-post">Newel Post - 200 per piece</label><br>
+
+                    <input type="checkbox" id="shelving" name="materials[]" value="Shelving" data-price="150" data-unit="ft">
+                    <label for="shelving">Shelving - 150 per ft</label><br>
+
+                    <input type="checkbox" id="fencing" name="materials[]" value="Fencing" data-price="1000" data-unit="meter">
+                    <label for="fencing">Fencing - 1,000 per meter</label><br>
+
+                    <input type="checkbox" id="stringers" name="materials[]" value="Stringers" data-price="80" data-unit="piece">
+                    <label for="stringers">Stringers - 80 per piece</label><br>
+
+                    <input type="checkbox" id="hanging-rods" name="materials[]" value="Hanging Rods" data-price="50" data-unit="piece">
+                    <label for="hanging-rods">Hanging Rods - 50 per piece</label><br>
+
+                    <input type="checkbox" id="underlayment" name="materials[]" value="Underlayment" data-price="20" data-unit="sqm">
+                    <label for="underlayment">Underlayment - 20 per sqm</label><br>
+
+                    <input type="checkbox" id="flashing" name="materials[]" value="Flashing" data-price="30" data-unit="meter">
+                    <label for="flashing">Flashing - 30 per meter</label><br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+
+</html>

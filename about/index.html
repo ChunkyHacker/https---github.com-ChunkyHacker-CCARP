@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <script src="https://kit.fontawesome.com/f6e4e0435b.js" crossorigin="anonymous"></script>
+    <title>Personal Portfolio</title>
+</head>
+<body>
+    <div id="header">
+        <div class="container">
+            <nav>
+                <img src="Images/logo.png" alt="" class="logo">
+                <ul id="sidemenu">
+                    <li><a href="#header">Home</a></li>
+                    <li><a href="#about">About</a></li>
+                    <li><a href="#services">Services</a></li>
+                    <li><a href="#portfolio">Portfolio</a></li>
+                    <li><a href="#contact">Contact</a></li>
+                    <i class="fa-solid fa-xmark" onclick="closemenu()"></i>
+                </ul>
+                <i class="fa-solid fa-bars" onclick="openmenu()"></i>
+            </nav>
+            <div class="header-text">
+                <p>UI/UX Designer</p>
+                <h1>Hi, I am <br><span> John Denvier </span><br> Alngog from Philippines</h1>
+            </div>
+        </div>
+    </div>
+<!---------------------about------------------->
+<div id="about">
+    <div class="container">
+        <div class="row">
+            <div class="about-col-1">
+                <img src="Images/profilepic.jpg" alt="">
+            </div>
+            <div class="about-col-2">
+                <h1 class="sub-title">About Me</h1>
+                <p>Hello, I'm <span>John Denvier Alngog</span>, a passionate and ambitious individual with a strong interest in software development and a vision for success.</p><br>
+                <p>I hold a Bachelor of Science in Information Technology from Davao Central College, where I gained a solid foundation in computer science and technology. While I am still in the early stages of my career, I have been actively exploring the world of web development, specifically focusing on HTML, CSS, and JavaScript.</p><br>
+                <p> I have successfully built functional websites and have delved into the backend aspects, utilizing MySQL and PHPAdmin for database management. As I continue to grow, I am eager to expand my skill set by mastering JavaScript and Python in the coming months.</p><br>
+                <p>My ultimate goal is to become a skilled software developer and establish my own business. I am driven by a passion for creating innovative solutions that address real-world challenges. I believe that software has the power to transform industries, enhance user experiences, and drive business growth. With every project, I strive to deliver high-quality, efficient, and user-friendly applications that exceed expectations.</p><br>
+                <p>In envisioning my future, I see myself working in a prominent company in the software industry, honing my skills alongside experienced professionals and contributing to impactful projects. Over the next 5-10 years, I aim to continue learning and growing, taking on increasingly complex and rewarding opportunities. I am motivated by the prospect of personal and professional development, as well as the financial rewards that come with success.</p><br>
+                <p>I understand that the path to achieving my goals requires continuous learning, dedication, and perseverance. I am committed to staying up to date with the latest industry trends and technologies, and I actively seek out opportunities to enhance my skills. By embracing new challenges and expanding my knowledge base, I am confident in my ability to make a significant impact in the world of software development.</p><br>
+                <p>Thank you for taking the time to learn more about me. I invite you to explore my portfolio to see some of my projects and get a better sense of my capabilities. If you're looking for a motivated and aspiring software developer to collaborate with, I would be thrilled to connect with you and discuss how we can work together to achieve our goals.</p><br>
+                <div class="tab-titles">
+                    <p class="tab-links active-link" onclick="opentab('Skills')">Skills</p>
+                    <p class="tab-links" onclick="opentab('Experience')">Experience</p>
+                    <p class="tab-links" onclick="opentab('Education')">Education</p>
+                </div>
+                <div class="tab-contents active-tab" id="Skills">
+                    <ul>
+                        <li><span>UI/UX</span><br>Designing Web/App interfaces</li>
+                        <li><span>Web Development</span><br>Web app Development</li>
+                        <li><span>App Development</span><br>Building Android/iOS apps</li>
+                        <li><span>Backend Development</span><br>Database Management System</li>
+                    </ul>
+                </div>
+                <div class="tab-contents" id="Experience">
+                    <ul>
+                        <li><span>2022 - Current</span><br>Call Center Agent / Team Leader at Veratex Telemarketing Services</li>
+                        <li><span>2021 - 2022</span><br>Call Center Agent at Champ Global Services</li>
+                        <li><span>2020 - 2021</span><br>Call Center Agent at Uptalk Solutions</li>
+                    </ul>
+                </div>
+                <div class="tab-contents" id="Education">
+                    <ul>
+                        <li><span>2021-Current</span><br>Bachelor of Science Information Technology at Davao Central College</li>
+                        <li><span>2019 - 2021</span><br>TVL-1 ICT Brokenshire College Toril</li>
+                        <li><span>2015 - 2019</span><br>Junior High School Doña Carmen Denia National High School</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!------------------SERVICES---------------->
+<div id="services">
+    <div class="container">
+        <h1 class="sub-title">My Services</h1>
+        <div class="services-list">
+            <div>
+                <i class="fa-solid fa-code"></i>
+                <h2>Web Design</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <a href="#">Learn More</a>
+            </div>
+            <div>
+                <i class="fa-solid fa-crop"></i>
+                <h2>UI/UX Design</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <a href="#">Learn More</a>
+            </div>
+            <div>
+                <i class="fa-solid fa-computer"></i>
+                <h2>Backend Developer</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <a href="#">Learn More</a>
+            </div>
+            <div>
+                <i class="fa-solid fa-database"></i>
+                <h2>Database Management System</h2>
+                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                <a href="#">Learn More</a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-------------------------portfolio------------------------->
+<div id="portfolio">
+    <div class="container">
+        <h1 class="sub-title">My Work</h1>
+        <div class="work-list">
+            <div class="work">
+                <img src="Images/user.jpg" alt="">
+                <div class="layer">
+                    <h3>Sample</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+            <div class="work">
+                <img src="Images/user.jpg" alt="">
+                <div class="layer">
+                    <h3>Sample</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+            <div class="work">
+                <img src="Images/user.jpg" alt="">
+                <div class="layer">
+                    <h3>Sample</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+            <div class="work">
+                <img src="Images/user.jpg" alt="">
+                <div class="layer">
+                    <h3>Sample</h3>
+                    <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                    <a href="#"><i class="fa-solid fa-arrow-up-right-from-square"></i></a>
+                </div>
+            </div>
+        </div>
+        <a href="#" class="btn">See more</a>
+    </div>
+</div>
+
+<!----------CONTACT------------>
+<div id="contact">
+    <div class="container">
+        <div class="row">
+            <div class="contact-left">
+                <h1 class="sub_title">Contact Me</h1>
+                <p><i class="fa-solid fa-envelope"></i> denvieralngog10@gmail.com</p>
+                <p><i class="fa-solid fa-phone"></i> 09153520025</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fa-solid fa-envelope"></i></a>
+                    <a href="#"><i class="fa-brands fa-instagram"></i></i></a>
+                    <a href="#"><i class="fa-brands fa-linkedin"></i></a>
+                </div>
+                <a href="#" class="btn btn2">Download CV</a>
+            </div>
+            <div class="contact-right">
+                <form action="">
+                    <input type="text" name="" id="" placeholder="Your Name" required>
+                    <input type="email" name="" id="" placeholder="Your Email" required>
+                    <textarea name="Message" id="" rows="6" placeholder="Your Message"></textarea>
+                    <button type="submit" class="btn btn2">Submit</button>
+                </form>
+                <span id="msg"></span>
+            </div>
+        </div>
+    </div>
+    <div class="copyright">
+        <p>copyright @ Denvier. Made with <i class="fa-solid fa-heart"></i> Easy Tutorials</p>
+    </div>
+</div>
+<script>
+
+    var tablinks = document.getElementsByClassName("tab-links");
+    var tabcontents = document.getElementsByClassName("tab-contents");
+
+    function opentab (tabname) {
+        for(tablink of tablinks) {
+            tablink.classList.remove("active-link");
+        }
+        for(tabcontent of tabcontents) {
+            tabcontent.classList.remove("active-tab");
+        }
+        event.currentTarget.classList.add("active-link");
+        document.getElementById(tabname).classList.add("active-tab");
+    }
+</script>
+
+<script>
+
+    var sidemenu = document.getElementById("sidemenu");
+
+    function openmenu() {
+        sidemenu.style.right = "0";
+
+    }
+
+    function closemenu() {
+        sidemenu.style.right = "-200px";
+
+    }
+
+</script>
+
+</body>
+</html>

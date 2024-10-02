@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Chat</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<style>
+* {
+  box-sizing: border-box;
+}
+
+body {font-family: Verdana, sans-serif; margin:0}
+.mySlides {display: none}
+img {vertical-align: middle;}
+
+/* Header*/
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 10px;
+  text-align: left;
+  background: #FF8C00;
+  color: #000000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-decoration: none;
+  z-index: 100;
+}
+
+/* Increase the font size of the heading */
+.header h1 {
+  font-size: 40px;
+  border-left: 20px solid transparent; 
+  padding-left: 20px; /* Adjust padding */
+  text-decoration: none;
+}
+
+.right {
+  margin-right: 20px;
+}
+
+.header a{
+  font-size: 25px;
+  font-weight: bold;
+  text-decoration: none;
+  color: #000000;
+}
+
+.topnav {
+  position: fixed;
+  top: 120px; /* Adjust the top position as per your needs */
+  width: 100%;
+  overflow: hidden;
+  background-color: #505050;
+  z-index: 100;
+}
+
+/* Style the links inside the navigation bar */
+.topnav a {
+  position: sticky;
+  float: left;
+  display: block;
+  color: black;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 30px;
+}
+
+.topnav a,
+.topnav a.active {
+  color: black;
+}
+
+.topnav a:hover,
+.topnav a.active:hover {
+  background-color: #FF8C00;
+  color: black;
+}
+
+
+/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+@media screen and (max-width: 600px) {
+  .topnav a, .topnav input[type=text] {
+    float: none;
+    display: block;
+    text-align: left;
+    width: 100%;
+    margin: 0;
+    padding: 14px;
+  }
+  .topnav input[type=text] {
+    border: 1px solid #ccc;
+  }
+}
+
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding-top: 170px;
+}
+
+/* Main column */
+.main {   
+  -ms-flex: 70%; /* IE10 */
+  flex: 70%;
+  background-color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.container {
+  border: 2px solid #dedede;
+  background-color: #f1f1f1;
+  border-radius: 5px;
+  padding: 20px;
+  border-radius: 10px;
+  margin-bottom: 10px;
+  margin: 10px 0;
+}
+
+.darker {
+  border-color: #ccc;
+  background-color: #ddd;
+}
+
+.container::after {
+  content: "";
+  clear: both;
+  display: table;
+}
+
+.container img {
+  float: left;
+  max-width: 60px;
+  width: 80px;
+  height: 80px;
+  margin-right: 20px;
+  border-radius: 50%;
+}
+
+
+
+.container img.right {
+  float: right;
+  margin-left: 20px;
+  margin-right:0;
+}
+
+.time-right {
+  float: right;
+  color: #aaa;
+}
+
+.time-left {
+  float: left;
+  color: #999;
+}
+
+.choices button {
+  border: none;
+  color: rgb(0, 0, 0);
+  display: inline-block;
+  padding: 10px 30px;
+  font-size: 30px;
+  margin: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  background-color: #FF8C00;
+  border-radius: 80px;
+  justify-content: center;
+}
+
+button:hover {
+    color: rgb(255, 255, 255);
+    background-color: #000000;
+}
+
+.choices {
+  display: flex;
+  justify-content: center;
+}
+
+/*Chat message*/
+.chatbox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 20px;
+}
+
+.chatbox input[type="text"] {
+  padding: 10px;
+  width: 700px;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+}
+
+.chatbox button {
+  padding: 10px 20px;
+  border: none;
+  background-color: #FF8C00;
+  color: #000000;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: background-color 0.5s ease;
+  font-size: 45px;
+}
+
+.chatbox button:hover {
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.chatbox input[type="text"] {
+  padding: 10px;
+  width: 700px;
+  height: 100px;
+  border: 1px solid #ccc;
+  border-radius: 50px;
+  font-size: 30px; /* Adjust the font size as per your preference */
+}
+
+
+/* Footer */
+.footer {
+  padding: 10px;
+  text-align: center;
+  background: #FF8C00;
+  position: relative;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+}
+
+/* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
+@media screen and (max-width: 700px) {
+  .row {   
+    flex-direction: column;
+  }
+}
+
+/* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
+@media screen and (max-width: 400px) {
+  .navbar a {
+    float: none;
+    width: 100%;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+    <a href="index.html">
+        <h1>
+            <img src="assets/img/logos/logo.png" alt=""  style="width: 75px; margin-right: 10px;">
+        </h1>
+    </a>
+    <div class="right">
+        <a href="login.html" style="text-decoration: none; color: black; margin-right: 20px;">Log Out</a>
+    </div>
+</div>
+
+<div class="topnav">
+    <a class="active" href="comment.php">Home</a>
+    <a href="about/index.html">About</a>
+    <a href="#contact">Contact</a>
+</div>
+
+<h2>Chat Messages</h2>
+<div class="container">
+    <img src="/blank-profile-picture-gb4f5f9059_640.png" alt="Avatar" style="width:100%;">
+    <p>Hi I have a project for you that you and your team need to work out</p>
+    <span class="time-right">11:00</span>
+  </div>
+  
+  <div class="container darker">
+    <img src="blank-profile-picture-gb4f5f9059_640.png" alt="Avatar" class="right" style="width:100%;">
+    <p>Okay, That is good to hear. So what is the project?</p>
+    <span class="time-left">11:01</span>
+  </div>
+  
+  <div class="container">
+    <img src="blank-profile-picture-gb4f5f9059_640.png" alt="Avatar" style="width:100%;">
+    <p>The project that you need to work out is about building a house. But don't worry I already have a plan for my project, All you need to do is to provide some feedbacks and some backup plan that we can talk. Okay?</p>
+    <span class="time-right">11:02</span>
+  </div>
+  
+  <div class="container darker">
+    <img src="blank-profile-picture-gb4f5f9059_640.png" alt="Avatar" class="right" style="width:100%;">
+    <p>Okay, that is Good! Let's have a conversation then!</p>
+    <span class="time-left">11:05</span>
+  </div>
+  <div class="container">
+    <img src="blank-profile-picture-gb4f5f9059_640.png" alt="Avatar" style="width:100%;">
+    <p>Okay, Thank you!</p>
+    <span class="time-right">11:07</span>
+  </div>
+  <div class="choices">
+    <button onclick="window.location.href='plan.php'">Plan</button>
+    <button onclick="window.location.href='location.html'">Location</button>
+    <button onclick="window.location.href='shop.php'">Shop</button>
+  </div>
+  <div class="chatbox">
+    <input type="text" name="" id="">
+    <button>Send Message</button>
+  </div>
+</div>
+<div class="footer">
+    <h2>E-Panday all rights reserved @2023</h2>
+    <a href="#">Link 1</a> |
+    <a href="#">Link 1</a> |
+    <a href="#">Link 1</a> |
+    <a href="#">Link 1</a>
+  </div>
+  </body>
+  </html>
+  
