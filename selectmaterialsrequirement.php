@@ -1,4 +1,5 @@
 <?php 
+    include('config.php');
     echo "<form method='post' action='selectingmaterialsrequirement.php'>";
 
         echo "<label for='materials'>Materials </label>";

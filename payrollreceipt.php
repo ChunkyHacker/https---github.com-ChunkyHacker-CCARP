@@ -76,7 +76,7 @@
                 }
 
                 // Prepare SQL query to fetch the data based on Payroll_ID
-                $sql = "SELECT * FROM payroll WHERE Payroll_ID = $Payroll_ID";
+                $sql = "SELECT * FROM payment WHERE Payroll_ID = $Payroll_ID";
 
                 // Execute SQL query
                 $result = $conn->query($sql);

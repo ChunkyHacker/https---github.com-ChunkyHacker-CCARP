@@ -39,7 +39,7 @@
 </head>
 <?php
   session_start();
-  require_once "config.php";
+  include('config.php');
 
   // Retrieve data from URL parameters
   $totalprice = $_GET['total_price'] ?? '';

@@ -212,7 +212,7 @@
     if (isset($_GET['requirement_ID'])) {
         $requirement_ID = $_GET['requirement_ID'];
 
-        $query = "SELECT * FROM requirements WHERE requirement_ID = ?";
+        $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
         $stmt = mysqli_prepare($connection, $query);
         mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
         mysqli_stmt_execute($stmt);

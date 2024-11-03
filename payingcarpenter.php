@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sender = $_POST["sender"];
 
     // Prepare the SQL query to insert the payroll data into the database
-    $sql = "INSERT INTO payroll (carpenter_name, Netpay, days_of_work, rate_per_day, payment_method, sender) 
+    $sql = "INSERT INTO payment (carpenter_name, Netpay, days_of_work, rate_per_day, payment_method, sender) 
     VALUES (?, ?, ?, ?, ?, ?)";
 
     // Prepare statement

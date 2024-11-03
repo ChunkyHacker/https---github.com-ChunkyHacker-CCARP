@@ -9,7 +9,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <?php
 session_start();
-require_once "config.php";
+include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];
@@ -453,7 +453,7 @@ if (isset($_SESSION['Carpenter_ID'])) {
     <?php
     require_once "config.php";
 
-    $query = "SELECT * FROM requirements";
+    $query = "SELECT * FROM projectrequirements";
     $result = mysqli_query($connection, $query);
 
     if ($result) {

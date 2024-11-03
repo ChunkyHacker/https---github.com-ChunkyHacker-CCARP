@@ -6,7 +6,7 @@ session_start();
     $User_ID = $_SESSION['User_ID'];
 
 
-    $query1 = "SELECT *FROM requirements WHERE requirement_ID = '$requirement_ID'";
+    $query1 = "SELECT *FROM projectrequirements WHERE requirement_ID = '$requirement_ID'";
     $result1 = mysqli_query($connection, $query1);
     $requirementData = mysqli_fetch_assoc($result1);
 
@@ -479,7 +479,7 @@ session_start();
     if (isset($_GET['requirement_ID'])) {
         $requirement_ID = $_GET['requirement_ID'];
 
-        $query = "SELECT * FROM requirements WHERE requirement_ID = ?";
+        $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
         $stmt = mysqli_prepare($connection, $query);
         mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
         mysqli_stmt_execute($stmt);
@@ -657,7 +657,7 @@ session_start();
               $requirementID = $_GET['requirement_ID'];
 
               // Prepare the SQL query with a WHERE clause to filter by requirement_ID
-              $sql = "SELECT * FROM progress WHERE requirement_ID = $requirementID";
+              $sql = "SELECT * FROM report WHERE requirement_ID = $requirementID";
               
 
               $result = $conn->query($sql);

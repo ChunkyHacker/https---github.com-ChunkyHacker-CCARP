@@ -218,7 +218,7 @@
     <div class="modal-content">
     <?php
     // listrequirements.php
-    require_once "config.php";
+    include('config.php');
 
     if (isset($_GET['approved_plan_ID'])) {
         $approved_plan_ID = $_GET['approved_plan_ID'];

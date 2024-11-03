@@ -30,18 +30,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             // Fetching remaining form data
             $labor_cost = $_POST['labor_cost'];
 
-            // Insert data into requirements table
-            $insertQuery = "INSERT INTO requirements (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, Photo, approved_by, labor_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            // Insert data into projectrequirements table
+            $insertQuery = "INSERT INTO projectrequirements (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, Photo, approved_by, labor_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $insertStmt = mysqli_prepare($connection, $insertQuery);
 
             mysqli_stmt_bind_param($insertStmt, "issssssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $photoPath, $approved_by, $labor_cost);
 
             if (mysqli_stmt_execute($insertStmt)) {
-                echo "Data inserted into requirements table successfully.";
+                echo "Data inserted into projectrequirements table successfully.";
                 header("Location: selectmaterialsrequirement.php");
                 exit();
             } else {
-                echo "Error inserting data into requirements table: " . mysqli_error($connection);
+                echo "Error inserting data into projectrequirements table: " . mysqli_error($connection);
             }
 
             mysqli_stmt_close($insertStmt);

@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert the item into the database
-    $sql = "INSERT INTO progress (Name, Status, Materials, Material_cost, Total_cost, requirement_ID) 
+    $sql = "INSERT INTO report (Name, Status, Materials, Material_cost, Total_cost, requirement_ID) 
             VALUES ('$progressname', '$progresstype', '$materials', '$materialcost', '$totalcost', '$requirementID')";
     
     if ($conn->query($sql) === TRUE) {

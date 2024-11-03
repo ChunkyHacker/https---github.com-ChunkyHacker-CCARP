@@ -455,7 +455,7 @@
 if (isset($_GET['requirement_ID'])) {
     $requirement_ID = $_GET['requirement_ID'];
 
-    $query = "SELECT * FROM requirements WHERE requirement_ID = ?";
+    $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
     $stmt = mysqli_prepare($connection, $query);
     mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
     mysqli_stmt_execute($stmt);
@@ -660,7 +660,7 @@ if (isset($_GET['requirement_ID'])) {
             $requirementID = $_GET['requirement_ID'];
 
             // Prepare the SQL query with a WHERE clause to filter by requirement_ID
-            $sql = "SELECT * FROM materials WHERE requirement_ID = $requirementID";
+            $sql = "SELECT * FROM constructionmaterials WHERE requirement_ID = $requirementID";
 
             $result = $conn->query($sql);
 
@@ -786,7 +786,7 @@ if (isset($_GET['requirement_ID'])) {
         }
 
         // Query to retrieve total material cost
-        $materialsQuery = "SELECT SUM(total_cost) AS total_material_cost FROM materials";
+        $materialsQuery = "SELECT SUM(total_cost) AS total_material_cost FROM constructionmaterials";
         $materialsResult = $conn->query($materialsQuery);
         $totalMaterialCost = 0;
         if ($materialsResult->num_rows > 0) {

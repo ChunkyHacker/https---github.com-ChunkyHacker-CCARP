@@ -404,7 +404,7 @@
           <a href="about/index.html">About</a>
           <a href="#contact">Get Ideas</a>
         </div>
-        <a href="userprofile.php" style="text-decoration: none; color: black; margin-left: 20px;">Profile</a>
+        <a href="profile.php" style="text-decoration: none; color: black; margin-left: 20px;">Profile</a>
         <a href="logout.php" style="text-decoration: none; color: black; margin-left: auto; margin-right: 20px;">Log Out</a>
 </div>
  

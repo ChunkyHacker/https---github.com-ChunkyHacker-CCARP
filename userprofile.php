@@ -310,7 +310,7 @@ if (!isset($_SESSION['User_ID'])) {
       <?php
       require_once "config.php";
 
-      $query = "SELECT * FROM requirements";
+      $query = "SELECT * FROM projectrequirements";
       $result = mysqli_query($connection, $query);
 
       if ($result) {

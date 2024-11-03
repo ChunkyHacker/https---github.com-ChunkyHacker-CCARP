@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert the item into the database
-    $sql = "INSERT INTO materials (material_name, type, quantity, cost, total_cost, requirement_ID) 
+    $sql = "INSERT INTO constructionmaterials (material_name, type, quantity, cost, total_cost, requirement_ID) 
     VALUES ('$materialname', '$type', '$quantity', '$cost', '$totalcost', '$requirementID')";
     
     if ($conn->query($sql) === TRUE) {
