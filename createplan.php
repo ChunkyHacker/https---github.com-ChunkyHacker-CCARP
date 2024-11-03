@@ -22,204 +22,204 @@ if (isset($_SESSION['formData'])) {
 <!DOCTYPE html>
 <html lang="en">
 <style>
-  * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: Verdana, sans-serif;
+      margin: 0;
+      background-color: #FF8C00;
+    }
+
+  .container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
   }
 
-  body {
-    font-family: Verdana, sans-serif;
-    margin: 0;
-    background-color: #FF8C00;
-  }
-
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-/* Header*/
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  text-align: left;
-  background: #FF8C00;
-  color: #000000;
-  display: flex;
-  align-items: center;
-  text-decoration: none;
-  z-index: 100;
-}
-
-/* Increase the font size of the heading */
-.header h1 {
-  font-size: 40px;
-  border-left: 20px solid transparent; 
-  text-decoration: none;
-}
-
-.right {
-  margin-right: 20px;
-}
-
-.header a{
-  font-size: 25px;
-  font-weight: bold;
-  text-decoration: none;
-  color: #000000;
-  margin-right: 15px;
-}
-
-/* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-@media screen and (max-width: 600px) {
-  .topnav a, .topnav input[type=text] {
-    float: none;
-    display: block;
-    text-align: left;
+  /* Header*/
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    padding: 10px;
+    text-align: left;
+    background: #FF8C00;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 100;
+  }
+
+  /* Increase the font size of the heading */
+  .header h1 {
+    font-size: 40px;
+    border-left: 20px solid transparent; 
+    text-decoration: none;
+  }
+
+  .right {
+    margin-right: 20px;
+  }
+
+  .header a{
+    font-size: 25px;
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    margin-right: 15px;
+  }
+
+  /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+  @media screen and (max-width: 600px) {
+    .topnav a, .topnav input[type=text] {
+      float: none;
+      display: block;
+      text-align: left;
+      width: 100%;
+      margin: 0;
+      padding: 14px;
+    }
+    .topnav input[type=text] {
+      border: 1px solid #ccc;
+    }
+    body {
+    font-family: Arial, Helvetica, sans-serif;
     margin: 0;
-    padding: 14px;
+    padding-top: 300px;
   }
-  .topnav input[type=text] {
-    border: 1px solid #ccc;
   }
-  body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding-top: 300px;
-}
-}
 
 
-/* CSS styles for the modal */
-/* CSS styles for the modal */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(255, 140, 0, 0.4); /* Updated background color */
-}
+  /* CSS styles for the modal */
+  /* CSS styles for the modal */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(255, 140, 0, 0.4); /* Updated background color */
+  }
 
-.modal-content {
-  background-color: #FF8C00; /* Updated background color */
-  margin: 15% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-height: 80%;
-  overflow-y: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-/* Header */
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  text-align: left;
-  background: #FF8C00; /* Updated background color */
-  color: #000000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  text-decoration: none;
-  z-index: 100;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-
-
-.modal-content {
-    background-color: #fefefe;
+  .modal-content {
+    background-color: #FF8C00; /* Updated background color */
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
     width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
     border-radius: 8px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
-
-  h2 {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #FF8C00;
   }
 
-  form {
-    display: flex;
-    flex-direction: column;
-  }
-
-  label {
-    font-size: 16px;
-    margin-bottom: 5px;
-    color: #000000;
-  }
-
-  input,
-  select,
-  textarea {
+  /* Header */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
     padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    text-align: left;
+    background: #FF8C00; /* Updated background color */
+    color: #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-.post-btn, .cancel-btn {
-  margin-bottom: 10px; /* Adjust the margin as needed */
-}
 
-.cancel-btn {
-  background-color: red;
-  color: #fff;
-  padding: 10px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  margin-right: 10px;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center; /* Center the text */
-  width: 100%; /* Make the button full-width */
-}
 
-.cancel-btn:hover {
-  background-color: #000000;
-}
+  .modal-content {
+      background-color: #fefefe;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
 
-button {
-  background-color: #FF8C00;
-  color: #fff;
-  border: none;
-  padding: 10px;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
+    h2 {
+      font-size: 24px;
+      margin-bottom: 20px;
+      color: #FF8C00;
+    }
 
-  button:hover {
+    form {
+      display: flex;
+      flex-direction: column;
+    }
+
+    label {
+      font-size: 16px;
+      margin-bottom: 5px;
+      color: #000000;
+    }
+
+    input,
+    select,
+    textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+  .post-btn, .cancel-btn {
+    margin-bottom: 10px; /* Adjust the margin as needed */
+  }
+
+  .cancel-btn {
+    background-color: red;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center; /* Center the text */
+    width: 100%; /* Make the button full-width */
+  }
+
+  .cancel-btn:hover {
     background-color: #000000;
   }
 
-  @media screen and (max-width: 600px) {
-    .modal-content {
-      width: 100%;
-    }
+  button {
+    background-color: #FF8C00;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
   }
+
+    button:hover {
+      background-color: #000000;
+    }
+
+    @media screen and (max-width: 600px) {
+      .modal-content {
+        width: 100%;
+      }
+    }
 </style>
 
 <head>
