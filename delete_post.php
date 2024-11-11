@@ -1,4 +1,5 @@
 <?php
+include('config.php');
 // Check if the form was submitted for deleting a post
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePost']) && isset($_POST['postID'])) {
     // Get the post ID from the form submission
@@ -7,12 +8,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['deletePost']) && isse
     } else {
         echo "Invalid post ID";
         exit;
-    }
-
-    // Connect to the database
-    $connection = mysqli_connect("localhost", "root", "", "ccarpcurrentsystem");
-    if (!$connection) {
-        die("Connection failed: " . mysqli_connect_error());
     }
 
     // Prepare and execute the SQL query to delete the post

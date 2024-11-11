@@ -1,8 +1,5 @@
 <?php
-$connection = mysqli_connect("localhost", "root", "", "ccarpcurrentsystem");
-if (!$connection) {
-    die("Connection failed: " . mysqli_connect_error());
-}
+include('config.php');
 
 $sql = "SELECT * FROM posts ORDER BY post_id DESC";
 $result = mysqli_query($connection, $sql);

@@ -7,16 +7,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 
 <?php
-$host = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ccarpcurrentsystem";
-
-$conn = new mysqli($host, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $shopID = $_POST["Shop_ID"];

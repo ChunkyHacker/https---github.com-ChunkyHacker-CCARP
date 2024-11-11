@@ -291,7 +291,7 @@
 
           // Query for the first table (prematerials)
           $query_materials = "SELECT * FROM prematerials";
-          $stmt_materials = mysqli_prepare($connection, $query_materials);
+          $stmt_materials = mysqli_prepare($conn, $query_materials);
           mysqli_stmt_execute($stmt_materials);
           $result_materials = mysqli_stmt_get_result($stmt_materials);
 
@@ -305,7 +305,7 @@
 
           // Query for the second table (requiredmaterials)
           $query_second_table = "SELECT * FROM requiredmaterials";
-          $stmt_second_table = mysqli_prepare($connection, $query_second_table);
+          $stmt_second_table = mysqli_prepare($conn, $query_second_table);
           mysqli_stmt_execute($stmt_second_table);
           $result_second_table = mysqli_stmt_get_result($stmt_second_table);
 

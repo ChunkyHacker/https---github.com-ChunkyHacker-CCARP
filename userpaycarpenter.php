@@ -7,12 +7,12 @@
 
   // Fetch user data
   $query1 = "SELECT * FROM users WHERE User_ID = '$User_ID'";
-  $result1 = mysqli_query($connection, $query1);
+  $result1 = mysqli_query($conn, $query1);
   $userData = mysqli_fetch_assoc($result1);
 
   // Fetch labor data
   $query = "SELECT * FROM labor WHERE requirement_ID = '$requirement_ID'";
-  $result = mysqli_query($connection, $query);
+  $result = mysqli_query($conn, $query);
   $laborData = mysqli_fetch_assoc($result);
 ?>
 

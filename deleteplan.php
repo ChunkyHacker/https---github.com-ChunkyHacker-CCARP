@@ -1,5 +1,5 @@
 <?php
-require_once "config.php";
+include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['plan_id'])) {
     $plan_id = $_POST['plan_id'];

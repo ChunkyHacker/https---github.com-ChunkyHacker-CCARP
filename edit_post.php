@@ -1,12 +1,7 @@
 <?php
+include('config.php');
 if ($_SERVER['REQUEST_METHOD'] === 'GET' && isset($_GET['postID']) && is_numeric($_GET['postID'])) {
     $postIdToEdit = $_GET['postID'];
-
-    // Connect to the database
-    $connection = mysqli_connect("localhost", "root", "", "ccarpcurrentsystem");
-    if (!$connection) {
-        die("Connection failed: " . mysqli_connect_error());
-    }
 
     // Retrieve the post data from the database
     $sql = "SELECT * FROM posts WHERE post_ID = ?";

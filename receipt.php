@@ -59,7 +59,7 @@
 
             // Query for prematerials table
             $query_materials = "SELECT * FROM prematerials";
-            $stmt_materials = mysqli_prepare($connection, $query_materials);
+            $stmt_materials = mysqli_prepare($conn, $query_materials);
             mysqli_stmt_execute($stmt_materials);
             $result_materials = mysqli_stmt_get_result($stmt_materials);
 
@@ -72,7 +72,7 @@
 
             // Query for requiredmaterials table
             $query_required_materials = "SELECT * FROM requiredmaterials";
-            $stmt_required_materials = mysqli_prepare($connection, $query_required_materials);
+            $stmt_required_materials = mysqli_prepare($conn, $query_required_materials);
             mysqli_stmt_execute($stmt_required_materials);
             $result_required_materials = mysqli_stmt_get_result($stmt_required_materials);
 

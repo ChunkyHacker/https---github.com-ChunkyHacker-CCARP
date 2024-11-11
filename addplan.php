@@ -1,4 +1,5 @@
 <?php
+include('config.php');
 // Get form data from POST request
 $Name = $_POST['Name'];
 $StartDate = $_POST['StartDate'];
@@ -13,19 +14,7 @@ $SupplierDetails = $_POST['SupplierDetails'];
 $ProjectRequest = $_POST['ProjectRequest'];
 $SummaryText = $_POST['SummaryText'];
 
-// Database connection details
-$host = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ccarpcurrentsystem";
 
-// Create connection
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-// Check connection
-if ($conn->connect_error) {
-  die("Connection failed: " . $conn->connect_error);
-}
 
 // Prepare the SQL query
 $sql = "INSERT INTO projects (Name, StartDate, EndDate, Description, Status, Budget, Location, WorkersDetails, ClientDetails, SupplierDetails, ProjectRequest, SummaryText)

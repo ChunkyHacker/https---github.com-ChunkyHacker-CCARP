@@ -7,16 +7,7 @@
     <title>Edit project</title>
 </head>
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ccarpcurrentsystem";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include('config.php');
 
 // Retrieve the project to be edited using projectID
 if (isset($_GET['projectID'])) {

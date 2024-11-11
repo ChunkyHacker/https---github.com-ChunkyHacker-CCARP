@@ -1,7 +1,6 @@
 <?php
 
-session_start();
-require_once "config.php";
+include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $firstname = $_POST['firstname'] ?? '';
@@ -30,7 +29,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $query = "INSERT INTO users (First_Name, Last_Name, Phone_Number, Email, Address, Date_Of_Birth, Username, Password, Photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($connection, $query);
+    $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {
         mysqli_stmt_bind_param($stmt, "sssssssss", $firstname, $lastname, $phonenumber, $email, $address, $dateofbirth, $username, $password, $photoPath);
@@ -39,11 +38,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);
-            mysqli_close($connection);
+            mysqli_close($conn);
             header("Location: success.php");
         } else {
             $response['success'] = false;
-            $response['message'] = "Error: " . mysqli_error($connection);
+            $response['message'] = "Error: " . mysqli_error($conn);
         }
 
         mysqli_stmt_close($stmt);
@@ -52,7 +51,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo json_encode($response);
     } else {
         $response['success'] = false;
-        $response['message'] = "Error: " . mysqli_error($connection);
+        $response['message'] = "Error: " . mysqli_error($conn);
 
         header("Content-Type: application/json");
         echo json_encode($response);

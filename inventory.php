@@ -426,16 +426,7 @@
 
   <div class="product-container">
   <?php
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ccarpcurrentsystem";
-
-    $conn = new mysqli($host, $username, $password, $dbname);
-
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
-    }
+  include('config.php');
 
     // Fetch the search query
     $searchQuery = isset($_GET['searchInput']) ? $_GET['searchInput'] : '';

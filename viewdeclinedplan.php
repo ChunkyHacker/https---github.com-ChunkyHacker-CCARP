@@ -204,7 +204,7 @@
 <div class="container">
     <div class="modal-content">
     <?php
-    require_once "config.php";
+    include('config.php');
 
     if (isset($_GET['declined_plan_ID'])) {
         $declined_plan_ID = $_GET['declined_plan_ID'];

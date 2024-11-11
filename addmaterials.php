@@ -1,4 +1,5 @@
 <?php
+include('config.php');
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the form data
@@ -15,20 +16,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Handle the case where requirement_ID is not provided
         echo "Error: requirement_ID is missing.";
         exit();
-    }
-
-    // Database connection settings
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ccarpcurrentsystem";
-
-    // Create a new connection
-    $conn = new mysqli($host, $username, $password, $dbname);
-
-    // Check connection
-    if ($conn->connect_error) {
-        die("Connection failed: " . $conn->connect_error);
     }
 
     // Prepare the SQL query to insert the item into the database

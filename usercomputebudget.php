@@ -456,7 +456,7 @@ if (isset($_GET['requirement_ID'])) {
     $requirement_ID = $_GET['requirement_ID'];
 
     $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
-    $stmt = mysqli_prepare($connection, $query);
+    $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -468,7 +468,7 @@ if (isset($_GET['requirement_ID'])) {
 
         $userId = $row['User_ID'];
         $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-        $userStmt = mysqli_prepare($connection, $userQuery);
+        $userStmt = mysqli_prepare($conn, $userQuery);
         mysqli_stmt_bind_param($userStmt, "i", $userId);
         mysqli_stmt_execute($userStmt);
         $userResult = mysqli_stmt_get_result($userStmt);
@@ -530,7 +530,7 @@ if (isset($_GET['requirement_ID'])) {
         echo "</div>"; 
       }
       
-      mysqli_close($connection);
+      mysqli_close($conn);
     } else {
       echo "<div class='main'>";
       echo "<p>Approved Plan ID is missing.</p>";
@@ -644,16 +644,8 @@ if (isset($_GET['requirement_ID'])) {
     <div class="product-container">
         <h2 style="text-align:center">Material</h2>
         <?php
-        $host = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ccarpcurrentsystem";
+        include('config.php');
 
-        $conn = new mysqli($host, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
 
         // Check if requirement_ID is provided in the URL parameter
         if(isset($_GET['requirement_ID'])) {
@@ -710,16 +702,8 @@ if (isset($_GET['requirement_ID'])) {
     <div class="product-container">
       <h2 style="text-align:center">Labor</h2>
       <?php
-        $host = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ccarpcurrentsystem";
+        include('config.php');
 
-        $conn = new mysqli($host, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
 
         // Query to select all columns from the prematerials table
         $sql = "SELECT * FROM labor";
@@ -762,19 +746,8 @@ if (isset($_GET['requirement_ID'])) {
 
     <div class="product-container">
         <?php
-        // Database connection settings
-        $host = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ccarpcurrentsystem";
+        include('config.php');
 
-        // Create a new connection
-        $conn = new mysqli($host, $username, $password, $dbname);
-
-        // Check connection
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
 
         // Query to retrieve total cost
         $transactionQuery = "SELECT SUM(total_price) AS total_budget_cost FROM transaction";
@@ -806,7 +779,7 @@ if (isset($_GET['requirement_ID'])) {
         // Calculate overall total cost
         $overallTotalCost = + $totalMaterialCost + $totalLaborCost + $totalprice;
 
-        // Close the database connection
+        // Close the database conn
         $conn->close();
         
         // Display total cost information

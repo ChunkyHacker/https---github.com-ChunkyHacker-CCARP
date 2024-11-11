@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once "config.php";
+include('config.php');
 
 $response = array();
 
@@ -14,15 +13,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 	$query = "INSERT INTO credentials (firstname, lastname, email, username, password, role) VALUES ('$firstname','$lastname','$email','$username','$password','$role')";
 	
-	if (mysqli_query($connection, $query)) {
+	if (mysqli_query($conn, $query)) {
         echo "Registration Successful!<br>";
         echo "Please <a href='index.php'>Sign In</a> to continue.";
 } else {
-    echo "ERROR: " . $query . "<br>" . mysqli_error($connection);
+    echo "ERROR: " . $query . "<br>" . mysqli_error($conn);
 }
 }
 
-mysqli_close($connection);
+mysqli_close($conn);
 ?>
 
 <!DOCTYPE html>

@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $specializationName = $_POST["specializationName"];
 
     $insertQuery = "INSERT INTO specialization (Specialization_Name) VALUES ('$specializationName')";
-    $insertResult = mysqli_query($connection, $insertQuery);
+    $insertResult = mysqli_query($conn, $insertQuery);
 
     if ($insertResult) {
         $response['success'] = true;
@@ -17,12 +17,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } else {
         $response['success'] = false;
-        $response['message'] = 'Error: ' . mysqli_error($connection);
+        $response['message'] = 'Error: ' . mysqli_error($conn);
     }
 
     header('Content-Type: application/json');
     echo json_encode($response);
 }
 
-mysqli_close($connection);
+mysqli_close($conn);
 ?>

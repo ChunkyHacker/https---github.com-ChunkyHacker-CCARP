@@ -238,16 +238,7 @@ body {
     <div class=""><h1>Partnered shops</h1></div>
     <div class="image-grid">
         <?php
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ccarpcurrentsystem";
-
-        $conn = new mysqli($servername, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+        include('config.php');
 
         $sql = "SELECT * FROM shop";
         $result = $conn->query($sql);

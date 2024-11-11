@@ -1,11 +1,11 @@
 <?php
-require_once "config.php";
+include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $approved_plan_id = $_POST['approved_plan_id'];
 
     $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
-    $stmt = mysqli_prepare($connection, $query);
+    $stmt = mysqli_prepare($conn, $query);
     mysqli_stmt_bind_param($stmt, "i", $approved_plan_id);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
@@ -32,7 +32,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
             // Insert data into projectrequirements table
             $insertQuery = "INSERT INTO projectrequirements (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, Photo, approved_by, labor_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-            $insertStmt = mysqli_prepare($connection, $insertQuery);
+            $insertStmt = mysqli_prepare($conn, $insertQuery);
 
             mysqli_stmt_bind_param($insertStmt, "issssssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $photoPath, $approved_by, $labor_cost);
 
@@ -41,7 +41,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 header("Location: selectmaterialsrequirement.php");
                 exit();
             } else {
-                echo "Error inserting data into projectrequirements table: " . mysqli_error($connection);
+                echo "Error inserting data into projectrequirements table: " . mysqli_error($conn);
             }
 
             mysqli_stmt_close($insertStmt);
@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     mysqli_stmt_close($stmt);
-    mysqli_close($connection);
+    mysqli_close($conn);
 } else {
     echo "Invalid request method. Please use POST.";
 }

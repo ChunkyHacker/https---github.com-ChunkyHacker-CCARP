@@ -4,9 +4,10 @@ $dbname = "ccarpcurrentsystem";
 $username = "root";
 $password = "";
 
-$connection = mysqli_connect ($host, $username, $password, $dbname);
+$conn = new mysqli ($host, $username, $password, $dbname);
 
-if (!$connection) {
-	die("Connection failed: " . mysqli_connect_error());
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
 }
 ?>

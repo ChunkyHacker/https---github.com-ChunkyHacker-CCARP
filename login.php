@@ -10,17 +10,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $query_users = "SELECT * FROM users WHERE username = ?";
     $query_shop = "SELECT * FROM shop WHERE username = ?";
 
-    $stmt_carpenters = mysqli_prepare($connection, $query_carpenters);
+    $stmt_carpenters = mysqli_prepare($conn, $query_carpenters);
     mysqli_stmt_bind_param($stmt_carpenters, "s", $username);
     mysqli_stmt_execute($stmt_carpenters);
     $result_carpenters = mysqli_stmt_get_result($stmt_carpenters);
 
-    $stmt_users = mysqli_prepare($connection, $query_users);
+    $stmt_users = mysqli_prepare($conn, $query_users);
     mysqli_stmt_bind_param($stmt_users, "s", $username);
     mysqli_stmt_execute($stmt_users);
     $result_users = mysqli_stmt_get_result($stmt_users);
 
-    $stmt_shop = mysqli_prepare($connection, $query_shop);
+    $stmt_shop = mysqli_prepare($conn, $query_shop);
     mysqli_stmt_bind_param($stmt_shop, "s", $username);
     mysqli_stmt_execute($stmt_shop);
     $result_shop = mysqli_stmt_get_result($stmt_shop);
@@ -93,5 +93,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 }
 
-mysqli_close($connection);
+mysqli_close($conn);
 ?>

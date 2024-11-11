@@ -1,12 +1,11 @@
 <?php
-session_start();
-require_once "config.php";
+include('config.php');
 
 $totalprice = $_POST['total_price'];
 $paymentmethod = $_POST['payment_method'];
 
 // Prepare the SQL statement for inserting transaction data
-$stmt = $connection->prepare("INSERT INTO transaction (total_price, payment_method) VALUES (?, ?)");
+$stmt = $conn->prepare("INSERT INTO transaction (total_price, payment_method) VALUES (?, ?)");
 
 // Check if the statement was prepared successfully
 if ($stmt) {
@@ -17,7 +16,7 @@ if ($stmt) {
     if ($stmt->execute()) {
         // Fetch data from the 'requirements' table
         $query = "SELECT * FROM prematerials";
-        $result = $connection->query($query);
+        $result = $conn->query($query);
 
         // Check if the query was successful
         if ($result) {
@@ -28,7 +27,7 @@ if ($stmt) {
             header("Location: receipt.php?total_price=$totalprice&payment_method=$paymentmethod&prematerials=$prematerials_json");
             exit;
         } else {
-            echo "Error fetching requirements: " . $connection->error;
+            echo "Error fetching requirements: " . $conn->error;
         }
     } else {
         echo "Error executing transaction: " . $stmt->error;
@@ -37,7 +36,7 @@ if ($stmt) {
     // Close statement
     $stmt->close();
 } else {
-    echo "Error preparing statement: " . $connection->error;
+    echo "Error preparing statement: " . $conn->error;
 }
 
 ?>

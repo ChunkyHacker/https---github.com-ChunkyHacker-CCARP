@@ -6,16 +6,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <?php
-$servername = "localhost";
-$username = "root";
-$password = "";
-$dbname = "ccarpcurrentsystem";
-
-$conn = new mysqli($servername, $username, $password, $dbname);
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+  include('config.php');
 
 function getProjects($conn)
 {

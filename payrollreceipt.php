@@ -56,24 +56,11 @@
         <h2>Payroll Receipt</h2>
         <div class="payroll-details">
             <?php
+            include('config.php');
             // Check if the Payroll_ID parameter is set in the URL
             if(isset($_GET["Payroll_ID"])) {
                 // Get the Payroll_ID from the URL
                 $Payroll_ID = $_GET["Payroll_ID"];
-
-                // Database connection parameters
-                $servername = "localhost";
-                $username = "root"; // Change this to your MySQL username
-                $password = ""; // Change this to your MySQL password
-                $database = "ccarpcurrentsystem";
-
-                // Create a new connection
-                $conn = new mysqli($servername, $username, $password, $database);
-
-                // Check connection
-                if ($conn->connect_error) {
-                    die("Connection failed: " . $conn->connect_error);
-                }
 
                 // Prepare SQL query to fetch the data based on Payroll_ID
                 $sql = "SELECT * FROM payment WHERE Payroll_ID = $Payroll_ID";

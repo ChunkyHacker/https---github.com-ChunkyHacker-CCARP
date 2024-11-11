@@ -1,19 +1,6 @@
 <?php
 session_start();
-
-// Database connection parameters
-$servername = "localhost";
-$username = "root";
-$password = "";
-$database = "ccarpcurrentsystem";
-
-// Create connection
-$conn = new mysqli($servername, $username, $password, $database);
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
+include('config.php');
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {

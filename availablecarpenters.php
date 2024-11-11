@@ -255,7 +255,7 @@
 
   $query .= " ORDER BY $sortColumn $sortOrder";
 
-  $result = mysqli_query($connection, $query);
+  $result = mysqli_query($conn, $query);
 
   // Check if there are rows in the result set
   if (mysqli_num_rows($result) > 0) {
@@ -274,7 +274,7 @@
 
       // Fetch specialization names from the database
       $specializationQuery = "SELECT DISTINCT Specialization FROM carpenters";
-      $specializationResult = mysqli_query($connection, $specializationQuery);
+      $specializationResult = mysqli_query($conn, $specializationQuery);
 
       while ($specializationRow = mysqli_fetch_assoc($specializationResult)) {
           echo "<option value='{$specializationRow['Specialization']}' " . ($specializationFilter === $specializationRow['Specialization'] ? 'selected' : '') . ">{$specializationRow['Specialization']}</option>";
@@ -326,8 +326,8 @@
       echo "No carpenters available.";
   }
 
-  // Close the database connection
-  mysqli_close($connection);
+  // Close the database conn
+  mysqli_close($conn);
   ?>
 
   </div>

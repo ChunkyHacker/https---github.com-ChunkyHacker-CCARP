@@ -17,7 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $query_carpenters = "SELECT * FROM carpenters WHERE username = ?";
 
-    $stmt_carpenters = mysqli_prepare($connection, $query_carpenters);
+    $stmt_carpenters = mysqli_prepare($conn, $query_carpenters);
     mysqli_stmt_bind_param($stmt_carpenters, "s", $username);
     mysqli_stmt_execute($stmt_carpenters);
     $result_carpenters = mysqli_stmt_get_result($stmt_carpenters);
@@ -361,7 +361,7 @@ if (isset($_SESSION['Carpenter_ID'])) {
     $Carpenter_ID = $_SESSION['Carpenter_ID'];
 
     $sql = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
-    $stmt = $connection->prepare($sql);
+    $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $Carpenter_ID);
     $stmt->execute();
     $result = $stmt->get_result();
@@ -403,7 +403,7 @@ if (isset($_SESSION['Carpenter_ID'])) {
   <div class="row">
   <?php
       $query = "SELECT * FROM approvedplan";
-      $result = mysqli_query($connection, $query);
+      $result = mysqli_query($conn, $query);
 
       if ($result) {
           // Check if there are rows in the result
@@ -415,7 +415,7 @@ if (isset($_SESSION['Carpenter_ID'])) {
                   // Fetch user details from the 'users' table
                   $userId = $row['User_ID'];
                   $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-                  $userStmt = mysqli_prepare($connection, $userQuery);
+                  $userStmt = mysqli_prepare($conn, $userQuery);
                   mysqli_stmt_bind_param($userStmt, "i", $userId);
                   mysqli_stmt_execute($userStmt);
                   $userResult = mysqli_stmt_get_result($userStmt);
@@ -443,7 +443,7 @@ if (isset($_SESSION['Carpenter_ID'])) {
               echo "<p>There is no approved projects.</p>";
           }
       } else {
-          echo "Error fetching data: " . mysqli_error($connection);
+          echo "Error fetching data: " . mysqli_error($conn);
       }
 
       ?></div>
@@ -451,10 +451,10 @@ if (isset($_SESSION['Carpenter_ID'])) {
   <h1>Listed Requirements</h1>
   <div class="row">
     <?php
-    require_once "config.php";
+    include('config.php');
 
     $query = "SELECT * FROM projectrequirements";
-    $result = mysqli_query($connection, $query);
+    $result = mysqli_query($conn, $query);
 
     if ($result) {
         // Check if there are rows in the result
@@ -465,7 +465,7 @@ if (isset($_SESSION['Carpenter_ID'])) {
 
                 $userId = $row['User_ID'];
                 $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-                $userStmt = mysqli_prepare($connection, $userQuery);
+                $userStmt = mysqli_prepare($conn, $userQuery);
                 mysqli_stmt_bind_param($userStmt, "i", $userId);
                 mysqli_stmt_execute($userStmt);
                 $userResult = mysqli_stmt_get_result($userStmt);
@@ -492,10 +492,10 @@ if (isset($_SESSION['Carpenter_ID'])) {
             echo "<p>There is no approved projects.</p>";
         }
     } else {
-        echo "Error fetching data: " . mysqli_error($connection);
+        echo "Error fetching data: " . mysqli_error($conn);
     }
 
-    mysqli_close($connection);
+    mysqli_close($conn);
     ?>
 </div>
   </div>

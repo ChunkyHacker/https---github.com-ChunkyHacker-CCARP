@@ -1,7 +1,7 @@
 <?php
 // edituser.php
 
-session_start();
+include('config.php');
 if (!isset($_SESSION['username']) || !$_SESSION['is_admin']) {
     header("Location: index.php");
     exit; // Add the missing semicolon and exit after redirection

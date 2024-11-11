@@ -16,7 +16,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     VALUES (?, ?, ?, ?, ?, ?)";
 
     // Prepare statement
-    if ($stmt = $connection->prepare($sql)) {
+    if ($stmt = $conn->prepare($sql)) {
         // Bind parameters
         $stmt->bind_param("ssssss", $carpenter_name, $net_pay, $days_of_work, $rate_per_day, $payment_method, $sender);
 
@@ -37,11 +37,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->close();
     } else {
         // If an error occurs during statement preparation, display the error message
-        echo "Error: " . $connection->error;
+        echo "Error: " . $conn->error;
     }
 
-    // Close connection
-    $connection->close();
+    // Close conn
+    $conn->close();
 } else {
     // If the form was not submitted via POST method, display an error message
     echo "Error: The form was not submitted.";

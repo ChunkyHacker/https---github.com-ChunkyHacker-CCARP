@@ -184,7 +184,7 @@ if (!isset($_SESSION['User_ID'])) {
         $User_ID = $_SESSION['User_ID'];
 
         $sql = "SELECT * FROM users WHERE User_ID = ?";
-        $stmt = $connection->prepare($sql);
+        $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $User_ID);
         $stmt->execute();
         $result = $stmt->get_result();
@@ -223,7 +223,7 @@ if (!isset($_SESSION['User_ID'])) {
     <div class="row">
         <?php
         $query = "SELECT * FROM plan";
-        $result = mysqli_query($connection, $query);
+        $result = mysqli_query($conn, $query);
 
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
@@ -233,7 +233,7 @@ if (!isset($_SESSION['User_ID'])) {
 
                 $userId = $row['User_ID'];
                 $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-                $userStmt = mysqli_prepare($connection, $userQuery);
+                $userStmt = mysqli_prepare($conn, $userQuery);
                 mysqli_stmt_bind_param($userStmt, "i", $userId);
                 mysqli_stmt_execute($userStmt);
                 $userResult = mysqli_stmt_get_result($userStmt);
@@ -257,7 +257,7 @@ if (!isset($_SESSION['User_ID'])) {
             }
             mysqli_free_result($result);
         } else {
-            echo "Error fetching data: " . mysqli_error($connection);
+            echo "Error fetching data: " . mysqli_error($conn);
         }
         ?>
     </div>
@@ -266,7 +266,7 @@ if (!isset($_SESSION['User_ID'])) {
     <div class="row">
         <?php
         $query = "SELECT * FROM declinedplan";
-        $result = mysqli_query($connection, $query);
+        $result = mysqli_query($conn, $query);
 
         if ($result) {
             while ($row = mysqli_fetch_assoc($result)) {
@@ -276,7 +276,7 @@ if (!isset($_SESSION['User_ID'])) {
 
                 $userId = $row['User_ID'];
                 $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-                $userStmt = mysqli_prepare($connection, $userQuery);
+                $userStmt = mysqli_prepare($conn, $userQuery);
                 mysqli_stmt_bind_param($userStmt, "i", $userId);
                 mysqli_stmt_execute($userStmt);
                 $userResult = mysqli_stmt_get_result($userStmt);
@@ -300,7 +300,7 @@ if (!isset($_SESSION['User_ID'])) {
             }
             mysqli_free_result($result);
         } else {
-            echo "Error fetching data: " . mysqli_error($connection);
+            echo "Error fetching data: " . mysqli_error($conn);
         }
         ?>
     </div>
@@ -311,7 +311,7 @@ if (!isset($_SESSION['User_ID'])) {
       require_once "config.php";
 
       $query = "SELECT * FROM projectrequirements";
-      $result = mysqli_query($connection, $query);
+      $result = mysqli_query($conn, $query);
 
       if ($result) {
         while ($row = mysqli_fetch_assoc($result))  {
@@ -322,7 +322,7 @@ if (!isset($_SESSION['User_ID'])) {
             // Fetch user details from the 'users' table
             $userId = $row['User_ID'];
             $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($connection, $userQuery);
+            $userStmt = mysqli_prepare($conn, $userQuery);
             mysqli_stmt_bind_param($userStmt, "i", $userId);
             mysqli_stmt_execute($userStmt);
             $userResult = mysqli_stmt_get_result($userStmt);
@@ -348,7 +348,7 @@ if (!isset($_SESSION['User_ID'])) {
         }
           mysqli_free_result($result);
       } else {
-          echo "Error fetching data: " . mysqli_error($connection);
+          echo "Error fetching data: " . mysqli_error($conn);
       }
 
       ?>

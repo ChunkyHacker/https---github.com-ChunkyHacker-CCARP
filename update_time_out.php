@@ -1,14 +1,10 @@
 <?php
+include('config.php');
+
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the timestamp for Time_out from the POST request
     $time_out = $_POST["Time_out"]; // Assuming the form field is named 'Time_out'
-
-    // Database connection settings
-    $host = "localhost";
-    $username = "root";
-    $password = "";
-    $dbname = "ccarpcurrentsystem";
 
     // Ensure the existence of the requirement_ID field in the form data
     if(isset($_POST["requirement_ID"])) {

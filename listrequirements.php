@@ -225,7 +225,7 @@
 
         // Fetch and display client's plan based on the approved_plan_ID
         $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
-        $stmt = mysqli_prepare($connection, $query);
+        $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "i", $approved_plan_ID);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
@@ -236,7 +236,7 @@
             // Fetch user details from the 'users' table
             $userId = $row['User_ID'];
             $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($connection, $userQuery);
+            $userStmt = mysqli_prepare($conn, $userQuery);
             mysqli_stmt_bind_param($userStmt, "i", $userId);
             mysqli_stmt_execute($userStmt);
             $userResult = mysqli_stmt_get_result($userStmt);
@@ -362,7 +362,7 @@
                         
 
             $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
-            $stmt = mysqli_prepare($connection, $query);
+            $stmt = mysqli_prepare($conn, $query);
             mysqli_stmt_bind_param($stmt, "i", $approved_plan_ID);
             mysqli_stmt_execute($stmt);
             $result = mysqli_stmt_get_result($stmt);
@@ -397,8 +397,8 @@
 
         // Close the statement
         mysqli_stmt_close($stmt);
-        // Close the database connection
-        mysqli_close($connection);
+        // Close the database conn$conn
+        mysqli_close($conn);
     } else {
         // Handle the case when approved_plan_ID is not provided in the URL
         echo "<div class='main'>";

@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once "config.php";
+include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     // Check if 'User_ID' is set in the session
@@ -38,26 +38,26 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $query = "INSERT INTO plan (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, Photo) 
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
-    $stmt = mysqli_prepare($connection, $query);
+    $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {        
         mysqli_stmt_bind_param($stmt, "issssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $photoPath);
         
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);
-            mysqli_close($connection);
+            mysqli_close($conn);
             header("Location: selectmaterials.php");
             exit;
         } else {
             // Check if the error is due to a duplicate entry
-            if (mysqli_errno($connection) == 1062) {
+            if (mysqli_errno($conn) == 1062) {
                 // Plan with the same user_ID already exists
                 $response['success'] = false;
                 $response['message'] = "Error: A plan for this user already exists.";
             } else {
                 // Handle other errors
                 $response['success'] = false;
-                $response['message'] = "Error: " . mysqli_error($connection);
+                $response['message'] = "Error: " . mysqli_error($conn);
             }
         }
     } else {
@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     echo json_encode($response);
 } else {
     $response['success'] = false;
-    $response['message'] = "Error: " . mysqli_error($connection);
+    $response['message'] = "Error: " . mysqli_error($conn);
 
     header("Content-Type: application/json");
     echo json_encode($response);

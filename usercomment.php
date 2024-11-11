@@ -375,14 +375,14 @@
     <?php
 
     $query = "SELECT * FROM plan";
-    $result = mysqli_query($connection, $query);
+    $result = mysqli_query($conn, $query);
 
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
             echo "<li class='comment'>";
             $userId = $row['User_ID'];
             $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($connection, $userQuery);
+            $userStmt = mysqli_prepare($conn, $userQuery);
             mysqli_stmt_bind_param($userStmt, "i", $userId);
             mysqli_stmt_execute($userStmt);
             $userResult = mysqli_stmt_get_result($userStmt);
@@ -405,10 +405,10 @@
 
         mysqli_free_result($result);
     } else {
-        echo "Error fetching data: " . mysqli_error($connection);
+        echo "Error fetching data: " . mysqli_error($conn);
     }
 
-    mysqli_close($connection);
+    mysqli_close($conn);
     ?>
 </body>
 </html>

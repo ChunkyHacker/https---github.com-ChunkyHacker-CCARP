@@ -450,7 +450,7 @@
         $requirement_ID = $_GET['requirement_ID'];
 
         $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
-        $stmt = mysqli_prepare($connection, $query);
+        $stmt = mysqli_prepare($conn, $query);
         mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
@@ -461,7 +461,7 @@
 
             $userId = $row['User_ID'];
             $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($connection, $userQuery);
+            $userStmt = mysqli_prepare($conn, $userQuery);
             mysqli_stmt_bind_param($userStmt, "i", $userId);
             mysqli_stmt_execute($userStmt);
             $userResult = mysqli_stmt_get_result($userStmt);
@@ -524,7 +524,7 @@
                   echo "<tbody>";
                   
                   $query_materials = "SELECT * FROM prematerials";
-                  $stmt_materials = mysqli_prepare($connection, $query_materials);
+                  $stmt_materials = mysqli_prepare($conn, $query_materials);
                   mysqli_stmt_execute($stmt_materials);
                   $result_materials = mysqli_stmt_get_result($stmt_materials);
                   
@@ -557,7 +557,7 @@
                   
                   //requiredmaterials
                   $query_materials = "SELECT * FROM requiredmaterials";
-                  $stmt_materials = mysqli_prepare($connection, $query_materials);
+                  $stmt_materials = mysqli_prepare($conn, $query_materials);
                   mysqli_stmt_execute($stmt_materials);
                   $result_materials = mysqli_stmt_get_result($stmt_materials);
                   
@@ -598,7 +598,7 @@
         }
 
         mysqli_stmt_close($stmt);
-        mysqli_close($connection);
+        mysqli_close($conn);
     } else {
         echo "<div class='main'>";
         echo "<p>Approved Plan ID is missing.</p>";
@@ -679,16 +679,8 @@
   <div class="product-container">
       <h2 style="text-align:center">Progress</h2>
       <?php
-          $host = "localhost";
-          $username = "root";
-          $password = "";
-          $dbname = "ccarpcurrentsystem";
+          include('config.php');
 
-          $conn = new mysqli($host, $username, $password, $dbname);
-
-          if ($conn->connect_error) {
-              die("Connection failed: " . $conn->connect_error);
-          }
 
           // Check if requirement_ID is provided in the URL parameter
           if(isset($_GET['requirement_ID'])) {
@@ -733,16 +725,7 @@
   <div class="product-container">
     <h2 style="text-align:center">Attendance</h2>
     <?php
-        $host = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ccarpcurrentsystem";
-
-        $conn = new mysqli($host, $username, $password, $dbname);
-
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+        include('config.php');
 
         // Check if requirement_ID is provided in the URL parameter
         if(isset($_GET['requirement_ID'])) {

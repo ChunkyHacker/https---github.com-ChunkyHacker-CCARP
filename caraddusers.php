@@ -1,6 +1,5 @@
 <?php
-session_start();
-require_once "config.php";
+include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $firstname = $_POST['firstname'] ?? '';
@@ -36,28 +35,28 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     $insertCarpenterQuery = "INSERT INTO carpenters (First_Name, Last_Name, Phone_Number, Email, Address, Date_Of_Birth, Experiences, Project_Completed, Username, Password, specialization, Photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-    $stmtCarpenter = mysqli_prepare($connection, $insertCarpenterQuery);
+    $stmtCarpenter = mysqli_prepare($conn, $insertCarpenterQuery);
 
     if ($stmtCarpenter) {
         mysqli_stmt_bind_param($stmtCarpenter, "ssssssssssss", $firstname, $lastname, $phonenumber, $email, $address, $dateofbirth, $experience, $projectcompleted, $username, $password, $selectedSpecializations, $photoPath);
 
-        mysqli_begin_transaction($connection);
+        mysqli_begin_transaction($conn);
 
         if (mysqli_stmt_execute($stmtCarpenter)) {
-            mysqli_commit($connection);
+            mysqli_commit($conn);
 
             $response['success'] = true;
             $response['message'] = 'Carpenter added successfully';
 
             mysqli_stmt_close($stmtCarpenter);
-            mysqli_close($connection);
+            mysqli_close($conn);
             header("Location: login.html");
             exit();
         } else {
-            mysqli_rollback($connection);
+            mysqli_rollback($conn);
 
             $response['success'] = false;
-            $response['message'] = "Error adding carpenter: " . mysqli_error($connection);
+            $response['message'] = "Error adding carpenter: " . mysqli_error($conn);
         }
 
         mysqli_stmt_close($stmtCarpenter);
@@ -66,7 +65,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         echo json_encode($response);
     } else {
         $response['success'] = false;
-        $response['message'] = "Error: " . mysqli_error($connection);
+        $response['message'] = "Error: " . mysqli_error($conn);
 
         header("Content-Type: application/json");
         echo json_encode($response);
