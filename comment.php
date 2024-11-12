@@ -447,9 +447,9 @@ if ($result) {
             echo "<img src='{$photoPath}' alt='Photo' style='width: 150px; height: auto;'>";
             echo "</a>";
 
-            // Add a button to go to clientsplan.php
-            echo "<p><a href='clientsplan.php?plan_id={$row['plan_ID']}'>View client plan</a></p>";
         }
+        // Add a button to go to clientsplan.php
+        echo "<p><a href='clientsplan.php?plan_id={$row['plan_ID']}'>View client plan</a></p>";
 
         echo "</li>";
     }
