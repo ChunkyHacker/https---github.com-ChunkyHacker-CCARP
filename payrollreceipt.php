@@ -54,67 +54,69 @@
 <body>
     <div class="container">
         <h2>Payroll Receipt</h2>
-        <div class="payroll-details">
-            <?php
-            include('config.php');
-            // Check if the Payroll_ID parameter is set in the URL
-            if(isset($_GET["Payroll_ID"])) {
-                // Get the Payroll_ID from the URL
-                $Payroll_ID = $_GET["Payroll_ID"];
+        <form action="copyexpenses.php?Payroll_ID=<?php echo $_GET['Payroll_ID']; ?>" method="POST">
+            <div class="payroll-details">
+                <?php
+                    include('config.php');
+                    // Check if the Payroll_ID parameter is set in the URL
+                    if(isset($_GET["Payroll_ID"])) {
+                        $Payroll_ID = $_GET["Payroll_ID"];
+                        $sql = "SELECT * FROM payment WHERE Payroll_ID = $Payroll_ID";
+                        $result = $conn->query($sql);
 
-                // Prepare SQL query to fetch the data based on Payroll_ID
-                $sql = "SELECT * FROM payment WHERE Payroll_ID = $Payroll_ID";
+                        if ($result->num_rows > 0) {
+                            $row = $result->fetch_assoc();
+                            ?>
+                            <table>
+                                <tr>
+                                    <th>Carpenter Name</th>
+                                    <td><?php echo htmlspecialchars($row["carpenter_name"]); ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Net Pay</th>
+                                    <td><?php echo htmlspecialchars($row["Netpay"]); ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Days of Work</th>
+                                    <td><?php echo htmlspecialchars($row["Days_Of_Work"]); ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Rate per Day</th>
+                                    <td><?php echo htmlspecialchars($row["Rate_per_day"]); ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Payment Method</th>
+                                    <td><?php echo htmlspecialchars($row["payment_method"]); ?></td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>Paid</td>
+                                </tr>
+                                <tr>
+                                    <th>Sender</th>
+                                    <td><?php echo htmlspecialchars($row["sender"]); ?></td>
+                                </tr>
+                            </table>
+                            <?php
+                        } else {
+                            echo "<p>No results found for Payroll ID: $Payroll_ID</p>";
+                        }
 
-                // Execute SQL query
-                $result = $conn->query($sql);
+                        // Close connection
+                        $conn->close();
+                    } else {
+                        echo "<p>Error: Payroll_ID parameter is missing in the URL.</p>";
+                    }
+                ?>
+                <div class="download-btn">
+                    <!-- Submit button to transfer data to expenses -->
+                    <button type="submit" name="copy_to_expenses">Copy to expenses</button>
+                </div>
+            </div>
+        </form>
 
-                // Check if there is a result
-                if ($result->num_rows > 0) {
-                    // Output data of each row
-                    $row = $result->fetch_assoc();
-                    ?>
-                    <table>
-                        <tr>
-                            <th>Carpenter Name</th>
-                            <td><?php echo $row["carpenter_name"]; ?></td>
-                        </tr>
-                        <tr>
-                            <th>Net Pay</th>
-                            <td><?php echo $row["Netpay"]; ?></td>
-                        </tr>
-                        <tr>
-                            <th>Days of Work</th>
-                            <td><?php echo $row["Days_Of_Work"]; ?></td>
-                        </tr>
-                        <tr>
-                            <th>Rate per Day</th>
-                            <td><?php echo $row["Rate_per_day"]; ?></td>
-                        </tr>
-                        <tr>
-                            <th>Payment Method</th>
-                            <td><?php echo $row["payment_method"]; ?></td>
-                        </tr>
-                        <tr>
-                            <th>Status</th>
-                            <td>Paid</td>
-                        </tr>
-                        <tr>
-                            <th>Sender</th>
-                            <td><?php echo $row["sender"]; ?></td>
-                        </tr>
-                    </table>
-                    <?php
-                } else {
-                    echo "<p>No results found for Payroll ID: $Payroll_ID</p>";
-                }
 
-                // Close connection
-                $conn->close();
-            } else {
-                echo "<p>Error: Payroll_ID parameter is missing in the URL.</p>";
-            }
-            ?>
-        </div>
+
         <div class="download-btn">
             <button onclick="downloadReceipt()">Download Receipt</button>
             <button onclick="window.print()">Print Receipt</button>

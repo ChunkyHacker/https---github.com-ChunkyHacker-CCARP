@@ -271,8 +271,6 @@
             echo "<p>End Date: <input type='text' value='{$row['end_date']}' readonly></p>";        
             echo "</div>";
             
-            echo "<p>Type: <input type='text' value='{$row['type']}' readonly></p>";
-
         // Display the resized photo with a link to open the modal
         $photoPath = $row['Photo'];
         if (!empty($photoPath) && file_exists($photoPath)) {

@@ -307,23 +307,7 @@
                                             
             echo "<div class=\"row-container\">";
             echo "<h3>Further Details</h3>";
-            
-            echo "<div style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;'>";
-            
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label for='type'>Type:</label>";
-            echo "<input type='text' id='type' name='type' value='{$row['type']}' readonly>";
-            echo "</div>";
-            
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label for='part'>Part:</label>";
-            echo "</div>";
-            
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label for='materials'>Materials:</label>";
-            echo "</div>";
         
-
             echo "</div>";
             echo "</div>";
 

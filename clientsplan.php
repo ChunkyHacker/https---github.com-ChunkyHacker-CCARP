@@ -326,12 +326,6 @@ session_start();
 
                     <div class="row-container">
                         <h3>Further Details</h3>
-                        <div style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;'>
-                            <div style='display: flex; flex-direction: column;'>
-                                <label for='type'>Type:</label>
-                                <input type='text' id='type' name='type' value='<?php echo $row['type']; ?>' readonly>
-                            </div>
-                        </div>
 
                         <table style="border-collapse: collapse; width: 100%;">
                             <thead>

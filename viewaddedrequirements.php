@@ -268,7 +268,6 @@
             echo "<p>End Date: <input type='text' value='{$row['end_date']}' readonly></p>";        
             echo "</div>";
             
-            echo "<p>Type: <input type='text' value='{$row['type']}' readonly></p>";
             echo '<table style="border-collapse: collapse; width: 100%;">';
                 echo '<thead>';
                     echo '<tr>';

@@ -88,80 +88,87 @@
         ?>
 
 
-        <div class="row">
-            <div class="col-75">
-                <div class="col-25">
-                    <div class="container">
-                        <!-- Table for prematerials -->
-                        <h4>Cart <span class="price" style="color:black"><i class="fa fa-shopping-cart"></i></span></h4>
-                        <table style="border-collapse: collapse; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Part</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Name</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">₱Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                // Rewind the result set to start from the beginning
-                                mysqli_data_seek($result_materials, 0);
+        <form action="copyexpenses.php" method="POST">
+            <div class="row">
+                <div class="col-75">
+                    <div class="col-25">
+                        <div class="container">
+                            <!-- Table for prematerials -->
+                            <h4>Cart <span class="price" style="color:black"><i class="fa fa-shopping-cart"></i></span></h4>
+                            <table style="border-collapse: collapse; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Part</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Name</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">₱Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    // Rewind the result set to start from the beginning
+                                    mysqli_data_seek($result_materials, 0);
 
-                                while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                                    echo '<tr>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['part']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['materials']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['name']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>
-                                        </tr>';
-                                }
-                                ?>
-                            </tbody>
-                        </table>
+                                    while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                                        echo '<tr>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['part']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['materials']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['name']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>
+                                            </tr>';
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
 
-                        <!-- Table for requiredmaterials -->
-                        <h4>Required Materials</h4>
-                        <table style="border-collapse: collapse; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Material</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Type</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Image</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                // Loop through the results and populate the second table (requiredmaterials)
-                                mysqli_data_seek($result_required_materials, 0);
+                            <!-- Table for requiredmaterials -->
+                            <h4>Required Materials</h4>
+                            <table style="border-collapse: collapse; width: 100%;">
+                                <thead>
+                                    <tr>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Material</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Type</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Image</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <?php
+                                    // Loop through the results and populate the second table (requiredmaterials)
+                                    mysqli_data_seek($result_required_materials, 0);
 
-                                while ($required_material_row = mysqli_fetch_assoc($result_required_materials)) {
-                                    echo '<tr>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['material']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['type']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><img src="' . htmlspecialchars($required_material_row['image']) . '" alt="' . htmlspecialchars($required_material_row['material']) . '" style="width: 100px; height: auto;"></td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['price']) . '</td>
-                                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['total']) . '</td>
-                                        </tr>';
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                        <p><strong>Total Price:</strong> <?php echo $totalSum_combined; ?></p>
-                        <p><strong>Payment Method:</strong> <?php echo $paymentmethod; ?></p>
-                        <p><strong>Status:</strong> Paid</p>
+                                    while ($required_material_row = mysqli_fetch_assoc($result_required_materials)) {
+                                        echo '<tr>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['material']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['type']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><img src="' . htmlspecialchars($required_material_row['image']) . '" alt="' . htmlspecialchars($required_material_row['material']) . '" style="width: 100px; height: auto;"></td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['price']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['total']) . '</td>
+                                            </tr>';
+                                    }
+                                    ?>
+                                </tbody>
+                            </table>
+
+                            <p><strong>Total Price:</strong> <?php echo $totalSum_combined; ?></p>
+                            <p><strong>Payment Method:</strong> <?php echo $paymentmethod; ?></p>
+                            <p><strong>Status:</strong> Paid</p>
+
+                            <div class="download-button">
+                                <!-- Submit button to transfer data to the expenses table -->
+                                <button type="submit" name="copyexpenses.php">Copy to expenses</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            </div>
-        </div>
+        </form>
     </div>
     <div class="print-button">
         <!-- Print button for printing the receipt -->
@@ -171,6 +178,7 @@
         <!-- Download button for downloading the receipt in PDF format -->
         <button onclick="downloadReceipt()">Download Receipt (PDF)</button>
     </div>
+
     <div>
         <a href="profile.php">Go back</a>
     </div>
