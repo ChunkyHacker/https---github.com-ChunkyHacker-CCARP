@@ -13,10 +13,10 @@
         }
 
         body {
-            font-family: Verdana, sans-serif;
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
             margin: 0;
-            text-align: center;
-            padding-top: 160px;
+            padding: 20px;
         }
 
         .header {
@@ -25,18 +25,16 @@
             left: 0;
             width: 100%;
             padding: 10px;
-            text-align: left;
             background: #FF8C00;
             color: #000;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 100;
+            z-index: 100; /* Ensures the header stays on top */
         }
 
         .header h1 {
             font-size: 40px;
-            border-left: 20px solid transparent;
             padding-left: 20px;
         }
 
@@ -50,205 +48,27 @@
 
         .topnav {
             position: fixed;
-            top: 120px;
+            top: 60px; /* Adjust based on the header's height */
             width: 100%;
-            overflow: hidden;
             background-color: #505050;
-            z-index: 100;
-        }
-
-        .topnav a {
-            float: left;
-            display: block;
-            color: black;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 30px;
-        }
-
-        .topnav a:hover {
-            background-color: #FF8C00;
-            color: black;
-        }
-
-        @media screen and (max-width: 600px) {
-            .topnav a {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                padding: 14px;
-            }
-
-            .topnav input[type=text] {
-                border: 1px solid #ccc;
-            }
-        }
-
-        .main {
-            flex: 70%;
-            background-color: white;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            max-width: 1000px;
-            width: 100%;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: #000;
-            text-decoration: none;
-            cursor: pointer;
+            z-index: 99; /* Ensures it's under the header but above other content */
         }
 
         .makepost {
-            max-width: 1000px;
-            width: 100%;
-            margin: 30px auto;
+            display: flex;
+            align-items: center; /* Center content horizontally */
             background-color: #fff;
-            border: 1px solid #dddfe2;
-            border-radius: 10px;
-            padding: 20px;
-            display: flex;
-            align-items: flex-start;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .makepost .avatar {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            margin-right: 10px;
-        }
-
-        .makepost textarea {
-            flex: 1;
-            resize: none;
-            padding: 10px;
-            border: 1px solid #dddfe2;
-            border-radius: 20px;
-            outline: none;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .makepost button {
-            background-color: #FF8C00;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            max-width: 1000px;
-            width: 100%;
             border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 20px; /* Add space inside the container */
+            width: 100%; /* Take up the full width of its parent */
+            max-width: 700px; /* Maximum width of the container */
+            height: auto; /* Allow the height to grow based on the content */
+            margin: 150px auto 20px; /* Center horizontally and add top margin */
+            z-index: 1;
         }
 
-        .modal textarea {
-            width: 100%;
-            height: 100px;
-            resize: none;
-            padding: 10px;
-            border: 1px solid #dddfe2;
-            border-radius: 5px;
-            outline: none;
-            font-size: 16px;
-            margin-bottom: 10px;
-        }
-
-        .modal .icons-container {
-            text-align: right;
-        }
-
-        .modal .icons-container i {
-            margin-left: 10px;
-            cursor: pointer;
-            color: #606770;
-            font-size: 20px;
-        }
-
-        .modal .icons-container i:hover {
-            color: #1c1e21;
-        }
-
-        .modal .post-btn {
-            display: inline-block;
-            padding: 8px 16px;
-            background-color: #FF8C00;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        .modal .post-btn:hover {
-            background-color: #000;
-        }
-
-        .post-container {
-            max-width: 1000px;
-            width: 100%;
-            margin: 30px auto;
-            padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 10px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        .post {
-            display: flex;
-            align-items: center;
-            background-color: #f5f5f5;
-            border-radius: 5px;
-            padding: 10px;
-            margin-bottom: 20px;
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
+        .avatar-container {
+            margin-right: 10px;
         }
 
         .avatar {
@@ -258,66 +78,127 @@
             margin-right: 10px;
         }
 
-        .username {
-            font-size: 16px;
-            margin: 0;
+        .input-link {
+            flex: 1;
+            display: flex;
+            text-decoration: none;
         }
 
-        .post-content {
-            margin-bottom: 10px;
+        .input-container {
+            width: 100%; /* Make input container take full width */
+            border: none;
+            border-radius: 20px;
+            padding: 10px 15px;
+            font-size: 14px;
+            background-color: #e4e6eb;
+            outline: none;
+            cursor: pointer;
         }
 
-        .post-text {
-            margin: 0;
+        .post {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 0; /* Remove margin-top */
+            margin-bottom: 10px; /* Reduced bottom margin for less space */
+            padding: 15px;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
         }
 
-        .post-footer {
-            margin-top: 10px;
+        .post-header {
             display: flex;
             align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .username {
+            font-weight: bold;
+            font-size: 16px;
         }
 
         .post-image {
-            width: 100%;
-            max-height: 400px;
-            overflow: hidden;
+            margin: 15px 0;
         }
 
-        .post-image img {
+        .client-photo {
             width: 100%;
-            height: auto;
+            border-radius: 8px;
             object-fit: cover;
+            max-height: 400px;
         }
 
-        .comment {
-            margin: 20px auto;
-            padding: 5px;
-            background-color: #f1f1f1;
-            border-radius: 5px;
-            max-width: 700px;
-        }
-
-        .comment p {
-            margin: 0;
-        }
-
-        .comment-form {
+        .post-footer {
             display: flex;
+            justify-content: flex-start;
+            margin-top: 15px;
+        }
+
+        .like-btn {
+            background-color: #FF8C00; /* Blue color */
+            color: #000;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-right: 10px; 
+        }
+
+        .view-plan-btn {
+            background-color: #FF8C00; /* Same color as like button */
+            color: #000;
+            padding: 8px 16px;
+            border-radius: 5px;
+            font-weight: bold;
+            text-decoration: none; /* Remove underline */
+            display: inline-block; /* Make it behave like a button */
+            cursor: pointer;
+            margin-left: 10px; /* Add space between the like button and the link */
+        }
+
+        .view-plan-btn:hover {
+            background-color: #365899; /* Darken the color on hover */
+        }
+
+        .comment-btn {
+            background-color: #FF8C00; /* Teal color */
+            color: #000;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px; /* Match the input's border radius */
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .like-btn:hover {
+            background-color: #365899;
+        }
+
+        .comment-btn:hover {
+            background-color: #009e8f; /* Darker teal on hover */
+        }
+
+        .comments-section {
+            display: flex;
+            align-items: center; /* Vertically centers the button and input field */
             margin-top: 10px;
         }
 
         .comment-input {
-            flex-grow: 1;
-            margin-right: 10px;
+            width: 100%;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 10px;
+            outline: none;
+            font-size: 14px;
+            margin-right: 10px; /* Adds space between the input and the button */
         }
 
-        .comment-btn {
-            background-color: #007bff;
-            color: white;
-            border: none;
-            padding: 5px 10px;
-            border-radius: 5px;
-            cursor: pointer;
+        .error {
+            color: red;
+            font-weight: bold;
         }
 
         .footer {
@@ -325,31 +206,15 @@
             text-align: center;
             background: #FF8C00;
             position: relative;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
             width: 100%;
-        }
-
-        @media screen and (max-width: 700px) {
-            .row {
-                flex-direction: column;
-            }
-        }
-
-        @media screen and (max-width: 400px) {
-            .navbar a {
-                float: none;
-                width: 100%;
-            }
-        }
+        }   
     </style>
 </head>
 <body>
     <div class="header">
         <a href="usercomment.php">
             <h1>
-                <img src="assets/img/logos/logo.png" alt="" style="width: 75px; margin-right: 10px;">
+                <img src="assets/img/logos/logo.png" alt="Logo" style="width: 75px; margin-right: 10px;">
             </h1>
         </a>
         <div class="right">
@@ -363,52 +228,129 @@
 
     <div class="topnav"></div>
 
-    <div class="container">
-        <div class="makepost">
-            <div class="avatar-container">
-                <img src="blank-profile-picture-gb4f5f9059_640.png" alt="Avatar" class="avatar">
-            </div>
-            <a href="usercreateplan.php"><button>Create plan</button></a>
-        </div>
-    </div>
+    <?php
+        // Check if the user is logged in
+        if (isset($_SESSION['user_ID'])) {
+            $userId = $_SESSION['user_ID'];
+
+            // Fetch the user's profile photo from the database
+            $userQuery = "SELECT Photo FROM users WHERE User_ID = ?";
+            $userStmt = mysqli_prepare($conn, $userQuery);
+            mysqli_stmt_bind_param($userStmt, "i", $userId);
+            mysqli_stmt_execute($userStmt);
+            $userResult = mysqli_stmt_get_result($userStmt);
+
+            // Check if the query returns a row and get the photo
+            if ($userRow = mysqli_fetch_assoc($userResult)) {
+                $profilePicture = $userRow['Photo'];  // Use the user's photo if available
+            } else {
+                // If no photo is found, set to empty string
+                $profilePicture = ''; 
+            }
+
+        } else {
+            // If no user is logged in, use the default photo
+            $profilePicture = ''; 
+        }
+
+        // Output the HTML structure with profile picture check
+        echo '<div class="container my-3">';
+        echo '    <div class="makepost">';
+
+        if (!empty($profilePicture) && file_exists($profilePicture)) {
+            echo "<div class='avatar-container'>";
+            echo "<img src='{$profilePicture}' alt='Avatar' class='avatar'>";
+            echo "</div>";
+        } else {
+            // Fallback to default avatar if no profile picture is found
+            echo "<div class='avatar-container'>";
+            echo "<img src='blank-profile-picture-gb4f5f9059_640.png' alt='Avatar' class='avatar'>";
+            echo "</div>";
+        }
+
+        echo '        <a href="usercreateplan.php" class="input-link">';
+        echo '            <input type="text" class="input-container" placeholder="What\'s on your mind?" readonly>';
+        echo '        </a>';
+        echo '    </div>';
+        echo '</div>';
+    ?>
+
+
 
     <?php
-
     $query = "SELECT * FROM plan";
     $result = mysqli_query($conn, $query);
 
     if ($result) {
         while ($row = mysqli_fetch_assoc($result)) {
-            echo "<li class='comment'>";
+            echo "<div class='post'>";
+            
             $userId = $row['User_ID'];
-            $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
+            $userQuery = "SELECT First_Name, Last_Name, Photo FROM users WHERE User_ID = ?";
             $userStmt = mysqli_prepare($conn, $userQuery);
             mysqli_stmt_bind_param($userStmt, "i", $userId);
             mysqli_stmt_execute($userStmt);
             $userResult = mysqli_stmt_get_result($userStmt);
 
             if ($userRow = mysqli_fetch_assoc($userResult)) {
-                echo "<p>Client Name: {$userRow['First_Name']} {$userRow['Last_Name']}</p>";
+                echo "<div class='post-header'>";
+                
+                // Get the profile picture path from the user record
+                $profilePicture = $userRow['Photo'];
+
+                // Check if the profile picture exists, otherwise set a default image
+                if (!empty($profilePicture) && file_exists($profilePicture)) {
+                    echo "<div class='avatar-container'>";
+                    echo "<img src='{$profilePicture}' alt='Avatar' class='avatar'>";
+                    echo "</div>";
+                } else {
+                    // Fallback to default avatar if no profile picture is found
+                    echo "<div class='avatar-container'>";
+                    echo "<img src='blank-profile-picture-gb4f5f9059_640.png' alt='Avatar' class='avatar'>";
+                    echo "</div>";
+                }
+
+                echo "<div class='username'>{$userRow['First_Name']} {$userRow['Last_Name']}</div>";
+                echo "</div>";
             }
 
             $photoPath = $row['Photo'];
             if (!empty($photoPath) && file_exists($photoPath)) {
+                echo "<div class='post-image'>";
                 echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-                echo "<img src='{$photoPath}' alt='Photo' style='width: 150px; height: auto;'>";
+                echo "<img src='{$photoPath}' alt='Photo' class='client-photo'>";
                 echo "</a>";
-
-                echo "<p><a href='userclientsplan.php?plan_id={$row['plan_ID']}'>View client plan</a></p>";
+                echo "</div>";
+            } else {
+                // If no photo or invalid photo path, display a placeholder image
+                echo "<div class='post-image'>";
+                echo "<img src='default-placeholder.jpg' alt='No photo available' class='client-photo'>";
+                echo "</div>";
             }
 
-            echo "</li>";
+            echo "<div class='post-footer'>";
+            echo "<button class='like-btn'>Like</button>";
+            echo "<a href='userclientsplan.php?plan_id={$row['plan_ID']}' class='view-plan-btn'>View your plan</a>";
+            echo "</div>";                
+
+            echo "<div class='comments-section'>";
+            echo "<input type='text' class='comment-input' placeholder='Write a comment...'>";
+            echo "<button class='comment-btn'>Comment</button>";
+            echo "</div>";
+
+            echo "</div>";
         }
 
         mysqli_free_result($result);
     } else {
-        echo "Error fetching data: " . mysqli_error($conn);
+        echo "<div class='error'>Error fetching data: " . mysqli_error($conn) . "</div>";
     }
 
     mysqli_close($conn);
-    ?>
+?>
+
 </body>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </html>
