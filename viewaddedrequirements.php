@@ -352,6 +352,20 @@
                
             echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
 
+            // Check if the file exists and display it
+            $contractPath = $row['contract'];
+            if (file_exists($contractPath)) {
+                // Display the contract file as a link
+                echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
+            
+                // Optionally, embed the file if it's a PDF
+                if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
+                    echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
+                }
+            } else {
+                echo "<p>Contract file not found.</p>";
+            }
+            
             echo "</div>"; 
             echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';
             echo "<p><a href='progress.php?requirement_ID={$row['requirement_ID']}'>Check progress</a></p>";

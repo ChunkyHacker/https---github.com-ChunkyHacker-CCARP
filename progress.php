@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Progress</title>
 </head>
 <style>
     * {
@@ -497,12 +497,6 @@
             echo "</div>";
 
             echo "<div class=\"row-container\">";
-            echo "<h3>Estimated Cost</h3>";
-            echo "<label for='estimated_cost'>Estimated Cost</label>";
-            echo "<input type='text' id='estimated_cost' name='estimated_cost' value='{$row['estimated_cost']}' readonly><br>";
-            echo "</div>";
-
-            echo "<div class=\"row-container\">";
             echo "<h3>Project Dates</h3>";
             echo "<p>Start Date: <input type='text' value='{$row['start_date']}' readonly></p>";
             echo "<p>End Date: <input type='text' value='{$row['end_date']}' readonly></p>";        
@@ -517,6 +511,8 @@
                               echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
                               echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
                               echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
+                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Estimated Cost</th>";
+
                           echo "</tr>";
                       echo "</thead>";
                   echo "<tbody>";
@@ -534,6 +530,7 @@
                           echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
                           echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
                           echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
+                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['estimated_cost']) . "</td>";
                       echo "</tr>";
                   }
                   
@@ -584,8 +581,22 @@
             echo "</a>";
         }
                
-            echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
+        echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
 
+        // Check if the file exists and display it
+        $contractPath = $row['contract'];
+        if (file_exists($contractPath)) {
+            // Display the contract file as a link
+            echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
+        
+            // Optionally, embed the file if it's a PDF
+            if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
+                echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
+            }
+        } else {
+            echo "<p>Contract file not found.</p>";
+        }
+        
             echo "</form>";
             echo "</div>"; 
 
@@ -602,8 +613,54 @@
         echo "<p>Approved Plan ID is missing.</p>";
         echo "</div>"; 
     }
-?>
 
+?>
+  <div class="product-container">
+        <h2 style="text-align:center">Signed Contract</h2>
+        <?php
+        include('config.php');
+
+        // Assuming you have a valid $requirementID from the query string or another source
+        if (isset($_GET['requirement_ID'])) {
+            $requirementID = $_GET['requirement_ID'];
+
+            // Query to fetch the signed contract for the given requirement_ID
+            $sql = "SELECT * FROM signedcontract WHERE requirement_ID = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $requirementID);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            // Check if the contract exists for this requirement ID
+            if ($row = mysqli_fetch_assoc($result)) {
+                $contractPath = $row['signedcontract'];  // Path to the uploaded file
+
+                // Check if the file exists
+                if (file_exists($contractPath)) {
+                    // Display the contract file as a link
+                    echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
+
+                    // Optionally, embed the file if it's a PDF
+                    if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
+                        echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
+                    }
+                } else {
+                    echo "<p>Contract file not found.</p>";
+                }
+            } else {
+                echo "<p>No signed contract found for this requirement.</p>";
+            }
+
+            // Close the statement
+            mysqli_stmt_close($stmt);
+        } else {
+            echo "<p>No requirement ID provided.</p>";
+        }
+
+        // Close the database connection
+        mysqli_close($conn);
+        ?>
+  </div>
 <h2 style="text-align:center">Progress and Attendance</h2>
 
 <button id="addMaterialsBtn">Add Progress</button>

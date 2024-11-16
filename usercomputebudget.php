@@ -132,11 +132,26 @@
     border-radius: 4px;
   }
 
+  #addContractBtn {
+    background-color: #FF8C00;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    margin: 20px;
+    border-radius: 4px;
+  }
+
   #addLaborBtn:hover {
     background-color: #FFA500;
   }
 
   #addMaterialBtn:hover {
+    background-color: #FFA500;
+  }
+
+  #addContractBtn:hover {
     background-color: #FFA500;
   }
 
@@ -619,7 +634,21 @@ if (isset($_GET['requirement_ID'])) {
         }
         
         echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
+
+        // Check if the file exists and display it
+        $contractPath = $row['contract'];
+        if (file_exists($contractPath)) {
+            // Display the contract file as a link
+            echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
         
+            // Optionally, embed the file if it's a PDF
+            if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
+                echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
+            }
+        } else {
+            echo "<p>Contract file not found.</p>";
+        }
+                
         echo "</form>";
         echo "</div>"; 
         
@@ -640,11 +669,9 @@ if (isset($_GET['requirement_ID'])) {
 
   <h2 style="text-align:center">Compute Budget</h2>
 
-
-
   <button id="addMaterialsBtn">Add Materials</button>
 
-    <div id="addMaterialsModal" class="modal" style="display: none;">
+  <div id="addMaterialsModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Compute Budget for Materials</h2>
@@ -678,11 +705,11 @@ if (isset($_GET['requirement_ID'])) {
                 <button type="submit">Add Materials</button>
             </form>
         </div>
-    </div>
+  </div>
 
-    <button id="addLaborBtn" data-requirement-id="<?php echo $requirementData['requirement_ID']; ?>">Add Labor</button>
+  <button id="addLaborBtn" data-requirement-id="<?php echo $requirementData['requirement_ID']; ?>">Add Labor</button>
 
-    <div id="addLaborModal" class="modal" style="display: none;">
+  <div id="addLaborModal" class="modal" style="display: none;">
         <div class="modal-content">
             <span class="close">&times;</span>
             <h2>Compute Budget for Labor</h2>
@@ -724,7 +751,26 @@ if (isset($_GET['requirement_ID'])) {
                 <button type="submit">Add Labor</button>
             </form>
         </div>
-    </div>
+  </div>
+
+  <button id="addContractBtn">Add signed contract</button>
+
+  <div id="addContractModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Signed Contract</h2>
+            <form id="addSignedContractForm" method="post" action="addcontract.php" enctype="multipart/form-data">
+                <div>
+                    <label for="signedcontract">Signed Contract: </label>
+                    <input type="File" id="signedcontract" name="signedcontract">
+                </div>
+                <div>
+                <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
+                </div>
+                <button type="submit">Add Signed Contract</button>
+            </form>
+        </div>
+  </div>
 
 
 
@@ -840,6 +886,58 @@ if (isset($_GET['requirement_ID'])) {
             echo '<p>No materials found.</p>';
         }
       ?>
+    </div>
+
+    <div class="product-container">
+        <h2 style="text-align:center">Signed Contract</h2>
+        <?php
+        include('config.php');
+
+        // Assuming you have a valid $requirementID from the query string or another source
+        if (isset($_GET['requirement_ID'])) {
+            $requirementID = $_GET['requirement_ID'];
+
+            // Query to fetch the signed contract for the given requirement_ID
+            $sql = "SELECT * FROM signedcontract WHERE requirement_ID = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $requirementID);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
+
+            // Check if the contract exists for this requirement ID
+            if ($row = mysqli_fetch_assoc($result)) {
+                $contractPath = $row['signedcontract'];  // Path to the uploaded file
+
+                // Check if the file exists
+                if (file_exists($contractPath)) {
+                    // Display the contract file as a link
+                    echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
+
+                    // Optionally, embed the file if it's a PDF
+                    if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
+                        echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
+                    }
+                } else {
+                    echo "<p>Contract file not found.</p>";
+                }
+            } else {
+                echo "<p>No signed contract found for this requirement.</p>";
+            }
+
+            // Close the statement
+            mysqli_stmt_close($stmt);
+        } else {
+            echo "<p>No requirement ID provided.</p>";
+        }
+
+        // Close the database connection
+        mysqli_close($conn);
+        ?>
+    </div>
+
+
+
+
 
 
 
@@ -925,35 +1023,53 @@ if (isset($_GET['requirement_ID'])) {
 </body>
 
 <script>
-    //labormaterialmodal.js
+    // Updated script to handle all modals
     var materialsModal = document.getElementById('addMaterialsModal');
     var laborModal = document.getElementById('addLaborModal');
+    var contractModal = document.getElementById('addContractModal'); // New modal
+
     var materialsBtn = document.getElementById('addMaterialsBtn');
     var laborBtn = document.getElementById('addLaborBtn');
+    var contractBtn = document.getElementById('addContractBtn'); // New button for contract
+
     var closeBtns = document.getElementsByClassName('close');
 
+    // Open the Materials modal
     materialsBtn.onclick = function() {
         materialsModal.style.display = 'block';
     }
 
+    // Open the Labor modal
     laborBtn.onclick = function() {
         laborModal.style.display = 'block';
     }
 
+    // Open the Contract modal
+    contractBtn.onclick = function() {
+        contractModal.style.display = 'block';
+    }
+
+    // Close all modals when any close button is clicked
     for (var i = 0; i < closeBtns.length; i++) {
         closeBtns[i].onclick = function() {
             materialsModal.style.display = 'none';
             laborModal.style.display = 'none';
+            contractModal.style.display = 'none'; // Close contract modal
         }
     }
 
+    // Close the modal if the user clicks outside of it
     window.onclick = function(event) {
-        if (event.target == materialsModal || event.target == laborModal) {
+        if (event.target == materialsModal) {
             materialsModal.style.display = 'none';
+        } else if (event.target == laborModal) {
             laborModal.style.display = 'none';
+        } else if (event.target == contractModal) {
+            contractModal.style.display = 'none';
         }
     }
 </script>
+
 <script>
     // quantityxcost.js
     // Get references to the input fields

@@ -27,14 +27,36 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $approved_by = $row['approved_by'];
             $photoPath = $row['Photo'];
 
-            // Fetching remaining form data
-            $labor_cost = $_POST['labor_cost'];
+            // Fetching other form data
+            $labor_cost = isset($_POST['labor_cost']) ? $_POST['labor_cost'] : null;
+
+            // Handling the file upload for 'contract'
+            if (isset($_FILES['contract']) && $_FILES['contract']['error'] === UPLOAD_ERR_OK) {
+                $contractTmpPath = $_FILES['contract']['tmp_name'];
+                $contractName = basename($_FILES['contract']['name']);
+                $contractDir = 'uploads/contracts/'; // Directory to save the file
+                $contractPath = $contractDir . $contractName;
+
+                // Create the directory if it doesn't exist
+                if (!is_dir($contractDir)) {
+                    mkdir($contractDir, 0777, true);
+                }
+
+                // Move the uploaded file to the desired location
+                if (move_uploaded_file($contractTmpPath, $contractPath)) {
+                    // File uploaded successfully
+                } else {
+                    die("Error moving the uploaded file.");
+                }
+            } else {
+                die("Error uploading the file.");
+            }
 
             // Insert data into projectrequirements table
-            $insertQuery = "INSERT INTO projectrequirements (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, Photo, approved_by, labor_cost) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            $insertQuery = "INSERT INTO projectrequirements (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, Photo, approved_by, labor_cost, contract) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
             $insertStmt = mysqli_prepare($conn, $insertQuery);
 
-            mysqli_stmt_bind_param($insertStmt, "issssssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $photoPath, $approved_by, $labor_cost);
+            mysqli_stmt_bind_param($insertStmt, "isssssssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $photoPath, $approved_by, $labor_cost, $contractPath);
 
             if (mysqli_stmt_execute($insertStmt)) {
                 echo "Data inserted into projectrequirements table successfully.";
