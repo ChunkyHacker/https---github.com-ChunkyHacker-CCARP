@@ -301,8 +301,6 @@
             // Estimated Cost on the right
             echo "<div style='display: flex; flex-direction: column;'>";
             echo "<h3>Estimated Cost</h3>";
-            echo "<label for='estimated_cost'>Estimated Cost</label>";
-            echo "<input type='text' id='estimated_cost' name='estimated_cost' value='{$ec}' readonly>";
             echo "</div>";
             echo "</div>";
             
@@ -326,17 +324,46 @@
             
             echo "<div style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;'>";
             
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label for='type'>Type:</label>";
-            echo "<input type='text' id='type' name='type' value='{$row['type']}' readonly>";
-            echo "</div>";
-            
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label for='part'>Part:</label>";
-            echo "</div>";
-            
-            
-            echo "</div>";
+            echo "<table style='border-collapse: collapse; width: 100%;'>";
+            echo "<thead>";
+                        echo "<tr>";
+                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Part</th>";
+                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Materials</th>";
+                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Name</th>";
+                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
+                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
+                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
+                            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>';
+
+                        echo "</tr>";
+                    echo "</thead>";
+
+                echo "<tbody>";
+                
+                $query_materials = "SELECT * FROM prematerials";
+                $stmt_materials = mysqli_prepare($conn, $query_materials);
+                mysqli_stmt_execute($stmt_materials);
+                $result_materials = mysqli_stmt_get_result($stmt_materials);
+                
+                while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                    echo "<tr>";
+                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['part']) . "</td>";
+                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['materials']) . "</td>";
+                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['name']) . "</td>";
+                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
+                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
+                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
+                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['estimated_cost']) . '</td>';
+
+                    echo "</tr>";
+                }
+                
+                echo "</tbody>";
+                echo "</table>";
+                echo "</div>";
+                
+                
+                echo "</div>";
     
             
 

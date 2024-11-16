@@ -55,8 +55,6 @@
     <div class="receipt-info">
         <p>Order Info</p>
         <?php
-            require_once "config.php";
-
             // Query for prematerials table
             $query_materials = "SELECT * FROM prematerials";
             $stmt_materials = mysqli_prepare($conn, $query_materials);
@@ -103,7 +101,7 @@
                                         <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Name</th>
                                         <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
                                         <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
-                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">₱Total</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
                                     </tr>
                                 </thead>
                                 <tbody>

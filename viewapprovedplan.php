@@ -284,9 +284,6 @@
             echo "</div>";
             // Estimated Cost on the right
             echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<h3>Estimated Cost</h3>";
-            echo "<label for='estimated_cost'>Estimated Cost</label>";
-            echo "<input type='text' id='estimated_cost' name='estimated_cost' value='{$row['estimated_cost']}' readonly>";
             echo "</div>";
             echo "</div>";
             
@@ -320,6 +317,8 @@
                             echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
                             echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
                             echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
+                            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>';
+
                         echo "</tr>";
                     echo "</thead>";
                 echo "<tbody>";
@@ -337,11 +336,13 @@
                         echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
                         echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
                         echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
+                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['estimated_cost']) . '</td>';
+
                     echo "</tr>";
                 }
                 
                 echo "</tbody>";
-        echo "</table>";
+            echo "</table>";
             
 
             // Display the resized photo with a link to open the modal

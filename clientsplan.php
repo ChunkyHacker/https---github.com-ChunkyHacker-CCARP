@@ -304,9 +304,6 @@ session_start();
                             <input type='text' id='initial_budget' name='initial_budget' value='<?php echo $row['initial_budget']; ?>' readonly>
                         </div>
                         <div style='display: flex; flex-direction: column;'>
-                            <h3>Estimated Cost</h3>
-                            <label for='estimated_cost'>Estimated Cost</label>
-                            <input type='text' id='estimated_cost' name='estimated_cost' value='<?php echo $row['estimated_cost']; ?>' readonly>
                         </div>
                     </div>
 
@@ -336,6 +333,7 @@ session_start();
                                     <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
                                     <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
                                     <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
+                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -354,6 +352,7 @@ session_start();
                                         <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['quantity']); ?></td>
                                         <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['price']); ?></td>
                                         <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['total']); ?></td>
+                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['estimated_cost']); ?></td>
                                     </tr>
                                     <?php
                                 }

@@ -164,6 +164,12 @@
             margin-bottom: 10px;
         }
 
+        .table-container {
+            margin-bottom: 20px; /* Adds space between tables */
+            width: 100%; /* Ensures each table takes full width */
+        }
+
+
         .cancel-btn {
             background-color: red;
             color: #fff;
@@ -270,7 +276,106 @@
             echo "<p>Start Date: <input type='text' value='{$row['start_date']}' readonly></p>";
             echo "<p>End Date: <input type='text' value='{$row['end_date']}' readonly></p>";        
             echo "</div>";
-            
+
+            echo '<div class="">';
+            echo '<p></p>';
+        
+            // Query for prematerials table
+            $query_materials = "SELECT * FROM prematerials";
+            $stmt_materials = mysqli_prepare($conn, $query_materials);
+            mysqli_stmt_execute($stmt_materials);
+            $result_materials = mysqli_stmt_get_result($stmt_materials);
+        
+            $totalSum_materials = 0; // Initialize total sum variable for prematerials
+            while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                // Add each total to the total sum for prematerials
+                $totalSum_materials += $material_row['total'];
+            }
+        
+            // Query for requiredmaterials table
+            $query_required_materials = "SELECT * FROM requiredmaterials";
+            $stmt_required_materials = mysqli_prepare($conn, $query_required_materials);
+            mysqli_stmt_execute($stmt_required_materials);
+            $result_required_materials = mysqli_stmt_get_result($stmt_required_materials);
+        
+            $totalSum_required = 0; // Initialize total sum variable for requiredmaterials
+            while ($required_material_row = mysqli_fetch_assoc($result_required_materials)) {
+                // Add each total to the total sum for requiredmaterials
+                $totalSum_required += $required_material_row['total'];
+            }
+        
+            // Calculate combined total sum
+            $totalSum_combined = $totalSum_materials + $totalSum_required;
+        
+            // Start the HTML output
+            echo '<div class="container">';  // Wrap everything in a container for structure
+        
+            // Table for prematerials
+            echo '<div class="table-container">';  // Create a div to separate the table visually
+            echo '<table>';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Part</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Name</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+        
+            // Loop through and display data for prematerials
+            mysqli_data_seek($result_materials, 0);
+            while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                echo '<tr>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['part']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['materials']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['name']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>';
+                echo '</tr>';
+            }
+        
+            echo '</tbody>';
+            echo '</table>';
+            echo '</div>'; // End of prematerials table container
+        
+            // Table for requiredmaterials
+            echo '<div class="table-container">';  // Create another div to separate this table
+            echo '<table style="border-collapse: collapse; width: 100%;">';
+            echo '<thead>';
+            echo '<tr>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Material</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Type</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Image</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>';
+            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>';
+            echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+        
+            // Loop through and display data for required materials
+            mysqli_data_seek($result_required_materials, 0);
+            while ($required_material_row = mysqli_fetch_assoc($result_required_materials)) {
+                echo '<tr>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['material']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['type']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><img src="' . htmlspecialchars($required_material_row['image']) . '" alt="' . htmlspecialchars($required_material_row['material']) . '" style="width: 100px; height: auto;"></td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['price']) . '</td>';
+                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['total']) . '</td>';
+                echo '</tr>';
+            }
+        
+            echo '</tbody>';
+            echo '</table>';
+            echo '</div>'; // End of required materials table container
+        
+            echo '</div>'; // End of container div
+                    
         // Display the resized photo with a link to open the modal
         $photoPath = $row['Photo'];
         if (!empty($photoPath) && file_exists($photoPath)) {

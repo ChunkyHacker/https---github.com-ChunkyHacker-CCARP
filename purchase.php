@@ -336,7 +336,8 @@
                                       <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Name</th>
                                       <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
                                       <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
-                                      <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">₱Total</th>
+                                      <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
+                                      <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>
                                   </tr>
                               </thead>
                               <tbody>
@@ -352,6 +353,7 @@
                                               <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>
                                               <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>
                                               <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>
+                                              <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['estimated_cost']) . '</td>
                                           </tr>';
                                   }
                                   ?>

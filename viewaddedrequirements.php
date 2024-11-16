@@ -277,6 +277,7 @@
                         echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>';
                         echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>';
                         echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>';
+                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>';
                     echo '</tr>';
                 echo '</thead>';
                 echo '<tbody>';
@@ -295,6 +296,7 @@
                             echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>';
                             echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>';
                             echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>';
+                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['estimated_cost']) . '</td>';
                         echo '</tr>';
                     }
                     

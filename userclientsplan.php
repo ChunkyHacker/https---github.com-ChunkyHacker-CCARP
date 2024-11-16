@@ -304,9 +304,6 @@
                 echo "</div>";
                 // Estimated Cost on the right
                 echo "<div style='display: flex; flex-direction: column;'>";
-                echo "<h3>Estimated Cost</h3>";
-                echo "<label for='estimated_cost'>Estimated Cost</label>";
-                echo "<input type='text' id='estimated_cost' name='estimated_cost' value='{$row['estimated_cost']}' readonly>";
                 echo "</div>";
                 echo "</div>";
                 
@@ -326,12 +323,6 @@
                 echo "</div>";                
                 
                 
-                
-                echo "<div style='display: flex; flex-direction: column;'>";
-                echo "<label for='type'>Type:</label>";
-                echo "<input type='text' id='type' name='type' value='{$row['type']}' readonly>";
-                echo "</div>";
-                
                 echo "<table style='border-collapse: collapse; width: 100%;'>";
                         echo "<thead>";
                             echo "<tr>";
@@ -341,6 +332,7 @@
                                 echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
                                 echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
                                 echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
+                                echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Estimated Cost</th>";
                             echo "</tr>";
                         echo "</thead>";
                     echo "<tbody>";
@@ -358,6 +350,7 @@
                             echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
                             echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
                             echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
+                            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['estimated_cost']) . "</td>";
                         echo "</tr>";
                     }
                     
@@ -384,6 +377,8 @@
                 echo "<input type='submit' value='Delete your plan'>";
                 echo "</form>";
             
+                echo '<button onclick="window.location.href = \'userprofile.php\'">Go back</button>';
+
                 echo "</div>";
             } else {
                 echo "<div class='main'>";
@@ -393,16 +388,12 @@
             echo "</div>";
         
             
-            echo '<button onclick="window.location.href = \'userprofile.php\'">Go back</button>';
 
             mysqli_stmt_close($stmt);
             mysqli_close($conn);
 
         } else {
-            echo "<div class='main'>";
-            echo "<p>Plan ID is missing.</p>";
-            echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';
-            echo "</div>";
+
         }
         ?>
 

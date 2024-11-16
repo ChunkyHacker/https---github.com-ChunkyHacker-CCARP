@@ -291,7 +291,7 @@
           <div class="input-container">
               <div id="estimated_budget">
                   <h3>Initial Budget</h3>
-                  <label for="initial_budget">Initial Budget:</label>
+                  <label for="initial_budget">Initial Budget (Peso sign ₱):</label>
                   <input type="text" name="initial_budget" id="initial_budget" oninput="calculateEstimatedCost()">
               </div>
           </div>

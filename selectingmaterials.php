@@ -3,7 +3,7 @@
     include('config.php');
 
     // Prepare SQL statement to insert selected items into the database
-    $sql = "INSERT INTO prematerials (materials, part, name, quantity, price, total) VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO prematerials (materials, part, name, quantity, price, total, estimated_cost) VALUES (?, ?, ?, ?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
 
     if (!$stmt) {
@@ -21,9 +21,10 @@
             $quantity = $_POST["quantity"][$key];
             $price = $_POST["price"][$key];
             $total = $_POST["total"][$key];
+            $estimated_cost = (float)$_POST["estimated_cost"]; // No need for [$key] since it's a single value
 
             // Bind parameters and execute the statement
-            $stmt->bind_param("sssidi", $materials, $part, $name, $quantity, $price, $total);
+            $stmt->bind_param("sssiddi", $materials, $part, $name, $quantity, $price, $total, $estimated_cost);
             $stmt->execute();
         }
 

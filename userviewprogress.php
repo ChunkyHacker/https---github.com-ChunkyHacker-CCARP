@@ -549,6 +549,8 @@ session_start();
                             echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
                             echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
                             echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
+                            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>';
+
                         echo "</tr>";
                     echo "</thead>";
                 echo "<tbody>";
@@ -566,6 +568,7 @@ session_start();
                         echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
                         echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
                         echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
+                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['estimated_cost']) . "</td>";
                     echo "</tr>";
                 }
                 
@@ -596,7 +599,7 @@ session_start();
                         echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['material']) . '</td>';
                         echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['type']) . '</td>';
                         echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
-                            echo '<img src="' . htmlspecialchars($material_row['image']) . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
+                        echo '<img src="' . htmlspecialchars($material_row['image']) . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
                         echo '</td>';
                         echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>';
                         echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>';
