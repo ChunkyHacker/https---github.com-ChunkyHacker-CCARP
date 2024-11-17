@@ -1,105 +1,130 @@
-<?php 
+<?php
     include('config.php');
     echo "<form method='post' action='selectingmaterialsrequirement.php'>";
+    $searchQuery = isset($_POST['search']) ? $_POST['search'] : '';
+    $selectedType = isset($_POST['filterType']) ? $_POST['filterType'] : '';
 
-        echo "<label for='materials'>Materials </label>";
+    echo '<div id="filteredMaterials">';
+    echo '<input type="text" id="search" name="search" oninput="searchItems()" placeholder="Search materials">';
+    echo '<button type="button" onclick="submitSearch()">Search</button>';
+    echo '</div>';
 
-        $servername = "localhost";
-        $username = "root";
-        $password = "";
-        $dbname = "ccarpcurrentsystem";
+    echo '<div id="filterOptions">';
+    echo '<label for="filterType">Filter by Type:</label>';
+    echo '<select id="filterType" name="filterType" onchange="filterByType()">';
+    echo '<option value="">All</option>';
 
-        $conn = new mysqli($servername, $username, $password, $dbname);
+    $sqlTypes = "SELECT DISTINCT type FROM items";
+    $resultTypes = $conn->query($sqlTypes);
+    while ($rowType = $resultTypes->fetch_assoc()) {
+        $typeName = $rowType["type"];
+        $selected = ($typeName == $selectedType) ? 'selected' : '';
+        echo "<option value='$typeName' $selected>$typeName</option>";
+    }
 
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
-        }
+    echo '</select>';
+    echo '</div>';
 
-        $searchQuery = isset($_POST['search']) ? $_POST['search'] : '';
-        $selectedType = isset($_POST['filterType']) ? $_POST['filterType'] : '';
+    $sql = "SELECT * FROM items WHERE itemname LIKE '%$searchQuery%'";
 
-        echo '<div id="filteredMaterials">';
-        echo '<input type="text" id="search" name="search" oninput="searchItems()" placeholder="Search materials">';
-        echo '<button type="button" onclick="submitSearch()">Search</button>';
-        echo '</div>';
+    if (!empty($selectedType)) {
+        $sql .= " AND type = '$selectedType'";
+    }
 
-        echo '<div id="filterOptions">';
-        echo '<label for="filterType">Filter by Type:</label>';
-        echo '<select id="filterType" name="filterType" onchange="filterByType()">';
-        echo '<option value="">All</option>';
+    $result = $conn->query($sql);
 
-        $sqlTypes = "SELECT DISTINCT type FROM items";
-        $resultTypes = $conn->query($sqlTypes);
-        while ($rowType = $resultTypes->fetch_assoc()) {
-            $typeName = $rowType["type"];
-            $selected = ($typeName == $selectedType) ? 'selected' : '';
-            echo "<option value='$typeName' $selected>$typeName</option>";
-        }
+    echo '<table id="materials" style="border-collapse: collapse; width: 100%; border: 1px solid black; text-align: center;">
+            <thead>
+                <tr>
+                    <th style="border: 1px solid black;">Select</th>
+                    <th style="border: 1px solid black;">Materials</th>
+                    <th style="border: 1px solid black;">Type</th>
+                    <th style="border: 1px solid black;">Photo</th>
+                    <th style="border: 1px solid black;">Quantity</th>
+                    <th style="border: 1px solid black;">Quantity Available</th>
+                    <th style="border: 1px solid black;">Price (₱)</th>
+                    <th style="border: 1px solid black;">Total (₱)</th>
+                </tr>
+            </thead>
+            <tbody>';
 
-        echo '</select>';
-        echo '</div>';
+    while ($row = $result->fetch_assoc()) {
+        $itemname = $row["itemname"];
+        $quantity = $row["quantity"];
+        $price = $row["price"];
+        $type = $row["type"];
+        $itemimage = $row["itemimage"];
 
-        $sql = "SELECT * FROM items WHERE itemname LIKE '%$searchQuery%'";
+        echo '<tr>
+                <td style="border: 1px solid black;">
+                    <input type="checkbox" class="item-checkbox" name="rawmaterials[]" data-price="' . $price . '" value="' . $itemname . '" onchange="updateMaterialsOverallCost()">
+                    <input type="hidden" name="material[]" value="' . $itemname . '">
+                    <input type="hidden" name="type[]" value="' . $type . '">
+                    <input type="hidden" name="image[]" value="' . $itemimage . '">
+                    <input type="hidden" name="quantity[]" value="' . $quantity . '">
+                    <input type="hidden" name="price[]" value="' . $price . '">
+                    <input type="hidden" name="total[]" class="totalInput" value="0.00">
+                </td>
+                <td style="border: 1px solid black;"><span name="name[]">' . $itemname . '</span></td>
+                <td style="border: 1px solid black;"><span name="type[]">' . $type . '</span></td>
+                <td style="border: 1px solid black;">
+                    <span name="itemimage[]">
+                        <img class="image[]" src="assets/items/' . $itemimage . '" alt="' . $itemname . '" style="width: 100px; height: auto;">
+                    </span>
+                </td>
+                <td style="border: 1px solid black;">
+                    <input type="number" class="quantity-input" name="itemQuantity[]" oninput="calculateTotal(this);" min="0">
+                </td>
+                <td style="border: 1px solid black;"><span name="quantity[]">' . $quantity . '</span></td>
+                <td style="border: 1px solid black;"><span name="price[]" class="price">' . $price . '</span></td>
+                <td style="border: 1px solid black;"><span name="total[]" class="total">0.00</span></td>
+            </tr>';
+    }
 
-        if (!empty($selectedType)) {
-            $sql .= " AND type = '$selectedType'";
-        }
+    echo '</tbody></table>';
 
-        $result = $conn->query($sql);
+    // Materials Overall Cost field (readonly)
+    echo '<div style="margin-top: 20px;">
+            <label for="materials_overall_cost"><b>Materials Overall Cost</b></label><br>
+            <input type="text" id="materials_overall_cost" name="materials_overall_cost" value="0.00" readonly style="width: 100%; padding: 10px; text-align: right;">
+        </div>';
 
-            echo '<table id="materials" style="border-collapse: collapse; width: 100%; border: 1px solid black; text-align: center;">
-                    <thead>
-                        <tr>
-                            <th style="border: 1px solid black;">Select</th>
-                            <th style="border: 1px solid black;">Materials</th>
-                            <th style="border: 1px solid black;">Type</th>
-                            <th style="border: 1px solid black;">Photo</th>
-                            <th style="border: 1px solid black;">Quantity</th>
-                            <th style="border: 1px solid black;">Quantity Available</th>
-                            <th style="border: 1px solid black;">Price (₱)</th>
-                            <th style="border: 1px solid black;">Total (₱)</th>
-                        </tr>
-                    </thead>
-                    <tbody>';
-
-            while ($row = $result->fetch_assoc()) {
-                $itemname = $row["itemname"];
-                $quantity = $row["quantity"];
-                $price = $row["price"];
-                $type = $row["type"];
-                $itemimage = $row["itemimage"];
-
-                echo '<tr>
-                        <td style="border: 1px solid black;">
-                            <input type="checkbox" class="item-checkbox" name="rawmaterials[]" data-price="' . $price . '" value="' . $itemname . '">
-                            <input type="hidden" name="material[]" value="' . $itemname . '">
-                            <input type="hidden" name="type[]" value="' . $type . '">
-                            <input type="hidden" name="image[]" value="' . $itemimage . '">
-                            <input type="hidden" name="quantity[]" value="' . $quantity . '">
-                            <input type="hidden" name="price[]" value="' . $price . '">
-                            <input type="hidden" name="total[]" value="' . $price . '">
-                        </td>
-                        <td style="border: 1px solid black;"><span name="name[]">' . $itemname . '</span></td>
-                        <td style="border: 1px solid black;"><span name="type[]">' . $type . '</span></td>
-                        <td style="border: 1px solid black;">
-                            <span name="itemimage[]">
-                                <img class="image[]" src="assets/items/' . $itemimage . '" alt="' . $itemname . '" style="width: 100px; height: auto;">
-                            </span>
-                        </td>
-                        <td style="border: 1px solid black;">
-                            <input type="number" class="quantity-input" name="itemQuantity[]" oninput="calculateTotal(this); if(value<0)value=0;">
-                        </td>
-                        <td style="border: 1px solid black;"><span name="quantity[]">' . $quantity . '</span></td>
-                        <td style="border: 1px solid black;"><span name="price[]" class="price">' . $price . '</span></td>
-                        <td style="border: 1px solid black;"><span name="total[]" class="total">' . $price . '</span></td>
-                    </tr>';
-        
-            }
-
-            echo '</tbody></table>';
-
-        echo "<button type='submit'>Submit</button>";
+    echo "<button type='submit'>Submit</button>";
     echo "</form>";
 
-    $conn->close();    
+    $conn->close();
 ?>
+
+<script>
+    // Function to calculate the total for each item based on the quantity and update the overall materials cost
+    function calculateTotal(quantityInput) {
+        const row = quantityInput.closest('tr');
+        const price = parseFloat(row.querySelector('.item-checkbox').dataset.price);
+        const quantity = parseInt(quantityInput.value, 10) || 0;
+        const total = price * quantity;
+
+        // Update the total for this row
+        row.querySelector('.total').innerText = total.toFixed(2);
+        row.querySelector('.totalInput').value = total.toFixed(2);
+
+        // Update the overall materials cost
+        updateMaterialsOverallCost();
+    }
+
+    // Function to update the materials overall cost when an item is selected or deselected
+    function updateMaterialsOverallCost() {
+        let materialsOverallCost = 0;
+
+        // Loop through each checkbox to check if it is selected
+        document.querySelectorAll('.item-checkbox').forEach((checkbox) => {
+            if (checkbox.checked) {
+                const row = checkbox.closest('tr');
+                const total = parseFloat(row.querySelector('.totalInput').value);
+                materialsOverallCost += total;
+            }
+        });
+
+        // Update the materials overall cost input
+        document.getElementById("materials_overall_cost").value = materialsOverallCost.toFixed(2);
+    }
+</script>

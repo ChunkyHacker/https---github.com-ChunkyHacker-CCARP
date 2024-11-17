@@ -6,12 +6,94 @@
     <title>Receipt</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.4.0/jspdf.umd.min.js"></script>
     <style>
-        /* Basic styling for the receipt */
-        body {
+        /* General styles for the receipt */
+        .container {
             font-family: Arial, sans-serif;
-            margin: 0;
+            background-color: #f8f8f8;
             padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
         }
+
+        h4 {
+            font-size: 20px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 30px;
+            color: #1a73e8; /* Adjusted color for price */
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border: 1px solid #ddd;
+            font-size: 14px;
+        }
+
+        th {
+            background-color: #f4f4f4;
+            color: #333;
+        }
+
+        td {
+            background-color: #fff;
+            color: #555;
+        }
+
+        td img {
+            width: 100px;
+            height: auto;
+            border-radius: 5px;
+        }
+
+        /* Table row hover effect */
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+
+        /* Total price and other summary information */
+        p {
+            font-size: 20px;
+            color: #333;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        p strong {
+            color: #000;
+        }
+
+        /* Button styling */
+        .download-button {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .download-button button {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .download-button button:hover {
+            background-color: #218838;
+        }
+
         .receipt {
             max-width: 600px;
             margin: 0 auto;
@@ -134,6 +216,7 @@
                                         <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
                                         <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
                                         <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
+                                        <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Material Overall Cost</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -149,6 +232,7 @@
                                                 <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>
                                                 <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['price']) . '</td>
                                                 <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['total']) . '</td>
+                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['materials_overall_cost']) . '</td>
                                             </tr>';
                                     }
                                     ?>

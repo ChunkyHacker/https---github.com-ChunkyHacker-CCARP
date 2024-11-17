@@ -48,12 +48,22 @@
   }
 
   .container {
+    font-size: 20px;
     background-color: #f2f2f2;
+    margin-top: 20px;
     margin-left: 50px;
     margin-bottom: 20px;
     padding: 20px 20px 2px 30px;
     border: 1px solid lightgrey;
     border-radius: 3px;
+  }
+
+  .payment-method {
+    font-size: 20px;      /* Adjust the font size of the dropdown */
+    padding: 10px;        /* Add padding for better clickability */
+    width: 400px;         /* Adjust width of the dropdown */
+    border-radius: 5px;   /* Rounded corners for the dropdown */
+    border: 1px solid #ccc; /* Light border for the dropdown */
   }
 
   input[type=text] {
@@ -204,6 +214,23 @@
     background-color: #FF8C00;
     color: black;
   }
+
+  .total_price {
+    font-size: 20px; /* Adjust the font size */
+    color: black;    /* Text color */
+    padding: 10px;   /* Add some padding to the input */
+    width: 150px;    /* Adjust the width of the input field */
+    text-align: right; /* Align text to the right */
+    border: 1px solid #ccc; /* Add a border */
+    border-radius: 5px; /* Optional: Rounded corners */
+}
+
+.total-price-container {
+    margin-top: 20px; /* Adjust the top margin */
+    padding-left: 45px;
+    text-align: left; /* Center align the text */
+}
+
 
 
   /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
@@ -374,6 +401,7 @@
                                   <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
                                   <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
                                   <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
+                                  <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Material Overall Cost</th>
                               </tr>
                           </thead>
                           <tbody>
@@ -389,6 +417,7 @@
                                           <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['quantity']) . '</td>
                                           <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['price']) . '</td>
                                           <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['total']) . '</td>
+                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['materials_overall_cost']) . '</td>
                                       </tr>';
                               }
                               ?>
@@ -398,20 +427,25 @@
 
                   <!-- Total Price Section -->
                   <hr>
-                  <p>Total (₱) <input type="number" class="total_price" style="color:black" name="total_price" value="<?php echo $totalprice_combined; ?>" readonly></p>
+                  <div class="total-price-container">
+                      <p>Total (₱)
+                          <input type="number" class="total_price" name="total_price" value="<?php echo $totalprice_combined; ?>" readonly>
+                      </p>
+                  </div>
 
                   <!-- Payment Method Section -->
-                <div class="container">
-                    <h4>Payment method</h4>
-                    <select id="payment-method" class="payment-method" name="payment_method">
-                        <option value="" selected disabled>Select Payment Method</option>
-                        <option value="Cash">Cash</option>
-                        <option value="Online Payment">Online Payment</option>
-                    </select>
-                    <br>
-                    <br>
-                    <p id="payment-message"></p>
-                </div>
+                  <div class="container">
+                      <h4>Payment method</h4>
+                      <select id="payment-method" class="payment-method" name="payment_method">
+                          <option value="" selected disabled>Select Payment Method</option>
+                          <option value="Cash">Cash</option>
+                          <option value="Online Payment">Online Payment</option>
+                      </select>
+                      <br>
+                      <br>
+                      <p id="payment-message"></p>
+                  </div>
+
 
 
                   <!-- Continue to Checkout Button -->
