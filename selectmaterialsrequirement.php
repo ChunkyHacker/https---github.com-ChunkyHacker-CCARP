@@ -1,3 +1,105 @@
+<style>
+        /* General styles */
+    body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+    }
+
+    form {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* Search and filter section */
+    #filteredMaterials {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 20px;
+    }
+
+    #filteredMaterials input,
+    #filteredMaterials button {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    #filterOptions {
+        margin-bottom: 20px;
+    }
+
+    #filterOptions label {
+        font-size: 16px;
+        margin-right: 10px;
+    }
+
+    #filterOptions select {
+        padding: 10px;
+        font-size: 16px;
+    }
+
+    /* Table styles */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    th, td {
+        padding: 12px;
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    th {
+        background-color: #f2f2f2;
+    }
+
+    td input[type="number"] {
+        padding: 8px;
+        width: 100px;
+        text-align: right;
+    }
+
+    td input[type="checkbox"] {
+        margin: 5px;
+    }
+
+    /* Image styling */
+    img {
+        width: 100px;
+        height: auto;
+        border-radius: 5px;
+    }
+
+    /* Overall cost section */
+    div {
+        margin-top: 20px;
+    }
+
+    #materials_overall_cost {
+        width: 100%;
+        padding: 12px;
+        font-size: 18px;
+        text-align: right;
+        background-color: #f9f9f9;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+    }
+
+    button {
+        background-color: #4CAF50;
+        color: white;
+        padding: 12px 24px;
+        border: none;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 20px;
+    }
+
+    button:hover {
+        background-color: #45a049;
+    }
+</style>
 <?php
     include('config.php');
     echo "<form method='post' action='selectingmaterialsrequirement.php'>";
@@ -128,3 +230,4 @@
         document.getElementById("materials_overall_cost").value = materialsOverallCost.toFixed(2);
     }
 </script>
+
