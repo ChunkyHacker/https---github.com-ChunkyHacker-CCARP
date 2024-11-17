@@ -85,6 +85,10 @@
                                     <td><?php echo htmlspecialchars($row["Rate_per_day"]); ?></td>
                                 </tr>
                                 <tr>
+                                    <th>Overall cost</th>
+                                    <td><?php echo htmlspecialchars($row["overall_cost"]); ?></td>
+                                </tr>
+                                <tr>
                                     <th>Payment Method</th>
                                     <td><?php echo htmlspecialchars($row["payment_method"]); ?></td>
                                 </tr>

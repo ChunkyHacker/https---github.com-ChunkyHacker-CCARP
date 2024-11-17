@@ -406,7 +406,7 @@
                 echo "No data found for the specified approved_plan_ID.";
             }
                         
-            echo "<label for='labor_cost'>Labor Cost:</label>";
+            echo "<label for='labor_cost'>Labor Cost (Pesos ₱):</label>";
             echo "<input type='text' name='labor_cost' id='labor_cost' required>";  
             
             echo "<label for='labor_cost'>Contract</label>";

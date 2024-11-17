@@ -32,6 +32,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['copy_to_expenses'])) 
                 $net_pay = intval($row_payment['Netpay']);
                 $days_of_work = intval($row_payment['Days_Of_Work']);
                 $rate_per_day = intval($row_payment['Rate_per_day']);
+                $overall_cost = intval($row_payment['overall_cost']);
 
                 // Validate data before inserting (just in case)
                 if (empty($materials) || empty($type) || $quantity <= 0 || $price <= 0 || $total <= 0) {
@@ -40,8 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['copy_to_expenses'])) 
                 }
 
                 // Insert into the expenses table
-                $insert_sql = "INSERT INTO expenses (materials, type, quantity, price, total, carpenter_name, Netpay, Days_Of_Work, Rate_per_day) 
-                               VALUES ('$materials', '$type', $quantity, $price, $total, '$carpenter_name', $net_pay, $days_of_work, $rate_per_day)";
+                $insert_sql = "INSERT INTO expenses (materials, type, quantity, price, total, carpenter_name, Netpay, Days_Of_Work, Rate_per_day, overall_cost) 
+                               VALUES ('$materials', '$type', $quantity, $price, $total, '$carpenter_name', $net_pay, $days_of_work, $rate_per_day, $overall_cost)";
 
                 if ($conn->query($insert_sql) === FALSE) {
                     echo "Error inserting data: " . $conn->error;

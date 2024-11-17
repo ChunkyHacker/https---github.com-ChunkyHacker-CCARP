@@ -8,17 +8,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $net_pay = $_POST["Netpay"];
     $days_of_work = $_POST["Days_Of_Work"];
     $rate_per_day = $_POST["Rate_per_day"];
+    $overall_cost = $_POST["overall_cost"];
     $payment_method = $_POST["payment_method"];
     $sender = $_POST["sender"];
 
     // Prepare the SQL query to insert the payroll data into the database
-    $sql = "INSERT INTO payment (carpenter_name, Netpay, days_of_work, rate_per_day, payment_method, sender) 
-    VALUES (?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO payment (carpenter_name, Netpay, days_of_work, rate_per_day,overall_cost, payment_method, sender) 
+    VALUES (?, ?, ?, ?, ?, ?,?)";
 
     // Prepare statement
     if ($stmt = $conn->prepare($sql)) {
         // Bind parameters
-        $stmt->bind_param("ssssss", $carpenter_name, $net_pay, $days_of_work, $rate_per_day, $payment_method, $sender);
+        $stmt->bind_param("sssssss", $carpenter_name, $net_pay, $days_of_work, $rate_per_day, $overall_cost, $payment_method, $sender);
 
         // Attempt to execute the prepared statement
         if ($stmt->execute()) {

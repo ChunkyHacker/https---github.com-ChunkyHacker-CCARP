@@ -633,7 +633,7 @@ if (isset($_GET['requirement_ID'])) {
           echo "</a>";
         }
         
-        echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
+        echo "<p>Labor Cost (Peso ₱): <input type='text' value='{$row['labor_cost']}' readonly></p>";
 
         // Check if the file exists and display it
         $contractPath = $row['contract'];
@@ -734,17 +734,17 @@ if (isset($_GET['requirement_ID'])) {
                     <input type="number" id="rate" name="rate" required>
                 </div>
                 <div>
-                    <label for="total_of_laborcost">Total of Labor cost</label>
-                    <input type="number" id="total_of_laborcost" name="total_of_laborcost" required readonly>
-                </div>
-                <div>
-                    <label for="additional_cost">Additional Cost: (Optional)</label>
-                    <input type="number" id="additional_cost" name="additional_cost" step="0.01" min="0" required>
-                </div>
-                <div>
-                    <label for="overall_cost">Overall Cost: (Rate, Days and Labor)</label>
-                    <input type="number" id="overall_cost" name="overall_cost" step="0.01" min="0" required readonly>
-                </div>
+                  <label for="total_of_laborcost">Total of Labor Cost</label>
+                  <input type="number" id="total_of_laborcost" name="total_of_laborcost" required readonly value="0">
+              </div>
+              <div>
+                  <label for="additional_cost">Additional Cost: (Optional)</label>
+                  <input type="number" id="additional_cost" name="additional_cost" step="0.01" min="0" required>
+              </div>
+              <div>
+                  <label for="overall_cost">Overall Cost: (Rate, Days, and Labor)</label>
+                  <input type="number" id="overall_cost" name="overall_cost" step="0.01" min="0" required readonly>
+              </div>
                 <!-- Hidden input field for requirement_ID -->
                 <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
 
@@ -1119,25 +1119,57 @@ if (isset($_GET['requirement_ID'])) {
     }
 </script>
 <script>
-        // Get references to the input fields
-        const totalLaborCostInput = document.getElementById("total_of_laborcost");
-        const additionalCostInput = document.getElementById("additional_cost");
-        const overallCostInput = document.getElementById("overall_cost");
+    // Get references to the input fields
+    const totalLaborCostInput = document.getElementById("total_of_laborcost");
+    const additionalCostInput = document.getElementById("additional_cost");
+    const overallCostInput = document.getElementById("overall_cost");
 
-        // Calculate the overall cost once on page load
-        function calculateOverallCost() {
-            const totalLaborCost = parseFloat(totalLaborCostInput.value) || 0;
-            const additionalCost = parseFloat(additionalCostInput.value) || 0;
+    // Function to calculate the overall cost
+    function calculateOverallCost() {
+        // Parse values as floats; default to 0 if parsing fails
+        const totalLaborCost = parseFloat(totalLaborCostInput.value) || 0;
+        const additionalCost = parseFloat(additionalCostInput.value) || 0;
 
-            // Calculate the overall cost
-            const overallCost = totalLaborCost + additionalCost;
+        // Calculate the overall cost
+        const overallCost = totalLaborCost + additionalCost;
 
-            // Update the overall cost input field
-            overallCostInput.value = overallCost.toFixed(2); // Displaying up to 2 decimal places
-        }
+        // Update the overall cost input field
+        overallCostInput.value = overallCost.toFixed(2); // Display up to 2 decimal places
+    }
 
-        // Initial calculation on page load
-        calculateOverallCost();
+    // Initial calculation on page load
+    calculateOverallCost();
+
+    // Add event listener to recalculate when the additional cost changes
+    additionalCostInput.addEventListener("input", calculateOverallCost);
+</script>
+<script>
+        // Wait until the DOM is fully loaded
+        document.addEventListener("DOMContentLoaded", function() {
+            // Get references to the input fields
+            const totalLaborCostInput = document.getElementById("total_of_laborcost");
+            const additionalCostInput = document.getElementById("additional_cost");
+            const overallCostInput = document.getElementById("overall_cost");
+
+            // Function to calculate the overall cost
+            function calculateOverallCost() {
+                // Parse values as floats; default to 0 if parsing fails
+                const totalLaborCost = parseFloat(totalLaborCostInput.value) || 0;
+                const additionalCost = parseFloat(additionalCostInput.value) || 0;
+
+                // Calculate the overall cost
+                const overallCost = totalLaborCost + additionalCost;
+
+                // Update the overall cost input field
+                overallCostInput.value = overallCost.toFixed(2); // Display up to 2 decimal places
+            }
+
+            // Initial calculation on page load
+            calculateOverallCost();
+
+            // Add event listener to recalculate when the additional cost changes
+            additionalCostInput.addEventListener("input", calculateOverallCost);
+        });
 </script>
 </html>
   

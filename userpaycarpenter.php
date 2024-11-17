@@ -299,8 +299,14 @@
                       value="<?php echo isset($laborData['rate']) ? $laborData['rate'] : ''; ?>" 
                       readonly>
 
+                <label for="overall_cost"><b>Overall Cost</b></label>
+                <input type="text"  name="overall_cost"  
+                      value="<?php echo isset($laborData['overall_cost']) ? $laborData['overall_cost'] : ''; ?>" 
+                      readonly>
+
                 <label for="payment_method"><b>Payment Method</b></label><br>
                 <select id="payment_method" name="payment_method" required>
+                    <option value="" disabled selected>Select a payment method</option> <!-- Default option prompting selection -->
                     <option value="cash on hand">Cash on hand</option>
                     <option value="creditcard">Credit Card</option>
                     <option value="Gcash">Gcash</option>
