@@ -229,51 +229,54 @@
     <div class="topnav"></div>
 
     <?php
-        // Check if the user is logged in
-        if (isset($_SESSION['user_ID'])) {
-            $userId = $_SESSION['user_ID'];
+// Check if the user is logged in
+if (isset($_SESSION['User_ID'])) {
+    $userId = $_SESSION['User_ID'];
 
-            // Fetch the user's profile photo from the database
-            $userQuery = "SELECT Photo FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($conn, $userQuery);
-            mysqli_stmt_bind_param($userStmt, "i", $userId);
-            mysqli_stmt_execute($userStmt);
-            $userResult = mysqli_stmt_get_result($userStmt);
+    // Fetch the user's profile photo and first name from the database
+    $userQuery = "SELECT Photo, First_Name FROM users WHERE User_ID = ?";
+    $userStmt = mysqli_prepare($conn, $userQuery);
+    mysqli_stmt_bind_param($userStmt, "i", $userId);
+    mysqli_stmt_execute($userStmt);
+    $userResult = mysqli_stmt_get_result($userStmt);
 
-            // Check if the query returns a row and get the photo
-            if ($userRow = mysqli_fetch_assoc($userResult)) {
-                $profilePicture = $userRow['Photo'];  // Use the user's photo if available
-            } else {
-                // If no photo is found, set to empty string
-                $profilePicture = ''; 
-            }
+    // Check if the query returns a row and get the data
+    if ($userRow = mysqli_fetch_assoc($userResult)) {
+        $profilePicture = $userRow['Photo'];  // User's photo
+        $firstName = $userRow['First_Name'];  // User's first name
+    } else {
+        // If no photo or first name is found, use default values
+        $profilePicture = '';
+        $firstName = 'there'; // Default to a generic greeting
+    }
+} else {
+    // If no user is logged in, use default values
+    $profilePicture = '';
+    $firstName = ''; // Default to a generic greeting
+}
 
-        } else {
-            // If no user is logged in, use the default photo
-            $profilePicture = ''; 
-        }
+// Output the HTML structure with profile picture check and customized placeholder
+echo '<div class="container my-3">';
+echo '    <div class="makepost">';
 
-        // Output the HTML structure with profile picture check
-        echo '<div class="container my-3">';
-        echo '    <div class="makepost">';
+if (!empty($profilePicture) && file_exists($profilePicture)) {
+    echo "<div class='avatar-container'>";
+    echo "<img src='{$profilePicture}' alt='Avatar' class='avatar'>";
+    echo "</div>";
+} else {
+    // Fallback to default avatar if no profile picture is found
+    echo "<div class='avatar-container'>";
+    echo "<img src='blank-profile-picture-gb4f5f9059_640.png' alt='Avatar' class='avatar'>";
+    echo "</div>";
+}
 
-        if (!empty($profilePicture) && file_exists($profilePicture)) {
-            echo "<div class='avatar-container'>";
-            echo "<img src='{$profilePicture}' alt='Avatar' class='avatar'>";
-            echo "</div>";
-        } else {
-            // Fallback to default avatar if no profile picture is found
-            echo "<div class='avatar-container'>";
-            echo "<img src='blank-profile-picture-gb4f5f9059_640.png' alt='Avatar' class='avatar'>";
-            echo "</div>";
-        }
+echo '    <a href="usercreateplan.php" class="input-link">';
+echo '        <input type="text" class="input-container" placeholder="What\'s on your mind' . htmlspecialchars($firstName) . '?" readonly>';
+echo '    </a>';
+echo '    </div>';
+echo '</div>';
+?>
 
-        echo '        <a href="usercreateplan.php" class="input-link">';
-        echo '            <input type="text" class="input-container" placeholder="What\'s on your mind?" readonly>';
-        echo '        </a>';
-        echo '    </div>';
-        echo '</div>';
-    ?>
 
 
 
