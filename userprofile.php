@@ -16,155 +16,158 @@ if (!isset($_SESSION['User_ID'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-    html {
-        box-sizing: border-box;
-    }
-
-    *, *:before, *:after {
-        box-sizing: inherit;
-    }
-
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        margin: 0 auto;
-        max-width: auto;
-        padding: 5px;
-        padding-top: 170px;
-        font-size: 20px; /* Updated font size */
-    }
-
-    .header {
-        text-align: left;
-        background: #FF8C00;
-        color: #000;
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 10px;
-        z-index: 100;
-    }
-
-    .header h1 {
-        font-size: 20px; /* Updated font size */
-        border-left: 20px solid transparent;
-        text-decoration: none;
-    }
-
-    .header a {
-        font-size: 20px; /* Updated font size */
-        font-weight: bold;
-        text-decoration: none;
-        color: #000;
-        margin-right: 45px;
-    }
-
-    .header .right {
-        margin-right: 20px;
-    }
-
-    .main {
-        flex: 70%;
-        background-color: white;
-        text-align: center;
-        margin: auto;
-    }
-
-    h1 {
-        font-size: 50px; /* Updated font size */
-        word-break: break-all;
-        padding-left: 50px;
-    }
-
-    .row {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: center;
-        align-items: left;
-        margin-top: 40px;
-    }
-
-    .column {
-        float: left;
-        width: 25%;
-        margin-bottom: 16px;
-        text-align: center;
-        justify-content: center;
-    }
-
-    .content {
-        background-color: white;
-        padding: 10px;
-    }
-
-    .card {
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .button {
-        border: none;
-        outline: 0;
-        display: inline-block;
-        padding: 8px;
-        color: #000;
-        background-color: #FF8C00;
-        text-align: center;
-        cursor: pointer;
-        width: 100%;
-        text-decoration: none;
-    }
-
-    .button:hover {
-        background-color: #535353;
-    }
-
-    .footer {
-        padding: 10px;
-        text-align: center;
-        background: #FF8C00;
-        position: relative;
-        bottom: 0;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 100%;
-    }
-
-    @media screen and (max-width: 600px) {
-        .topnav a, .topnav input[type=text] {
-            float: none;
-            display: block;
-            text-align: left;
-            width: 100%;
-            margin: 0;
-            padding: 14px;
+        html {
+            box-sizing: border-box;
         }
-        .topnav input[type=text] {
-            border: 1px solid #ccc;
+
+        *, *:before, *:after {
+            box-sizing: inherit;
         }
+
         body {
             font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding-top: 300px;
+            margin: 0 auto;
+            max-width: auto;
+            padding: 5px;
+            padding-top: 170px;
+            font-size: 20px; /* Updated font size */
+        }
+
+        .header {
+            text-align: left;
+            background: #FF8C00;
+            color: #000;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px; /* Updated font size */
+            border-left: 20px solid transparent;
+            text-decoration: none;
+        }
+
+        .header a {
+            font-size: 20px; /* Updated font size */
+            font-weight: bold;
+            text-decoration: none;
+            color: #000;
+            margin-right: 45px;
+        }
+
+        .header .right {
+            margin-right: 20px;
+        }
+
+        .main {
+            flex: 70%;
+            background-color: white;
+            text-align: center;
+            margin: auto;
+        }
+
+        h1 {
             font-size: 50px; /* Updated font size */
+            word-break: break-all;
+            padding-left: 50px;
         }
-    }
 
-    @media screen and (max-width: 700px) {
-        .row {   
-            flex-direction: column;
+        .row {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: left;
+            margin-top: 40px;
         }
-    }
 
-    @media screen and (max-width: 400px) {
-        .navbar a {
-            float: none;
+        .column {
+            float: left;
+            text-align: center;
+            justify-content: center;
+            margin: 10px;
+        }
+
+        .content {
+            background-color: white;
+            padding: 15px;
+        }
+
+        .card {
+            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        }
+
+        .container {
+            padding: 30px;
+        }
+
+        .button {
+            border: none;
+            outline: 0;
+            display: inline-block;
+            padding: 8px;
+            color: #000;
+            background-color: #FF8C00;
+            text-align: center;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+        }
+
+        .button:hover {
+            background-color: #535353;
+        }
+
+        .footer {
+            padding: 10px;
+            text-align: center;
+            background: #FF8C00;
+            position: relative;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
             width: 100%;
         }
-    }
-</style>
+
+        @media screen and (max-width: 600px) {
+            .topnav a, .topnav input[type=text] {
+                float: none;
+                display: block;
+                text-align: left;
+                width: 100%;
+                margin: 0;
+                padding: 14px;
+            }
+            .topnav input[type=text] {
+                border: 1px solid #ccc;
+            }
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                margin: 0;
+                padding-top: 300px;
+                font-size: 50px; /* Updated font size */
+            }
+        }
+
+        @media screen and (max-width: 700px) {
+            .row {   
+                flex-direction: column;
+            }
+        }
+
+        @media screen and (max-width: 400px) {
+            .navbar a {
+                float: none;
+                width: 100%;
+            }
+        }
+    </style>
 
 </head>
 <body>
@@ -201,7 +204,7 @@ if (!isset($_SESSION['User_ID'])) {
                 echo '<div class="row">
                         <div class="column">
                             <div class="card">
-                                <img src="' . $photoPath . '" alt="Profile Picture" style="width: 300px; height: 300px;">
+                                <img src="' . $photoPath . '" alt="Profile Picture" style="width: 300px; height: 300px; padding:10px; ">
                                 <div class="container">
                                     <h2>' . $user['First_Name'] . ' ' . $user['Last_Name'] . '</h2>
                                     <p class="title">User</p>
@@ -357,42 +360,5 @@ if (!isset($_SESSION['User_ID'])) {
 
       ?>
 </div>
-
-    <script>
-        function openModal(photoPath) {
-            var modal = document.createElement('div');
-            modal.style.position = 'fixed';
-            modal.style.top = '50%';
-            modal.style.left = '50%';
-            modal.style.transform = 'translate(-50%, -50%)';
-            modal.style.backgroundColor = 'white';
-            modal.style.padding = '20px';
-            modal.style.border = '2px solid black';
-            modal.style.zIndex = '9999';
-
-            var img = document.createElement('img');
-            img.src = photoPath;
-            img.style.maxWidth = '100%';
-            img.style.height = 'auto';
-
-            var closeBtn = document.createElement('button');
-            closeBtn.textContent = 'Close';
-            closeBtn.style.display = 'block';
-            closeBtn.style.margin = '20px auto 0';
-            closeBtn.style.padding = '10px 20px';
-            closeBtn.style.backgroundColor = '#FF8C00';
-            closeBtn.style.color = 'white';
-            closeBtn.style.border = 'none';
-            closeBtn.style.cursor = 'pointer';
-
-            closeBtn.addEventListener('click', function() {
-                document.body.removeChild(modal);
-            });
-
-            modal.appendChild(img);
-            modal.appendChild(closeBtn);
-            document.body.appendChild(modal);
-        }
-    </script>
 </body>
 </html>

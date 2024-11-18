@@ -5,200 +5,204 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Declined Plan Details</title>
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+<style>
+    * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-family: Verdana, sans-serif;
-            margin: 0;
-            background-color: #FF8C00;
-        }
+body {
+    font-family: Verdana, sans-serif;
+    margin: 0;
+    background-color: #FF8C00;
+    font-size: 20px; /* Adjusted font size */
+}
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-        }
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    background: #FF8C00;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 100;
+}
 
-        .header h1 {
-            font-size: 40px;
-            border-left: 20px solid transparent;
-            text-decoration: none;
-        }
+.header h1 {
+    font-size: 20px; /* Adjusted font size */
+    border-left: 20px solid transparent;
+    text-decoration: none;
+}
 
-        .right {
-            margin-right: 20px;
-        }
+.right {
+    margin-right: 20px;
+}
 
-        .header a {
-            font-size: 25px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #000000;
-            margin-right: 15px;
-        }
+.header a {
+    font-size: 20px; /* Adjusted font size */
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    margin-right: 15px;
+}
 
-        @media screen and (max-width: 600px) {
-            .topnav a, .topnav input[type=text] {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                margin: 0;
-                padding: 14px;
-            }
+@media screen and (max-width: 600px) {
+    .topnav a, .topnav input[type=text] {
+        float: none;
+        display: block;
+        text-align: left;
+        width: 100%;
+        margin: 0;
+        padding: 14px;
+    }
 
-            .topnav input[type=text] {
-                border: 1px solid #ccc;
-            }
+    .topnav input[type=text] {
+        border: 1px solid #ccc;
+    }
 
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding-top: 300px;
-            }
-        }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding-top: 300px;
+        font-size: 20px; /* Adjusted font size */
+    }
+}
 
-        /* CSS styles for the modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(255, 140, 0, 0.4);
-        }
+/* CSS styles for the modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(255, 140, 0, 0.4);
+}
 
-        .modal-content {
-            background-color: #FF8C00;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+.modal-content {
+    background-color: #FF8C00;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    background: #FF8C00;
+    color: #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #FF8C00;
-        }
+h2 {
+    font-size: 20px; /* Adjusted font size */
+    margin-bottom: 20px;
+    color: #FF8C00;
+}
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+form {
+    display: flex;
+    flex-direction: column;
+}
 
-        label {
-            font-size: 16px;
-            margin-bottom: 5px;
-            color: #000000;
-        }
+label {
+    font-size: 20px; /* Adjusted font size */
+    margin-bottom: 5px;
+    color: #000000;
+}
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 20px; /* Adjusted font size for form elements */
+}
 
-        .post-btn, .cancel-btn {
-            margin-bottom: 10px;
-        }
+.post-btn, .cancel-btn {
+    margin-bottom: 10px;
+}
 
-        .cancel-btn {
-            background-color: red;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            width: 100%;
-        }
+.cancel-btn {
+    background-color: red;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+}
 
-        .cancel-btn:hover {
-            background-color: #000000;
-        }
+.cancel-btn:hover {
+    background-color: #000000;
+}
 
-        button {
-            background-color: #FF8C00;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+button {
+    background-color: #FF8C00;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px; /* Adjusted font size */
+}
 
-        button:hover {
-            background-color: #000000;
-        }
+button:hover {
+    background-color: #000000;
+}
 
-        @media screen and (max-width: 600px) {
-            .modal-content {
-                width: 100%;
-            }
-        }
-    </style>
+@media screen and (max-width: 600px) {
+    .modal-content {
+        width: 100%;
+    }
+}
+
+</style>
 </head>
 <body>
 <div class="container">
@@ -368,7 +372,7 @@
             echo "</form>";
 
             echo "</form>";
-            echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';
+            echo '<button onclick="window.location.href = \'userprofile.php\'">Go back</button>';
 
             echo "</div>"; 
         } else {

@@ -430,7 +430,7 @@ button:hover {
                     
             echo "</form>";
             echo "</div>"; 
-            echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';
+            echo '<button onclick="window.location.href = \'userprofile.php\'">Go back</button>';
 
             echo "<div class='button-container'>
                 <button onclick=\"window.location.href='usercomputebudget.php?requirement_ID={$row['requirement_ID']}'\">Compute Budget</button>
