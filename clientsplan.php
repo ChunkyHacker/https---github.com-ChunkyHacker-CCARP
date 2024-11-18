@@ -203,6 +203,7 @@ session_start();
         color: #fff;
         border: none;
         padding: 10px;
+        margin-bottom: 10px;
         border-radius: 5px;
         cursor: pointer;
         font-size: 20px; /* Set button font size to 20px */
@@ -324,6 +325,15 @@ session_start();
                             </div>
                         </div>
                     </div>
+                    <div class="row-container">
+                        <h3>More Details:</h3>
+                        <div style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;'>
+                            <div style='display: flex; flex-direction: column;'>
+                                <label>More Details:</label>
+                                <input type='text' value='<?php echo $row['more_details']; ?>' readonly>
+                            </div>
+                        </div>
+                    </div>
 
                     <div class="row-container">
                         <h3>Further Details</h3>
@@ -412,11 +422,8 @@ session_start();
 
                         <label for='comment'>If Yes/No, why?</label>
                         <textarea name='comment' rows='4' cols='50'></textarea>
-
-                       
-                                <label for='name'>Approved By: </label>
-                                <input type='text' id='name' name='approved_by' value='<?php echo $carpenterData['First_Name'];?> <?php echo $carpenterData['Last_Name'];?>' readonly><br>
-
+                            <label for='name'>Approved By: </label>
+                            <input type='text' id='name' name='approved_by' value='<?php echo $carpenterData['First_Name'];?> <?php echo $carpenterData['Last_Name'];?>' readonly><br>
                         <label for='status'>Status:</label>
                         <select id="status" name="status">
                             <option value="" selected disabled>Select an option</option>

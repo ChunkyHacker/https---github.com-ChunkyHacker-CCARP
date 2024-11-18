@@ -296,7 +296,7 @@ if (!isset($_SESSION['User_ID'])) {
                     echo "</a>";
                 }
 
-                echo "<p><a href='userclientsplan.php?plan_id={$row['plan_ID']}'>View your plan</a></p>";
+                echo "<p><a href='userviewdeclinedplan.php?declined_plan_ID={$row['declined_plan_ID']}'>View your plan</a></p>";
                 echo "</li>";
                 echo "</ul>";
                 echo "</div>";
