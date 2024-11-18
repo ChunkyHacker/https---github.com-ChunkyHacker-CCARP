@@ -26,6 +26,8 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
         font-family: Verdana, sans-serif;
         margin: 0;
         font-size: 20px; /* Default font size */
+        line-height: 1.6;
+        padding: 20px; /* Added padding to body */
     }
 
     table {
@@ -35,10 +37,10 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
     }
 
     th, td {
-        border: 1px solid #dddddd;
+        border: 1px solid #ddd;
         text-align: left;
         padding: 8px;
-        font-size: 20px; /* Updated font size */
+        font-size: 20px;
     }
 
     /* Header */
@@ -48,32 +50,39 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
         left: 0;
         width: 100%;
         padding: 10px;
-        text-align: left;
         background: #FF8C00;
-        color: #000000;
+        color: #000;
         display: flex;
         align-items: center;
-        text-decoration: none;
         z-index: 100;
     }
 
-    /* Increase the font size of the heading */
     .header h1 {
-        font-size: 20px; /* Updated font size */
+        font-size: 20px;
+        margin-left: 10px;
         border-left: 20px solid transparent;
-        text-decoration: none;
-    }
-
-    .right {
-        margin-right: 20px;
     }
 
     .header a {
-        font-size: 20px; /* Updated font size */
+        font-size: 20px;
         font-weight: bold;
+        color: #000;
         text-decoration: none;
-        color: #000000;
         margin-right: 15px;
+    }
+
+    .right {
+        margin-left: auto;
+    }
+
+    /* Box container */
+    .content-box {
+        background-color: #f9f9f9; /* Light grey background */
+        border: 20px solid #FF8600; /* Light border for the box */
+        border-radius: 0px;
+        padding: 50px; /* Space inside the box */
+        margin-top: 20px; /* To account for fixed header */
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
     .row-container {
@@ -86,62 +95,72 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
         flex: 1;
     }
 
-    /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+    /* Media Queries */
     @media screen and (max-width: 600px) {
-        .topnav a, .topnav input[type=text] {
-            float: none;
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            padding-top: 60px; /* Adjusted for header */
+        }
+
+        .header {
+            padding: 10px;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .header a {
+            margin-bottom: 10px;
+        }
+
+        .topnav a, .topnav input[type="text"] {
             display: block;
-            text-align: left;
             width: 100%;
+            text-align: left;
             margin: 0;
             padding: 14px;
         }
-        .topnav input[type=text] {
+
+        .topnav input[type="text"] {
             border: 1px solid #ccc;
         }
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding-top: 300px;
-            font-size: 20px; /* Updated font size */
+
+        .modal-content {
+            width: 100%;
+        }
+
+        /* For mobile views, content box gets full width */
+        .content-box {
+            width: 100%;
+            padding: 15px;
         }
     }
 
-    /* CSS styles for the modal */
+    /* CSS for Modal */
     .modal {
         display: none;
         position: fixed;
-        z-index: 1;
-        left: 0;
         top: 0;
+        left: 0;
         width: 100%;
         height: 100%;
+        background-color: rgba(255, 140, 0, 0.4);
+        z-index: 1000;
         overflow: auto;
-        background-color: rgba(255, 140, 0, 0.4); /* Updated background color */
     }
 
     .modal-content {
-        background-color: #FF8C00; /* Updated background color */
-        margin: 15% auto;
+        background-color: #FF8C00;
+        margin: 10% auto;
         padding: 20px;
         width: 80%;
-        overflow-y: auto;
         border-radius: 8px;
-    }
-
-    .modal-content {
-        background-color: #fefefe;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     }
 
     h2 {
-        font-size: 20px; /* Updated font size */
-        margin-bottom: 20px;
+        font-size: 20px;
         color: #FF8C00;
+        margin-bottom: 20px;
     }
 
     form {
@@ -150,69 +169,61 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
     }
 
     label {
-        font-size: 20px; /* Updated font size */
+        font-size: 20px;
         margin-bottom: 5px;
-        color: #000000;
+        color: #000;
     }
 
-    input,
-    select,
-    textarea {
+    input, select, textarea {
         width: 100%;
         padding: 10px;
         margin-bottom: 15px;
         border: 1px solid #ccc;
         border-radius: 5px;
-        font-size: 20px; /* Updated font size */
+        font-size: 20px;
     }
 
     .post-btn, .cancel-btn {
-        margin-bottom: 10px; /* Adjust the margin as needed */
+        margin-bottom: 10px;
     }
 
     .cancel-btn {
         background-color: red;
-        color: #fff;
+        color: white;
         padding: 10px;
         border: none;
         border-radius: 5px;
         cursor: pointer;
-        margin-right: 10px;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center; /* Center the text */
-        width: 100%; /* Make the button full-width */
-        font-size: 20px; /* Updated font size */
+        text-align: center;
+        width: 100%;
+        font-size: 20px;
     }
 
     .cancel-btn:hover {
-        background-color: #000000;
+        background-color: #000;
     }
 
     button {
         background-color: #FF8C00;
-        color: #fff;
-        border: none;
+        color: white;
         padding: 10px;
+        border: none;
         border-radius: 5px;
         cursor: pointer;
-        font-size: 20px; /* Updated font size */
+        font-size: 20px;
     }
 
     button:hover {
-        background-color: #000000;
+        background-color: #000;
     }
 
-    @media screen and (max-width: 600px) {
-        .modal-content {
-            width: 100%;
-        }
-    }
 </style>
+
+
 
 </head>
 <body>
-    <div class="housepart">
+    <div class="content-box">
         <form id="postForm" enctype="multipart/form-data" method="POST" action="selectingmaterials.php">
 
             <input type="hidden" id="Plan_ID" name="plan_ID" value="<?php echo $PlanID; ?>">
