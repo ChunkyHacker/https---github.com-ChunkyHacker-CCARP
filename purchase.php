@@ -410,16 +410,29 @@
                               mysqli_data_seek($result_second_table, 0);
 
                               while ($second_row = mysqli_fetch_assoc($result_second_table)) {
-                                  echo '<tr>
-                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['material']) . '</td>
-                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['type']) . '</td>
-                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><img src="' . htmlspecialchars($second_row['image']) . '" alt="' . htmlspecialchars($second_row['material']) . '" style="width: 100px; height: auto;"></td>
-                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['quantity']) . '</td>
-                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['price']) . '</td>
-                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['total']) . '</td>
-                                          <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['materials_overall_cost']) . '</td>
+                                echo '<tr>
+                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['material']) . '</td>
+                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['type']) . '</td>';
+                                
+                                // Check if the image path exists and is valid
+                                $image_path = htmlspecialchars($second_row['image']);
+                                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
+                                
+                                if (!empty($image_path) && file_exists($image_path)) {
+                                    echo '<img src="' . $image_path . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
+                                } else {
+                                    // Display a default image if the path is invalid or empty
+                                    echo '<img src="assets/default-product.png" alt="Default Image" style="max-width: 100px; max-height: 100px;">';
+                                }
+                                
+                                echo '</td>
+                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['quantity']) . '</td>
+                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['price']) . '</td>
+                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['total']) . '</td>
+                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($second_row['materials_overall_cost']) . '</td>
                                       </tr>';
-                              }
+                            }
+                            
                               ?>
                           </tbody>
                       </table>

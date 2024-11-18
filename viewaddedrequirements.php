@@ -16,6 +16,7 @@
             font-family: Verdana, sans-serif;
             margin: 0;
             background-color: #FF8C00;
+            font-size: 20px; /* Set font size to 20px for body */
         }
 
         .container {
@@ -41,7 +42,7 @@
         }
 
         .header h1 {
-            font-size: 40px;
+            font-size: 20px; /* Adjusted font size */
             border-left: 20px solid transparent;
             text-decoration: none;
         }
@@ -51,7 +52,7 @@
         }
 
         .header a {
-            font-size: 25px;
+            font-size: 20px; /* Adjusted font size */
             font-weight: bold;
             text-decoration: none;
             color: #000000;
@@ -76,6 +77,7 @@
                 font-family: Arial, Helvetica, sans-serif;
                 margin: 0;
                 padding-top: 300px;
+                font-size: 20px; /* Ensure font size is 20px */
             }
         }
 
@@ -131,7 +133,7 @@
         }
 
         h2 {
-            font-size: 24px;
+            font-size: 20px; /* Adjusted font size */
             margin-bottom: 20px;
             color: #FF8C00;
         }
@@ -142,7 +144,7 @@
         }
 
         label {
-            font-size: 16px;
+            font-size: 20px; /* Adjusted font size */
             margin-bottom: 5px;
             color: #000000;
         }
@@ -186,7 +188,7 @@
             padding: 10px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 20px; /* Adjusted font size */
         }
 
         button:hover {
@@ -199,6 +201,7 @@
             }
         }
     </style>
+
 </head>
 <body>
 <div class="container">
@@ -304,40 +307,50 @@
             echo '</table>';
 
             echo '<table style="border-collapse: collapse; width: 100%;">';
-                echo '<thead>';
-                    echo '<tr>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Type</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Image</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Material Overall Cost</th>';
-                    echo '</tr>';
-                echo '</thead>';
-                echo '<tbody>';
-                    
-                    //requiredmaterials
-                    $query_materials = "SELECT * FROM requiredmaterials";
-                    $stmt_materials = mysqli_prepare($conn, $query_materials);
-                    mysqli_stmt_execute($stmt_materials);
-                    $result_materials = mysqli_stmt_get_result($stmt_materials);
-                    
-                    while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                        echo '<tr>';
-                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['material']) . '</td>';
-                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['type']) . '</td>';
-                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
-                                echo '<img src="' . htmlspecialchars($material_row['image']) . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
-                            echo '</td>';
-                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>';
-                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>';
-                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>';
-                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['materials_overall_cost']) . '</td>';
-                        echo '</tr>';
-                    }
-                    
-                echo '</tbody>';
+            echo '<thead>';
+                echo '<tr>';
+                    echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>';
+                    echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Type</th>';
+                    echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Image</th>';
+                    echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>';
+                    echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>';
+                    echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>';
+                    echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Material Overall Cost</th>';
+                echo '</tr>';
+            echo '</thead>';
+            echo '<tbody>';
+            
+            // Fetch required materials from the database
+            $query_materials = "SELECT * FROM requiredmaterials";
+            $stmt_materials = mysqli_prepare($conn, $query_materials);
+            mysqli_stmt_execute($stmt_materials);
+            $result_materials = mysqli_stmt_get_result($stmt_materials);
+            
+            // Loop through each material row
+            while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                echo '<tr>';
+                    echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['material']) . '</td>';
+                    echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['type']) . '</td>';
+                    echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
+            
+                        // Check if the image path exists and is valid
+                        $image_path = htmlspecialchars($material_row['image']);
+                        if (!empty($image_path) && file_exists($image_path)) {
+                            echo '<img src="' . $image_path . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
+                        } else {
+                            // Display a default image if the path is invalid or empty
+                            echo '<img src="assets\default-product.png" alt="Default Image" style="max-width: 100px; max-height: 100px;">';
+                        }
+            
+                    echo '</td>';
+                    echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>';
+                    echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>';
+                    echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>';
+                    echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['materials_overall_cost']) . '</td>';
+                echo '</tr>';
+            }
+            
+            echo '</tbody>';
             echo '</table>';
             
             
@@ -370,8 +383,7 @@
             
             echo "</div>"; 
             echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';
-            echo "<p><a href='progress.php?requirement_ID={$row['requirement_ID']}'>Check progress</a></p>";
-
+            echo "<p><button onclick=\"window.location.href = 'progress.php?requirement_ID={$row['requirement_ID']}'\">Check progress</button></p>";
         } else {
             echo "<div class='main'>";
             echo "<p>No approved plan found with Approved Plan ID: $requirement_ID</p>";

@@ -34,7 +34,7 @@
 
   /* Increase the font size of the heading */
   .header h1 {
-    font-size: 40px;
+    font-size: 20px;
     border-left: 20px solid transparent; 
     padding-left: 20px; /* Adjust padding */
     text-decoration: none;
@@ -44,8 +44,8 @@
     margin-right: 20px;
   }
 
-  .header a{
-    font-size: 25px;
+  .header a {
+    font-size: 20px;
     font-weight: bold;
     text-decoration: none;
     color: #000000;
@@ -69,7 +69,7 @@
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-    font-size: 30px;
+    font-size: 20px;
   }
 
   .topnav a,
@@ -82,7 +82,6 @@
     background-color: #FF8C00;
     color: black;
   }
-
 
   /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
   @media screen and (max-width: 600px) {
@@ -98,10 +97,10 @@
       border: 1px solid #ccc;
     }
     body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-    padding-top: 300px;
-  }
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding-top: 300px;
+    }
   }
 
   /* Main column */
@@ -125,11 +124,10 @@
     width: 600px;
   }
 
-
-
   label {
     display: block;
     margin-top: 10px;
+    font-size: 20px;
   }
 
   input[type=text], input[type=password] {
@@ -139,11 +137,27 @@
     display: inline-block;
     border: none;
     background: #f1f1f1;
+    font-size: 20px;
   }
 
   input[type=text]:focus, input[type=password]:focus {
     background-color: #ddd;
     outline: none;
+  }
+
+  input[type="tel"] {
+    width: 100%;                /* Full width */
+    padding: 15px;              /* Padding inside the input */
+    margin: 5px 0 22px 0;       /* Space around the input */
+    display: inline-block;      /* Inline element but respects block styles */
+    border: none;               /* Remove the border */
+    background: #f1f1f1;        /* Light background color */
+    font-size: 20px;            /* Larger font size for better readability */
+  }
+
+  input[type="tel"]:focus {
+    background-color: #ddd;    /* Darker background when focused */
+    outline: none;             /* Remove the default focus outline */
   }
 
   hr {
@@ -161,16 +175,18 @@
     cursor: pointer;
     width: 100%;
     opacity: 0.9;
+    font-size: 20px;
   }
 
   button:hover {
-    opacity:1;
+    opacity: 1;
   }
 
   /* Extra styles for the cancel button */
   .cancelbtn {
     padding: 14px 20px;
     background-color: #f44336;
+    font-size: 20px;
   }
 
   /* Float cancel and signup buttons and add an equal width */
@@ -208,6 +224,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
+    font-size: 20px;
   }
 
   /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
@@ -225,6 +242,7 @@
     }
   }
 </style>
+
 </head>
 <div class="header">
     <a href="comment.php">
@@ -249,8 +267,8 @@
             <label for="lastname"><b>Last Name</b></label>
             <input type="text" placeholder="Enter Last Name" name="lastname" id="lastname" required>
 
-            <label for="phonenumber"><b>Phone Number</b></label>
-            <input type="tel" placeholder="Enter Phonenumber" name="phonenumber" id="phonenumber" required>
+            <label for="phonenumber"><b>Phonenumber</b></label>
+            <input type="tel" id="phonenumber" name="phonenumber" placeholder="Enter phone number" required pattern="[0-9]{10}" title="Please enter a 10-digit phone number">
 
             <label for="email"><b>Email</b></label>
             <input type="text" placeholder="Enter Email" name="email" id="email" required>

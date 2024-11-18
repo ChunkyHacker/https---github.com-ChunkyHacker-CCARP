@@ -16,152 +16,156 @@ if (!isset($_SESSION['User_ID'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        html {
-            box-sizing: border-box;
-        }
+    html {
+        box-sizing: border-box;
+    }
 
-        *, *:before, *:after {
-            box-sizing: inherit;
-        }
+    *, *:before, *:after {
+        box-sizing: inherit;
+    }
 
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0 auto;
+        max-width: auto;
+        padding: 5px;
+        padding-top: 170px;
+        font-size: 20px; /* Updated font size */
+    }
+
+    .header {
+        text-align: left;
+        background: #FF8C00;
+        color: #000;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        z-index: 100;
+    }
+
+    .header h1 {
+        font-size: 20px; /* Updated font size */
+        border-left: 20px solid transparent;
+        text-decoration: none;
+    }
+
+    .header a {
+        font-size: 20px; /* Updated font size */
+        font-weight: bold;
+        text-decoration: none;
+        color: #000;
+        margin-right: 45px;
+    }
+
+    .header .right {
+        margin-right: 20px;
+    }
+
+    .main {
+        flex: 70%;
+        background-color: white;
+        text-align: center;
+        margin: auto;
+    }
+
+    h1 {
+        font-size: 50px; /* Updated font size */
+        word-break: break-all;
+        padding-left: 50px;
+    }
+
+    .row {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        align-items: left;
+        margin-top: 40px;
+    }
+
+    .column {
+        float: left;
+        width: 25%;
+        margin-bottom: 16px;
+        text-align: center;
+        justify-content: center;
+    }
+
+    .content {
+        background-color: white;
+        padding: 10px;
+    }
+
+    .card {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+    }
+
+    .button {
+        border: none;
+        outline: 0;
+        display: inline-block;
+        padding: 8px;
+        color: #000;
+        background-color: #FF8C00;
+        text-align: center;
+        cursor: pointer;
+        width: 100%;
+        text-decoration: none;
+    }
+
+    .button:hover {
+        background-color: #535353;
+    }
+
+    .footer {
+        padding: 10px;
+        text-align: center;
+        background: #FF8C00;
+        position: relative;
+        bottom: 0;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100%;
+    }
+
+    @media screen and (max-width: 600px) {
+        .topnav a, .topnav input[type=text] {
+            float: none;
+            display: block;
+            text-align: left;
+            width: 100%;
+            margin: 0;
+            padding: 14px;
+        }
+        .topnav input[type=text] {
+            border: 1px solid #ccc;
+        }
         body {
             font-family: Arial, Helvetica, sans-serif;
-            margin: 0 auto;
-            max-width: auto;
-            padding: 5px;
-            padding-top: 170px;
+            margin: 0;
+            padding-top: 300px;
+            font-size: 50px; /* Updated font size */
         }
+    }
 
-        .header {
-            text-align: left;
-            background: #FF8C00;
-            color: #000;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            z-index: 100;
+    @media screen and (max-width: 700px) {
+        .row {   
+            flex-direction: column;
         }
+    }
 
-        .header h1 {
-            font-size: 40px;
-            border-left: 20px solid transparent;
-            text-decoration: none;
-        }
-
-        .header a {
-            font-size: 25px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #000;
-            margin-right: 45px;
-        }
-
-        .header .right {
-            margin-right: 20px;
-        }
-
-        .main {
-            flex: 70%;
-            background-color: white;
-            text-align: center;
-            margin: auto;
-        }
-
-        h1 {
-            font-size: 50px;
-            word-break: break-all;
-        }
-
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: left;
-            margin-top: 40px;
-        }
-
-        .column {
-            float: left;
-            width: 25%;
-            margin-bottom: 16px;
-            text-align: center;
-            justify-content: center;
-        }
-
-        .content {
-            background-color: white;
-            padding: 10px;
-        }
-
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-        }
-
-        .button {
-            border: none;
-            outline: 0;
-            display: inline-block;
-            padding: 8px;
-            color: #000;
-            background-color: #FF8C00;
-            text-align: center;
-            cursor: pointer;
-            width: 100%;
-            text-decoration: none;
-        }
-
-        .button:hover {
-            background-color: #535353;
-        }
-
-        .footer {
-            padding: 10px;
-            text-align: center;
-            background: #FF8C00;
-            position: relative;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+    @media screen and (max-width: 400px) {
+        .navbar a {
+            float: none;
             width: 100%;
         }
+    }
+</style>
 
-        @media screen and (max-width: 600px) {
-            .topnav a, .topnav input[type=text] {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                margin: 0;
-                padding: 14px;
-            }
-            .topnav input[type=text] {
-                border: 1px solid #ccc;
-            }
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding-top: 300px;
-            }
-        }
-
-        @media screen and (max-width: 700px) {
-            .row {   
-                flex-direction: column;
-            }
-        }
-
-        @media screen and (max-width: 400px) {
-            .navbar a {
-                float: none;
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="header">

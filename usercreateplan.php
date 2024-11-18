@@ -20,23 +20,23 @@
     font-family: Verdana, sans-serif;
     margin: 0;
     background-color: #FF8C00;
+    font-size: 20px; /* Default font size */
   }
 
-      table {
-      display: none;
-      border-collapse: collapse;
-      width: 100%;
-    }
+  table {
+    display: none;
+    border-collapse: collapse;
+    width: 100%;
+  }
 
-    th, td {
-      border: 1px solid #dddddd;
-      text-align: left;
-      padding: 8px;
-    }
+  th, td {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+    font-size: 20px; /* Updated font size */
+  }
 
-
-
-  /* Header*/
+  /* Header */
   .header {
     position: fixed;
     top: 0;
@@ -54,7 +54,7 @@
 
   /* Increase the font size of the heading */
   .header h1 {
-    font-size: 40px;
+    font-size: 20px; /* Updated font size */
     border-left: 20px solid transparent; 
     text-decoration: none;
   }
@@ -63,8 +63,8 @@
     margin-right: 20px;
   }
 
-  .header a{
-    font-size: 25px;
+  .header a {
+    font-size: 20px; /* Updated font size */
     font-weight: bold;
     text-decoration: none;
     color: #000000;
@@ -72,16 +72,14 @@
   }
 
   .row-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+  }
 
-        .input-container {
-            flex: 1;
-        }
-
-
+  .input-container {
+    flex: 1;
+  }
 
   /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
   @media screen and (max-width: 600px) {
@@ -97,14 +95,13 @@
       border: 1px solid #ccc;
     }
     body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-    padding-top: 300px;
-  }
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding-top: 300px;
+      font-size: 20px; /* Updated font size */
+    }
   }
 
-
-  /* CSS styles for the modal */
   /* CSS styles for the modal */
   .modal {
     display: none;
@@ -145,43 +142,42 @@
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-
-
   .modal-content {
-      background-color: #fefefe;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-      border-radius: 8px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
-    h2 {
-      font-size: 24px;
-      margin-bottom: 20px;
-      color: #FF8C00;
-    }
+  h2 {
+    font-size: 20px; /* Updated font size */
+    margin-bottom: 20px;
+    color: #FF8C00;
+  }
 
-    form {
-      display: flex;
-      flex-direction: column;
-    }
+  form {
+    display: flex;
+    flex-direction: column;
+  }
 
-    label {
-      font-size: 16px;
-      margin-bottom: 5px;
-      color: #000000;
-    }
+  label {
+    font-size: 20px; /* Updated font size */
+    margin-bottom: 5px;
+    color: #000000;
+  }
 
-    input,
-    select,
-    textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 15px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-    }
+  input,
+  select,
+  textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 20px; /* Updated font size */
+  }
 
   .post-btn, .cancel-btn {
     margin-bottom: 10px; /* Adjust the margin as needed */
@@ -199,6 +195,7 @@
     display: inline-block;
     text-align: center; /* Center the text */
     width: 100%; /* Make the button full-width */
+    font-size: 20px; /* Updated font size */
   }
 
   .cancel-btn:hover {
@@ -212,19 +209,20 @@
     padding: 10px;
     border-radius: 5px;
     cursor: pointer;
-    font-size: 16px;
+    font-size: 20px; /* Updated font size */
   }
 
-    button:hover {
-      background-color: #000000;
-    }
+  button:hover {
+    background-color: #000000;
+  }
 
-    @media screen and (max-width: 600px) {
-      .modal-content {
-        width: 100%;
-      }
+  @media screen and (max-width: 600px) {
+    .modal-content {
+      width: 100%;
     }
+  }
 </style>
+
 
 <head>
     <meta charset="UTF-8">
@@ -291,7 +289,7 @@
           <div class="input-container">
               <div id="estimated_budget">
                   <h3>Initial Budget</h3>
-                  <label for="initial_budget">Initial Budget (Peso sign ₱):</label>
+                  <label for="initial_budget">Initial Budget (Pesos ₱):</label>
                   <input type="text" name="initial_budget" id="initial_budget" oninput="calculateEstimatedCost()">
               </div>
           </div>
@@ -348,6 +346,10 @@
       <!-- Photo Upload -->
       <label for="photo">Upload Photo: (Optional)</label>
       <input type="file" id="Photo" name="Photo"><br>
+
+      <!-- New "More Details" Field -->
+      <label for="more_details">More Details:</label>
+      <textarea id="more_details" name="more_details" rows="4" placeholder="Provide additional details about your project..."></textarea>
 
       <!-- Form Buttons -->
       <button type="submit" class="post-btn">Submit</button>

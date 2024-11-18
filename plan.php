@@ -21,6 +21,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $start_date = $_POST['start_date'] ?? '';
     $end_date = $_POST['end_date'] ?? '';
     $type = $_POST['type'] ?? '';
+    $more_details = $_POST['more_details'] ?? '';
+
 
     // Simple file upload handling
     $targetDir = "assets/plan/";
@@ -35,13 +37,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     }
 
     // Continue with database insertion
-    $query = "INSERT INTO plan (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, Photo) 
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $query = "INSERT INTO plan (User_ID, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, initial_budget, estimated_cost, start_date, end_date, type, more_details, Photo) 
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     $stmt = mysqli_prepare($conn, $query);
 
     if ($stmt) {        
-        mysqli_stmt_bind_param($stmt, "issssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $photoPath);
+        mysqli_stmt_bind_param($stmt, "isssssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $more_details, $photoPath);
         
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);

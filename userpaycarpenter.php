@@ -34,6 +34,7 @@
     font-family: Arial, Helvetica, sans-serif;
     margin: 0;
     padding-top: 170px;
+    font-size: 20px; /* Adjusted font size to 20px */
   }
 
   /* Header*/
@@ -64,7 +65,7 @@
   }
 
   .header a{
-    font-size: 25px;
+    font-size: 20px; /* Adjusted font size to 20px */
     font-weight: bold;
     text-decoration: none;
     color: #000000;
@@ -88,7 +89,7 @@
     text-align: center;
     padding: 14px 16px;
     text-decoration: none;
-    font-size: 30px;
+    font-size: 20px; /* Adjusted font size to 20px */
   }
 
   .topnav a,
@@ -101,7 +102,6 @@
     background-color: #FF8C00;
     color: black;
   }
-
 
   /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
   @media screen and (max-width: 600px) {
@@ -117,10 +117,10 @@
       border: 1px solid #ccc;
     }
     body {
-    font-family: Arial, Helvetica, sans-serif;
-    margin: 0;
-    padding-top: 300px;
-  }
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding-top: 300px;
+    }
   }
 
   /* Main column */
@@ -144,11 +144,10 @@
     width: 600px;
   }
 
-
-
   label {
     display: block;
     margin-top: 10px;
+    font-size: 20px; /* Adjusted font size to 20px */
   }
 
   input[type=number], [type=text], input[type=password], select {
@@ -163,6 +162,7 @@
     -moz-appearance: none; /* Remove default arrow for Firefox */
     cursor: pointer; /* Show pointer cursor */
     border-radius: 5px; /* Add some border-radius for a softer look */
+    font-size: 20px; /* Adjusted font size to 20px */
   }
 
   select option {
@@ -190,6 +190,7 @@
     cursor: pointer;
     width: 100%;
     opacity: 0.9;
+    font-size: 20px; /* Adjusted font size to 20px */
   }
 
   button:hover {
@@ -200,6 +201,7 @@
   .cancelbtn {
     padding: 14px 20px;
     background-color: #f44336;
+    font-size: 20px; /* Adjusted font size to 20px */
   }
 
   /* Float cancel and signup buttons and add an equal width */
@@ -237,6 +239,7 @@
     left: 50%;
     transform: translateX(-50%);
     width: 100%;
+    font-size: 20px; /* Adjusted font size to 20px */
   }
 
   /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
@@ -254,6 +257,7 @@
     }
   }
 </style>
+
 
 </head>
 <body>
@@ -317,7 +321,7 @@
                 <input type="text" name="sender" value="<?php echo isset($userData['First_Name']) ? $userData['First_Name'] : ''; ?> <?php echo isset($userData['Last_Name']) ? $userData['Last_Name'] : ''; ?>" readonly>
 
                 <div class="clearfix">
-                    <button type="button" class="cancelbtn" onclick="window.location.href='accountselect.html'">Cancel</button>
+                <button type="button" class="cancelbtn" onclick="history.back()">Go Back</button>
                     <button type="submit" class="signupbtn">Submit</button>
                 </div>
             </div>

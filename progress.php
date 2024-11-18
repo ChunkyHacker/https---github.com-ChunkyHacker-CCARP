@@ -8,419 +8,382 @@
 </head>
 <style>
     * {
-      box-sizing: border-box;
+        box-sizing: border-box;
     }
 
     /* Style the body */
     body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 0;
-      padding-top: 180px;
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding-top: 180px;
     }
 
     /* Header*/
     .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 10px;
-      text-align: left;
-      background: #FF8C00;
-      color: #000000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      text-decoration: none;
-      z-index: 100;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        text-align: left;
+        background: #FF8C00;
+        color: #000000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+        z-index: 100;
     }
 
     /* Increase the font size of the heading */
     .header h1 {
-      font-size: 40px;
-      border-left: 20px solid transparent; 
-      padding-left: 20px; /* Adjust padding */
-      text-decoration: none;
+        font-size: 20px;
+        border-left: 20px solid transparent; 
+        padding-left: 20px; /* Adjust padding */
+        text-decoration: none;
     }
 
     .right {
-      margin-right: 20px;
+        margin-right: 20px;
     }
 
-    .header a{
-      font-size: 25px;
-      font-weight: bold;
-      text-decoration: none;
-      color: #000000;
+    .header a {
+        font-size: 20px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #000000;
     }
 
     .topnav {
-      position: fixed;
-      top: 120px; /* Adjust the top position as per your needs */
-      width: 100%;
-      overflow: hidden;
-      background-color: #505050;
-      z-index: 100;
+        position: fixed;
+        top: 120px; /* Adjust the top position as per your needs */
+        width: 100%;
+        overflow: hidden;
+        background-color: #505050;
+        z-index: 100;
     }
 
     /* Style the links inside the navigation bar */
     .topnav a {
-      position: sticky;
-      float: left;
-      display: block;
-      color: black;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 30px;
+        position: sticky;
+        float: left;
+        display: block;
+        color: black;
+        text-align: center;
+        padding: 14px 16px;
+        text-decoration: none;
+        font-size: 20px;
     }
 
     .topnav a,
     .topnav a.active {
-      color: black;
+        color: black;
     }
 
     .topnav a:hover,
     .topnav a.active:hover {
-      background-color: #FF8C00;
-      color: black;
+        background-color: #FF8C00;
+        color: black;
     }
-
 
     /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
     @media screen and (max-width: 600px) {
-      .topnav a, .topnav input[type=text] {
-        float: none;
-        display: block;
-        text-align: left;
-        width: 100%;
-        margin: 0;
-        padding: 14px;
-      }
-      .topnav input[type=text] {
-        border: 1px solid #ccc;
-      }
+        .topnav a, .topnav input[type=text] {
+            float: none;
+            display: block;
+            text-align: left;
+            width: 100%;
+            margin: 0;
+            padding: 14px;
+        }
+        .topnav input[type=text] {
+            border: 1px solid #ccc;
+        }
     }
 
     #addMaterialsBtn {
-      background-color: #FF8C00;
-      color: #FFFFFF;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 20px;
-      border-radius: 4px;
+        background-color: #FF8C00;
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 20px;
+        border-radius: 4px;
     }
 
     #addLaborBtn {
-      background-color: #FF8C00;
-      color: #FFFFFF;
-      border: none;
-      padding: 10px 20px;
-      font-size: 16px;
-      cursor: pointer;
-      margin: 20px;
-      border-radius: 4px;
+        background-color: #FF8C00;
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 20px;
+        border-radius: 4px;
     }
 
     #addLaborBtn:hover {
-      background-color: #FFA500;
+        background-color: #FFA500;
     }
 
     #addMaterialBtn:hover {
-      background-color: #FFA500;
+        background-color: #FFA500;
     }
 
-    Materials Styles */Materials {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.5);
+    /* Modal Styles */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000; /* Ensure modal appears on top of other elements */
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(0,0,0,0.4);
     }
 
-      .modal {
-          display: none;
-          position: fixed;
-          z-index: 1000; /* Ensure modal appears on top of other elements */
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          background-color: rgba(0,0,0,0.4);
-      }
+    .modal-content {
+        background-color: #f2f2f2;
+        position: fixed;
+        top: 50%; /* Center modal vertically */
+        left: 50%; /* Center modal horizontally */
+        transform: translate(-50%, -50%); /* Move modal back to center */
+        padding: 20px;
+        border: 1px solid #888;
+        width: 70%;
+        border-radius: 5px;
+        z-index: 1001; /* Ensure modal content appears on top of the modal background */
+    }
 
-      .modal-content {
-          background-color: #f2f2f2;
-          position: fixed;
-          top: 50%; /* Center modal vertically */
-          left: 50%; /* Center modal horizontally */
-          transform: translate(-50%, -50%); /* Move modal back to center */
-          padding: 20px;
-          border: 1px solid #888;
-          width: 70%;
-          border-radius: 5px;
-          z-index: 1001; /* Ensure modal content appears on top of the modal background */
-      }
+    .close {
+        color: #aaa;
+        position: absolute;
+        top: 0;
+        right: 0;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+        z-index: 1002; /* Ensure close button appears on top of modal content */
+    }
 
-      .close {
-          color: #aaa;
-          position: absolute;
-          top: 0;
-          right: 0;
-          font-size: 28px;
-          font-weight: bold;
-          cursor: pointer;
-          z-index: 1002; /* Ensure close button appears on top of modal content */
-      }
+    .close:hover,
+    .close:focus {
+        color: black;
+        text-decoration: none;
+        cursor: pointer;
+    }
 
-      .close:hover,
-      .close:focus {
-          color: black;
-          text-decoration: none;
-          cursor: pointer;
-      }
+    /* Rest of your styles remain unchanged */
+    .modal-content h2 {
+        margin-bottom: 20px;
+        font-size: 20px;
+    }
 
-      /* Rest of your styles remain unchanged */
-      .modal-content h2 {
-          margin-bottom: 20px;
-      }
+    .modal-content form div {
+        margin-bottom: 15px;
+    }
 
-      .modal-content form div {
-          margin-bottom: 15px;
-      }
+    .modal-content form label {
+        display: block;
+        font-size: 20px;
+        font-weight: bold;
+        text-align: left;
+        margin-bottom: 5px;
+    }
 
-      .modal-content form label {
-          display: block;
-          font-size: 16px;
-          font-weight: bold;
-          text-align: left;
-          margin-bottom: 5px;
-      }
+    .modal-content form input,
+    .modal-content form textarea,
+    .modal-content form select {
+        width: 100%;
+        padding: 8px;
+        font-size: 20px;
+        color: #000;
+        background-color: #fff;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+    }
 
-      .modal-content form input,
-      .modal-content form textarea,
-      .modal-content form select {
-          width: 100%;
-          padding: 8px;
-          font-size: 16px;
-          color: #000;
-          background-color: #fff;
-          border-radius: 4px;
-          border: 1px solid #ccc;
-      }
+    .modal-content form select {
+        width: 100%;
+    }
 
-      .modal-content form select {
-          width: 100%;
-      }
+    .modal-content form button {
+        background-color: #FF8C00;
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        border-radius: 4px;
+    }
 
-      .modal-content form button {
-          background-color: #FF8C00;
-          color: #FFFFFF;
-          border: none;
-          padding: 10px 20px;
-          font-size: 16px;
-          cursor: pointer;
-          border-radius: 4px;
-      }
+    .modal-content form button:hover {
+        background-color: #FFA500;
+    }
 
-      .modal-content form button:hover {
-          background-color: #FFA500;
-      }
-
-  /* Modal Styles */
+    /* Edit Modal Styles */
     .editModal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: none;
-      z-index: 1001; /* Ensure a higher z-index than the table */
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: none;
+        z-index: 1001; /* Ensure a higher z-index than the table */
     }
 
     .edit-modal-content {
-      background-color: #f2f2f2;
-      padding: 30px;
-      border: 1px solid #888;
-      max-width: 70%; /* Use max-width instead of width */
-      width: auto; /* Adjusted width property */
-      border-radius: 5px;
-      position: absolute; /* Use absolute positioning */
-      top: 50%; /* Set top to 50% */
-      left: 50%; /* Set left to 50% */
-      transform: translate(-50%, -50%); /* Center the modal */
+        background-color: #f2f2f2;
+        padding: 30px;
+        border: 1px solid #888;
+        max-width: 70%; /* Use max-width instead of width */
+        width: auto; /* Adjusted width property */
+        border-radius: 5px;
+        position: absolute; /* Use absolute positioning */
+        top: 50%; /* Set top to 50% */
+        left: 50%; /* Set left to 50% */
+        transform: translate(-50%, -50%); /* Center the modal */
     }
 
     /* Main column */
     .main {   
-      margin: auto;
-      width: 70%; /* Adjusted width for better visibility */
-      padding: 20px;
-      text-align: left;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        margin: auto;
+        width: 70%; /* Adjusted width for better visibility */
+        padding: 20px;
+        text-align: left;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        background-color: #f9f9f9;
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
     }
 
     .main h1 {
-      font-size: 32px;
-      margin-bottom: 20px;
-      color: #333;
-      }
+        font-size: 20px;
+        margin-bottom: 20px;
+        color: #333;
+    }
 
-      .row-container h3 {
-              font-size: 24px;
-              margin-bottom: 10px;
-              color: #555;
-          }
+    .row-container h3 {
+        font-size: 20px;
+        margin-bottom: 10px;
+        color: #555;
+    }
 
-          label {
-              display: block;
-              font-size: 18px;
-              margin-bottom: 5px;
-              color: #777;
-          }
+    label {
+        display: block;
+        font-size: 20px;
+        margin-bottom: 5px;
+        color: #777;
+    }
 
-          input[type='text'] {
-              width: 100%;
-              padding: 8px;
-              font-size: 16px;
-              color: #000;
-              background-color: #fff;
-              border-radius: 4px;
-              border: 1px solid #ccc;
-              margin-bottom: 10px;
-          }
+    input[type='text'] {
+        width: 100%;
+        padding: 8px;
+        font-size: 20px;
+        color: #000;
+        background-color: #fff;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        margin-bottom: 10px;
+    }
 
-          p {
-              margin-bottom: 10px;
-              font-size: 18px;
-              color: #333;
-          }
+    p {
+        margin-bottom: 10px;
+        font-size: 20px;
+        color: #333;
+    }
 
-          img {
-              max-width: 100%;
-              height: auto;
-              border-radius: 4px;
-          }
+    img {
+        max-width: 100%;
+        height: auto;
+        border-radius: 4px;
+    }
 
-
-    /*Sort*/
+    /* Sort */
     .sort {
-      display: inline-block;
-      margin-bottom: 10px;
-      margin-left: 40px;
+        display: inline-block;
+        margin-bottom: 10px;
+        margin-left: 40px;
     }
 
     .sort select {
-      padding: 8px;
-      font-size: 16px;
-      color: #000000;
-      background-color: #ffffff;
-      border-radius: 4px;
+        padding: 8px;
+        font-size: 20px;
+        color: #000000;
+        background-color: #ffffff;
+        border-radius: 4px;
     }
 
     .sort select:focus {
-      outline: none;
-      box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
+        outline: none;
+        box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
     }
 
     /* Table styling */
     .table-container {
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 20px; /* Adjusted margin-top for spacing */
-      margin-bottom: 40px; /* Added margin-bottom for space below the table */
-      padding:50px;
+        border-radius: 8px;
+        overflow: hidden;
+        margin-top: 20px; /* Adjusted margin-top for spacing */
+        margin-bottom: 40px; /* Added margin-bottom for space below the table */
+        padding:50px;
     }
 
     .styled-table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid #333;
+        width: 100%;
+        border-collapse: collapse;
+        border: 1px solid #333;
     }
 
     .table-header {
-      padding: 12px;
-      text-align: center;
-      background-color: #FF8C00; /* Orange color */
-      color: black; /* Text color */
-      font-weight: bold;
-      border-bottom: 1px solid #333;
+        padding: 12px;
+        text-align: center;
+        background-color: #FF8C00; /* Orange color */
+        color: black; /* Text color */
+        font-weight: bold;
+        border-bottom: 1px solid #ddd;
     }
 
-    .table-cell {
-      padding: 2px;
-      text-align: center;
-      background-color: #f2f2f2;
-      border-bottom: 1px solid #333;
+    .styled-table th,
+    .styled-table td {
+        padding: 12px;
+        text-align: center;
+        font-size: 20px;
+        border: 1px solid #ddd;
     }
 
-    .table-cell img {
-      max-width: 100px;
-      max-height: 100px;
-      border-radius: 4px;
+    .styled-table td {
+        color: #333;
     }
 
-    .styled-table tr {
-      border-bottom: 1px solid #333; /* Added border for table rows */
+    .styled-table tr:nth-child(even) {
+        background-color: #f2f2f2;
     }
 
-    .styled-table th, .styled-table td {
-      border-right: 1px solid #333; /* Added border for table columns */
+    .styled-table tr:nth-child(odd) {
+        background-color: #fff;
     }
 
-    /* Footer */
-    .footer {
-      padding: 10px;
-      text-align: center;
-      background: #FF8C00;
-      position: relative;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
+    .action-buttons {
+        display: flex;
+        justify-content: space-around;
     }
 
-    /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
-    @media screen and (max-width: 700px) {
-      .row {   
-        flex-direction: column;
-      }
-      body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 0;
-      padding-top: 300px;
-    }
+    .action-buttons button {
+        background-color: #FF8C00;
+        color: white;
+        border: none;
+        padding: 10px;
+        cursor: pointer;
+        font-size: 20px;
+        border-radius: 4px;
     }
 
-    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
-    @media screen and (max-width: 400px) {
-      .navbar a {
-        float: none;
-        width: 100%;
-      }
-    }
-
-    @media (max-width: 768px) {
-      .product-card {
-        width: calc(50% - 20px);
-      }
-    }
-
-    @media (max-width: 480px) {
-      .product-card {
-        width: calc(100% - 20px);
-      }
+    .action-buttons button:hover {
+        background-color: #FFA500;
     }
 </style>
+
 
 <head>
 <div class="header">

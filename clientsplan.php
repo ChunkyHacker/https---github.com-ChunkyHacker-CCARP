@@ -22,199 +22,203 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client's Plan</title>
     <style>
-        * {
-            box-sizing: border-box;
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        font-family: Verdana, sans-serif;
+        margin: 0;
+        background-color: #FF8C00;
+        font-size: 20px; /* Set base font size to 20px */
+    }
+
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        text-align: left;
+        background: #FF8C00;
+        color: #000000;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        z-index: 100;
+    }
+
+    .header h1 {
+        font-size: 40px; /* Keep h1 larger */
+        border-left: 20px solid transparent;
+        text-decoration: none;
+    }
+
+    .right {
+        margin-right: 20px;
+    }
+
+    .header a {
+        font-size: 25px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #000000;
+        margin-right: 15px;
+    }
+
+    @media screen and (max-width: 600px) {
+        .topnav a, .topnav input[type=text] {
+            float: none;
+            display: block;
+            text-align: left;
+            width: 100%;
             margin: 0;
-            padding: 0;
+            padding: 14px;
+        }
+
+        .topnav input[type=text] {
+            border: 1px solid #ccc;
         }
 
         body {
-            font-family: Verdana, sans-serif;
+            font-family: Arial, Helvetica, sans-serif;
             margin: 0;
-            background-color: #FF8C00;
+            padding-top: 300px;
         }
+    }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+    /* CSS styles for the modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(255, 140, 0, 0.4);
+    }
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-        }
+    .modal-content {
+        background-color: #FF8C00;
+        margin: 15% auto;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        max-height: 80%;
+        overflow-y: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 
-        .header h1 {
-            font-size: 40px;
-            border-left: 20px solid transparent;
-            text-decoration: none;
-        }
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        text-align: left;
+        background: #FF8C00;
+        color: #000000;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        text-decoration: none;
+        z-index: 100;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 
-        .right {
-            margin-right: 20px;
-        }
+    .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
 
-        .header a {
-            font-size: 25px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #000000;
-            margin-right: 15px;
-        }
+    h2 {
+        font-size: 24px; /* Adjusted to be slightly larger than the base font */
+        margin-bottom: 20px;
+        color: #FF8C00;
+    }
 
-        @media screen and (max-width: 600px) {
-            .topnav a, .topnav input[type=text] {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                margin: 0;
-                padding: 14px;
-            }
+    form {
+        display: flex;
+        flex-direction: column;
+    }
 
-            .topnav input[type=text] {
-                border: 1px solid #ccc;
-            }
+    label {
+        font-size: 20px; /* Set label font size to 20px */
+        margin-bottom: 5px;
+        color: #000000;
+    }
 
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding-top: 300px;
-            }
-        }
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 20px; /* Set input font size to 20px */
+    }
 
-        /* CSS styles for the modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(255, 140, 0, 0.4);
-        }
+    .post-btn, .cancel-btn {
+        margin-bottom: 10px;
+    }
 
+    .cancel-btn {
+        background-color: red;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center;
+        width: 100%;
+        font-size: 20px; /* Set cancel button font size to 20px */
+    }
+
+    .cancel-btn:hover {
+        background-color: #000000;
+    }
+
+    button {
+        background-color: #FF8C00;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 20px; /* Set button font size to 20px */
+    }
+
+    button:hover {
+        background-color: #000000;
+    }
+
+    @media screen and (max-width: 600px) {
         .modal-content {
-            background-color: #FF8C00;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #FF8C00;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-size: 16px;
-            margin-bottom: 5px;
-            color: #000000;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
-
-        .post-btn, .cancel-btn {
-            margin-bottom: 10px;
-        }
-
-        .cancel-btn {
-            background-color: red;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
             width: 100%;
         }
+    }
+</style>
 
-        .cancel-btn:hover {
-            background-color: #000000;
-        }
-
-        button {
-            background-color: #FF8C00;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-        button:hover {
-            background-color: #000000;
-        }
-
-        @media screen and (max-width: 600px) {
-            .modal-content {
-                width: 100%;
-            }
-        }
-    </style>
 </head>
 <body>
     <div class="header">
@@ -414,10 +418,10 @@ session_start();
                                 <input type='text' id='name' name='approved_by' value='<?php echo $carpenterData['First_Name'];?> <?php echo $carpenterData['Last_Name'];?>' readonly><br>
 
                         <label for='status'>Status:</label>
-                        <select id='status' name='status'>
-                            <option value='' selected disabled>Select an option</option>
-                            <option value='approve'>Approve</option>
-                            <option value='decline'>Decline</option>
+                        <select id="status" name="status">
+                            <option value="" selected disabled>Select an option</option>
+                            <option value="approve">Approve</option>
+                            <option value="decline">Decline</option>
                         </select>
 
                         <input type='hidden' name='plan_id' value='<?php echo $plan_id; ?>'>

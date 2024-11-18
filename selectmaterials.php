@@ -14,222 +14,202 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Select Part</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+    }
 
-        body {
-            font-family: Verdana, sans-serif;
-            margin: 0;
-        }
+    body {
+        font-family: Verdana, sans-serif;
+        margin: 0;
+        font-size: 20px; /* Default font size */
+    }
 
-            table {
-            display: none;
-            border-collapse: collapse;
-            width: 100%;
-            }
+    table {
+        display: none;
+        border-collapse: collapse;
+        width: 100%;
+    }
 
-            th, td {
-            border: 1px solid #dddddd;
-            text-align: left;
-            padding: 8px;
-            }
+    th, td {
+        border: 1px solid #dddddd;
+        text-align: left;
+        padding: 8px;
+        font-size: 20px; /* Updated font size */
+    }
 
+    /* Header */
+    .header {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        padding: 10px;
+        text-align: left;
+        background: #FF8C00;
+        color: #000000;
+        display: flex;
+        align-items: center;
+        text-decoration: none;
+        z-index: 100;
+    }
 
+    /* Increase the font size of the heading */
+    .header h1 {
+        font-size: 20px; /* Updated font size */
+        border-left: 20px solid transparent;
+        text-decoration: none;
+    }
 
-        /* Header*/
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-        }
+    .right {
+        margin-right: 20px;
+    }
 
-        /* Increase the font size of the heading */
-        .header h1 {
-            font-size: 40px;
-            border-left: 20px solid transparent; 
-            text-decoration: none;
-        }
+    .header a {
+        font-size: 20px; /* Updated font size */
+        font-weight: bold;
+        text-decoration: none;
+        color: #000000;
+        margin-right: 15px;
+    }
 
-        .right {
-            margin-right: 20px;
-        }
+    .row-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
 
-        .header a{
-            font-size: 25px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #000000;
-            margin-right: 15px;
-        }
+    .input-container {
+        flex: 1;
+    }
 
-        .row-container {
-                    display: flex;
-                    flex-wrap: wrap;
-                    gap: 20px;
-                }
-
-                .input-container {
-                    flex: 1;
-                }
-
-
-
-        /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-        @media screen and (max-width: 600px) {
-            .topnav a, .topnav input[type=text] {
+    /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
+    @media screen and (max-width: 600px) {
+        .topnav a, .topnav input[type=text] {
             float: none;
             display: block;
             text-align: left;
             width: 100%;
             margin: 0;
             padding: 14px;
-            }
-            .topnav input[type=text] {
+        }
+        .topnav input[type=text] {
             border: 1px solid #ccc;
-            }
-            body {
+        }
+        body {
             font-family: Arial, Helvetica, sans-serif;
             margin: 0;
             padding-top: 300px;
+            font-size: 20px; /* Updated font size */
         }
-        }
+    }
 
+    /* CSS styles for the modal */
+    .modal {
+        display: none;
+        position: fixed;
+        z-index: 1;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        overflow: auto;
+        background-color: rgba(255, 140, 0, 0.4); /* Updated background color */
+    }
 
-        /* CSS styles for the modal */
-        /* CSS styles for the modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(255, 140, 0, 0.4); /* Updated background color */
-        }
+    .modal-content {
+        background-color: #FF8C00; /* Updated background color */
+        margin: 15% auto;
+        padding: 20px;
+        width: 80%;
+        overflow-y: auto;
+        border-radius: 8px;
+    }
 
+    .modal-content {
+        background-color: #fefefe;
+        padding: 20px;
+        border: 1px solid #888;
+        width: 80%;
+        border-radius: 8px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    h2 {
+        font-size: 20px; /* Updated font size */
+        margin-bottom: 20px;
+        color: #FF8C00;
+    }
+
+    form {
+        display: flex;
+        flex-direction: column;
+    }
+
+    label {
+        font-size: 20px; /* Updated font size */
+        margin-bottom: 5px;
+        color: #000000;
+    }
+
+    input,
+    select,
+    textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 15px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 20px; /* Updated font size */
+    }
+
+    .post-btn, .cancel-btn {
+        margin-bottom: 10px; /* Adjust the margin as needed */
+    }
+
+    .cancel-btn {
+        background-color: red;
+        color: #fff;
+        padding: 10px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 10px;
+        text-decoration: none;
+        display: inline-block;
+        text-align: center; /* Center the text */
+        width: 100%; /* Make the button full-width */
+        font-size: 20px; /* Updated font size */
+    }
+
+    .cancel-btn:hover {
+        background-color: #000000;
+    }
+
+    button {
+        background-color: #FF8C00;
+        color: #fff;
+        border: none;
+        padding: 10px;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 20px; /* Updated font size */
+    }
+
+    button:hover {
+        background-color: #000000;
+    }
+
+    @media screen and (max-width: 600px) {
         .modal-content {
-            background-color: #FF8C00; /* Updated background color */
-            margin: 15% auto;
-            padding: 20px;
-            width: 80%;
-            overflow-y: auto;
-            border-radius: 8px;
-        }
-
-        /* Header */
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00; /* Updated background color */
-            color: #000000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
         }
+    }
+</style>
 
-
-
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-            h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #FF8C00;
-            }
-
-            form {
-            display: flex;
-            flex-direction: column;
-            }
-
-            label {
-            font-size: 16px;
-            margin-bottom: 5px;
-            color: #000000;
-            }
-
-            input,
-            select,
-            textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            }
-
-        .post-btn, .cancel-btn {
-            margin-bottom: 10px; /* Adjust the margin as needed */
-        }
-
-        .cancel-btn {
-            background-color: red;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center; /* Center the text */
-            width: 100%; /* Make the button full-width */
-        }
-
-        .cancel-btn:hover {
-            background-color: #000000;
-        }
-
-        button {
-            background-color: #FF8C00;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
-
-            button:hover {
-            background-color: #000000;
-            }
-
-            @media screen and (max-width: 600px) {
-            .modal-content {
-                width: 100%;
-            }
-            }
-    </style>
 </head>
 <body>
     <div class="housepart">

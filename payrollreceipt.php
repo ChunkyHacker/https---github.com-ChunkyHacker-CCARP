@@ -10,6 +10,7 @@
             background-color: #f4f4f4;
             margin: 0;
             padding: 20px;
+            font-size: 20px; /* Set font size to 20px */
         }
 
         .container {
@@ -23,6 +24,7 @@
 
         h2 {
             text-align: center;
+            font-size: 24px; /* Optional, if you want to adjust the heading font size */
         }
 
         .payroll-details {
@@ -49,7 +51,22 @@
             text-align: center;
             margin-top: 20px;
         }
+
+        .download-btn button {
+            background-color: #FF8C00;
+            color: white;
+            padding: 12px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 20px;
+        }
+
+        .download-btn button:hover {
+            background-color: #FFA500;
+        }
     </style>
+
 </head>
 <body>
     <div class="container">

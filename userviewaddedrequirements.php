@@ -10,203 +10,207 @@
     <title>Approved Plan Details</title>
     <style>
         * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
 
-        body {
-            font-family: Verdana, sans-serif;
-            margin: 0;
-            background-color: #FF8C00;
-        }
+body {
+    font-family: Verdana, sans-serif;
+    margin: 0;
+    background-color: #FF8C00;
+    font-size: 20px; /* Set body font size to 20px */
+}
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-        }
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    background: #FF8C00;
+    color: #000000;
+    display: flex;
+    align-items: center;
+    text-decoration: none;
+    z-index: 100;
+}
 
-        .header h1 {
-            font-size: 40px;
-            border-left: 20px solid transparent;
-            text-decoration: none;
-        }
+.header h1 {
+    font-size: 20px; /* Adjust header font size */
+    border-left: 20px solid transparent;
+    text-decoration: none;
+}
 
-        .right {
-            margin-right: 20px;
-        }
+.right {
+    margin-right: 20px;
+}
 
-        .header a {
-            font-size: 25px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #000000;
-            margin-right: 15px;
-        }
+.header a {
+    font-size: 20px; /* Set font size to 20px */
+    font-weight: bold;
+    text-decoration: none;
+    color: #000000;
+    margin-right: 15px;
+}
 
-        @media screen and (max-width: 600px) {
-            .topnav a, .topnav input[type=text] {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                margin: 0;
-                padding: 14px;
-            }
+@media screen and (max-width: 600px) {
+    .topnav a, .topnav input[type=text] {
+        float: none;
+        display: block;
+        text-align: left;
+        width: 100%;
+        margin: 0;
+        padding: 14px;
+    }
 
-            .topnav input[type=text] {
-                border: 1px solid #ccc;
-            }
+    .topnav input[type=text] {
+        border: 1px solid #ccc;
+    }
 
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding-top: 300px;
-            }
-        }
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        margin: 0;
+        padding-top: 300px;
+        font-size: 20px; /* Set font size to 20px */
+    }
+}
 
-        /* CSS styles for the modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(255, 140, 0, 0.4);
-        }
+/* CSS styles for the modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(255, 140, 0, 0.4);
+}
 
-        .modal-content {
-            background-color: #FF8C00;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+.modal-content {
+    background-color: #FF8C00;
+    margin: 15% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    max-height: 80%;
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    text-align: left;
+    background: #FF8C00;
+    color: #000000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    text-decoration: none;
+    z-index: 100;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
+.modal-content {
+    background-color: #fefefe;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
 
-        h2 {
-            font-size: 24px;
-            margin-bottom: 20px;
-            color: #FF8C00;
-        }
+h2 {
+    font-size: 20px; /* Adjust heading size */
+    margin-bottom: 20px;
+    color: #FF8C00;
+}
 
-        form {
-            display: flex;
-            flex-direction: column;
-        }
+form {
+    display: flex;
+    flex-direction: column;
+}
 
-        label {
-            font-size: 16px;
-            margin-bottom: 5px;
-            color: #000000;
-        }
+label {
+    font-size: 20px; /* Adjust label font size */
+    margin-bottom: 5px;
+    color: #000000;
+}
 
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-        }
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 20px; /* Adjust input font size */
+}
 
-        .post-btn, .cancel-btn {
-            margin-bottom: 10px;
-        }
+.post-btn, .cancel-btn {
+    margin-bottom: 10px;
+}
 
-        .table-container {
-            margin-bottom: 20px; /* Adds space between tables */
-            width: 100%; /* Ensures each table takes full width */
-        }
+.table-container {
+    margin-bottom: 20px; /* Adds space between tables */
+    width: 100%; /* Ensures each table takes full width */
+}
 
+.cancel-btn {
+    background-color: red;
+    color: #fff;
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-right: 10px;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    width: 100%;
+    font-size: 20px; /* Set cancel button font size */
+}
 
-        .cancel-btn {
-            background-color: red;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            width: 100%;
-        }
+.cancel-btn:hover {
+    background-color: #000000;
+}
 
-        .cancel-btn:hover {
-            background-color: #000000;
-        }
+button {
+    background-color: #FF8C00;
+    color: #fff;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 20px; /* Set button font size */
+}
 
-        button {
-            background-color: #FF8C00;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 16px;
-        }
+button:hover {
+    background-color: #000000;
+}
 
-        button:hover {
-            background-color: #000000;
-        }
+@media screen and (max-width: 600px) {
+    .modal-content {
+        width: 100%;
+    }
+}
 
-        @media screen and (max-width: 600px) {
-            .modal-content {
-                width: 100%;
-            }
-        }
     </style>
 </head>
 <body>
@@ -363,12 +367,35 @@
                 echo '<tr>';
                 echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['material']) . '</td>';
                 echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['type']) . '</td>';
-                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><img src="' . htmlspecialchars($required_material_row['image']) . '" alt="' . htmlspecialchars($required_material_row['material']) . '" style="width: 100px; height: auto;"></td>';
-                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>';
-                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['price']) . '</td>';
-                echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['total']) . '</td>';
-                echo '</tr>';
-            }
+                while ($required_material_row = mysqli_fetch_assoc($result_required_materials)) {
+                    if ($required_material_row) {
+                        echo '<tr>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['material']) . '</td>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['type']) . '</td>';
+                        
+                        // Image column
+                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
+                        
+                        // Check if the image path exists and is valid
+                        $image_path = htmlspecialchars($required_material_row['image']);
+                        if (!empty($image_path) && file_exists($image_path)) {
+                            echo '<img src="' . $image_path . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
+                        } else {
+                            // Display a default image if the path is invalid or empty
+                            echo '<img src="assets/default-product.png" alt="Default Image" style="max-width: 100px; max-height: 100px;">';
+                        }
+                        
+                        echo '</td>';
+                    
+                        // Remaining columns
+                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>
+                              <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['price']) . '</td>
+                              <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['total']) . '</td>
+                              <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['materials_overall_cost']) . '</td>
+                            </tr>';
+                    }
+                }
+                            }
         
             echo '</tbody>';
             echo '</table>';
@@ -404,9 +431,15 @@
             echo "</form>";
             echo "</div>"; 
             echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';
-            echo "<p><a href='usercomputebudget.php?requirement_ID={$row['requirement_ID']}'>Compute Budget</a></p>";
-            echo "<p><a href='userviewprogress.php?requirement_ID={$row['requirement_ID']}'>Check Progress</a></p>";
 
+            echo "<div class='button-container'>
+                <button onclick=\"window.location.href='usercomputebudget.php?requirement_ID={$row['requirement_ID']}'\">Compute Budget</button>
+            </div>";
+            
+            echo "<div class='button-container'>
+                <button onclick=\"window.location.href='userviewprogress.php?requirement_ID={$row['requirement_ID']}'\">Check Progress</button>
+            </div>";
+            
 
         } else {
             echo "<div class='main'>";

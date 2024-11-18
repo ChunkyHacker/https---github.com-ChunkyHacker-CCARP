@@ -13,6 +13,10 @@
             padding: 20px;
             border-radius: 10px;
             box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+            font-size: 20px; /* Set base font size */
+            max-width: 1200px; /* Set max-width for the container */
+            margin: 0 auto; /* Center the container */
+            overflow-x: auto; /* Handle overflow horizontally */
         }
 
         h4 {
@@ -22,8 +26,9 @@
         }
 
         .price {
-            font-size: 30px;
+            font-size: 20px;
             color: #1a73e8; /* Adjusted color for price */
+            font-weight: bold;
         }
 
         /* Table styling */
@@ -37,7 +42,7 @@
             padding: 12px;
             text-align: left;
             border: 1px solid #ddd;
-            font-size: 14px;
+            font-size: 20px; /* Set font size of table content */
         }
 
         th {
@@ -80,10 +85,10 @@
         }
 
         .download-button button {
-            background-color: #28a745;
-            color: white;
+            background-color: #FF8600;
+            color: black;
             padding: 12px 20px;
-            font-size: 16px;
+            font-size: 20px; /* Set font size to 20px */
             border: none;
             border-radius: 5px;
             cursor: pointer;
@@ -94,33 +99,84 @@
             background-color: #218838;
         }
 
+        /* Receipt layout */
         .receipt {
-            max-width: 600px;
+            max-width: 100%; /* Allow the receipt to adjust its width */
             margin: 0 auto;
             border: 1px solid #ccc;
             padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
         }
+
         .receipt h1 {
             text-align: center;
+            font-size: 24px; /* Slightly larger header */
+            color: #333;
         }
+
         .receipt-info {
             margin-bottom: 20px;
         }
+
         .receipt-info p {
             margin: 5px 0;
         }
+
         .receipt-info p strong {
             margin-right: 10px;
         }
-        .print-button,
-        .download-button {
+
+        /* Button styling for print, download, and go back */
+        .print-button button,
+        .download-button button,
+        .go-back-button a {
+            background-color: #FF8600; /* Same color as download button */
+            color: black;
+            padding: 12px 20px;
+            font-size: 20px; /* Match font size */
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
             text-align: center;
-            margin-top: 20px;
+            text-decoration: none; /* Remove underline from the link */
+            display: inline-block; /* Make the link behave like a button */
+        }
+
+        /* Hover effect for all buttons */
+        .print-button button:hover,
+        .download-button button:hover,
+        .go-back-button a:hover {
+            background-color: #ffcb91; /* Darker shade for hover */
+        }
+
+        /* Adjust the 'Go back' button if needed */
+        .go-back-button a {
+            display: inline-block; /* Ensure it's styled like a button */
+            padding: 12px 20px;
+            font-size: 20px;
+        }
+
+
+        /* Responsive design for smaller screens */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px; /* Less padding on smaller screens */
+            }
+
+            table {
+                font-size: 18px; /* Slightly smaller table font on smaller screens */
+            }
+
+            th, td {
+                padding: 10px; /* Adjust padding for smaller screens */
+            }
         }
     </style>
+
 </head>
 <?php
-  session_start();
   include('config.php');
 
   // Retrieve data from URL parameters
@@ -224,17 +280,32 @@
                                     // Loop through the results and populate the second table (requiredmaterials)
                                     mysqli_data_seek($result_required_materials, 0);
 
-                                    while ($required_material_row = mysqli_fetch_assoc($result_required_materials)) {
-                                        echo '<tr>
-                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['material']) . '</td>
-                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['type']) . '</td>
-                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><img src="' . htmlspecialchars($required_material_row['image']) . '" alt="' . htmlspecialchars($required_material_row['material']) . '" style="width: 100px; height: auto;"></td>
-                                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>
+                                        while ($required_material_row = mysqli_fetch_assoc($result_required_materials)) {
+                                            echo '<tr>
+                                                    <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['material']) . '</td>
+                                                    <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['type']) . '</td>';
+                                        
+                                            // Image column
+                                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
+                                            
+                                            // Check if the image path exists and is valid
+                                            $image_path = htmlspecialchars($required_material_row['image']);
+                                            if (!empty($image_path) && file_exists($image_path)) {
+                                                echo '<img src="' . $image_path . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
+                                            } else {
+                                                // Display a default image if the path is invalid or empty
+                                                echo '<img src="assets/default-product.png" alt="Default Image" style="max-width: 100px; max-height: 100px;">';
+                                            }
+                                            
+                                            echo '</td>';
+                                        
+                                            // Remaining columns
+                                            echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['quantity']) . '</td>
                                                 <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['price']) . '</td>
                                                 <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['total']) . '</td>
                                                 <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($required_material_row['materials_overall_cost']) . '</td>
-                                            </tr>';
-                                    }
+                                                </tr>';
+                                            }                                    
                                     ?>
                                 </tbody>
                             </table>
@@ -261,9 +332,11 @@
         <button onclick="downloadReceipt()">Download Receipt (PDF)</button>
     </div>
 
-    <div>
+    <div class="go-back-button">
+        <!-- Go back button with similar style as download button -->
         <a href="profile.php">Go back</a>
     </div>
+
 </div>
 </body>
 <script>
