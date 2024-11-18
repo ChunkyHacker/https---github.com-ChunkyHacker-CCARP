@@ -78,10 +78,10 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
     /* Box container */
     .content-box {
         background-color: #f9f9f9; /* Light grey background */
-        border: 20px solid #FF8600; /* Light border for the box */
+        border: 20px solid #FF8600; 
         border-radius: 0px;
-        padding: 50px; /* Space inside the box */
-        margin-top: 20px; /* To account for fixed header */
+        padding: 50px; 
+        margin-top: 20px; 
         box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     }
 
