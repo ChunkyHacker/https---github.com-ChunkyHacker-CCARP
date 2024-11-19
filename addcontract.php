@@ -44,8 +44,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['signedcontract']) && 
         
         // Execute the statement
         if (mysqli_stmt_execute($stmt)) {
-            // Redirect to the 'usercomputebudget.php' page with the requirement_ID
-            header("Location: usercomputebudget.php?requirement_ID=$requirementID");
+            // Redirect to the 'usercomputebudget.php' page with a success message
+            header("Location: usercomputebudget.php?requirement_ID=$requirementID&success=true&message=" . urlencode("Signed contract uploaded successfully!"));
             exit(); // Ensure no further code is executed after the redirect
         } else {
             echo "Error uploading signed contract: " . mysqli_error($conn);

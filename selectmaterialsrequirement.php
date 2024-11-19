@@ -108,6 +108,15 @@
                 background-color: #45a049;
             }
         </style>
+        <?php
+            // Check if success parameter is passed in the URL
+            if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+                // Sanitize the message to prevent XSS
+                $message = htmlspecialchars($_GET['message']);
+                // Output the alert with the message
+                echo "<script>alert('$message');</script>";
+            }
+        ?>
     </head>
     <body>
     <?php

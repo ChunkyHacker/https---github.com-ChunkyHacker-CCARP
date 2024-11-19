@@ -7,7 +7,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $time_out = $_POST["Time_out"]; // Assuming the form field is named 'Time_out'
 
     // Ensure the existence of the requirement_ID field in the form data
-    if(isset($_POST["requirement_ID"])) {
+    if (isset($_POST["requirement_ID"])) {
         $requirementID = $_POST["requirement_ID"];
     } else {
         // Handle the case where requirement_ID is not provided
@@ -24,16 +24,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to update the Time_out field
-    $sql = "UPDATE attendance SET Time_out = ?"; // SQL query to update Time_out field
+    $sql = "UPDATE attendance SET Time_out = ? WHERE requirement_ID = ?"; // Ensure the WHERE clause to target the specific record
 
     // Prepare and bind the statement
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $time_out); // "s" indicates that the parameter is a string
+    $stmt->bind_param("si", $time_out, $requirementID); // "si" indicates string and integer parameter types
 
     // Execute the statement
     if ($stmt->execute()) {
-        // Time_out updated successfully, redirect to progress.php
-        header("Location: progress.php?requirement_ID=$requirementID");
+        // Time_out updated successfully, redirect to progress.php with a success message
+        $stmt->close();
+        $conn->close();
+        header("Location: progress.php?requirement_ID=$requirementID&action=time_out&success=true");
         exit();
     } else {
         echo "Error updating time out: " . $stmt->error;

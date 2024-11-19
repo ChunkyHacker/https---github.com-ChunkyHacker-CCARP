@@ -67,6 +67,14 @@
         }
     </style>
 
+    <?php
+    // Check if the success parameter is passed in the URL
+    if (isset($_GET['success']) && $_GET['success'] == 'true') {
+        echo "<script>alert('Payroll data added successfully!');</script>";
+    }
+    ?>
+
+    <!-- Rest of your HTML content -->
 </head>
 <body>
     <div class="container">

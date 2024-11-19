@@ -12,7 +12,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $overallcost = $_POST["overall_cost"];
 
     // Ensure the existence of the requirement_ID field in the form data
-    if(isset($_POST["requirement_ID"])) {
+    if (isset($_POST["requirement_ID"])) {
         $requirementID = $_POST["requirement_ID"];
     } else {
         // Handle the case where requirement_ID is not provided
@@ -22,13 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Prepare the SQL query to insert the labor data into the database
     $sql = "INSERT INTO labor (carpenter_name, type_of_work, days_of_work, rate, total_of_laborcost, additional_cost, overall_cost, requirement_ID) 
-    VALUES ('$carpentername', '$typework', '$workdays', '$rate', '$totallaborcost','$additionalcost','$overallcost','$requirementID')";
+    VALUES ('$carpentername', '$typework', '$workdays', '$rate', '$totallaborcost', '$additionalcost', '$overallcost', '$requirementID')";
     
     // Attempt to execute the SQL query
     if ($conn->query($sql) === TRUE) {
-        // If insertion is successful, redirect back to the page with the requirement_ID
+        // If insertion is successful, redirect back to the page with a success message
         $conn->close();
-        header("Location: usercomputebudget.php?requirement_ID=$requirementID");
+        header("Location: usercomputebudget.php?requirement_ID=$requirementID&success=true&message=" . urlencode("Labor details added successfully!"));
         exit();
     } else {
         // If an error occurs during insertion, display the error message

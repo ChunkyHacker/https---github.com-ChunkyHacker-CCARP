@@ -39,8 +39,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['plan_id'])) {
                 $deleteStmt = mysqli_prepare($conn, $deleteQuery);
                 mysqli_stmt_bind_param($deleteStmt, "i", $plan_id);
                 if (mysqli_stmt_execute($deleteStmt)) {
-                    echo "Plan Approved and Moved to approvedplan table.";
-                    header("Location: profile.php");
+                    // Display the pop-up message
+                    echo "<script>alert('Plan Approved and Moved to approvedplan table.'); window.location.href = 'profile.php';</script>";
+                    exit();
                 } else {
                     echo "Error deleting plan data: " . mysqli_error($conn);
                 }
@@ -61,8 +62,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['plan_id'])) {
                 $deleteStmt = mysqli_prepare($conn, $deleteQuery);
                 mysqli_stmt_bind_param($deleteStmt, "i", $plan_id);
                 if (mysqli_stmt_execute($deleteStmt)) {
-                    echo "Plan Declined and Moved to declinedplan table.";
-                    header("Location: profile.php");
+                    // Display the pop-up message
+                    echo "<script>alert('Plan Declined and Moved to declinedplan table.'); window.location.href = 'profile.php';</script>";
+                    exit();
                 } else {
                     echo "Error deleting plan data: " . mysqli_error($conn);
                 }

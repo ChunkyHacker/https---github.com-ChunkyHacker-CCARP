@@ -6,16 +6,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['plan_id'])) {
 
     // Delete plan logic
     $deleteQuery = "DELETE FROM plan WHERE plan_ID = ?";
-    $deleteStmt = mysqli_prepare($connection, $deleteQuery);
+    $deleteStmt = mysqli_prepare($conn, $deleteQuery);
     mysqli_stmt_bind_param($deleteStmt, "i", $plan_id);
 
     if (mysqli_stmt_execute($deleteStmt)) {
-        echo "Plan deleted successfully.";
-        // Redirect to userprofile.php after successful deletion
-        header("Location: userprofile.php");
-        exit();
+        // Echo JavaScript to show the alert and redirect after a successful deletion
+        echo "<script>
+                alert('Plan deleted successfully.');
+                window.location.href = 'userprofile.php';
+              </script>";
     } else {
-        echo "Error deleting plan: " . mysqli_error($connection);
+        echo "Error deleting plan: " . mysqli_error($conn);
     }
 
     mysqli_stmt_close($deleteStmt);

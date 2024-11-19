@@ -384,6 +384,31 @@
     }
 </style>
 
+<?php
+// Check if the success parameter is passed in the URL
+if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+    // Sanitize the message to prevent XSS
+    $message = htmlspecialchars($_GET['message']);
+    // Output the alert with the message
+    echo "<script>alert('$message');</script>";
+}
+
+//Attendance
+if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action'])) {
+    $action = htmlspecialchars($_GET['action']);
+    
+    // Determine the message based on the action
+    if ($action == 'time_in') {
+        echo "<script>alert('Time In recorded successfully!');</script>";
+    } elseif ($action == 'time_out') {
+        echo "<script>alert('Time Out recorded successfully!');</script>";
+    }
+}
+
+if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action']) && $_GET['action'] == 'time_out') {
+    echo "<script>alert('Time Out recorded successfully!');</script>";
+}
+?>
 
 <head>
 <div class="header">
@@ -666,7 +691,7 @@
   <div id="addLaborModal" class="modal" style="display: none;">
       <div class="modal-content">
           <span class="close">&times;</span>
-          <h2>Compute Budget for Labor</h2>
+          <h2>Attendance</h2>
           <form id="addLaborForm" method="post" action="addattendance.php" enctype="multipart/form-data">
 
               <div>

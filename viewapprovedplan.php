@@ -16,6 +16,7 @@
             font-family: Verdana, sans-serif;
             margin: 0;
             background-color: #FF8C00;
+            font-size: 20px; /* Adjusted font size */
         }
 
         .container {
@@ -41,7 +42,7 @@
         }
 
         .header h1 {
-            font-size: 40px;
+            font-size: 20px; /* Adjusted font size */
             border-left: 20px solid transparent;
             text-decoration: none;
         }
@@ -51,7 +52,7 @@
         }
 
         .header a {
-            font-size: 25px;
+            font-size: 20px; /* Adjusted font size */
             font-weight: bold;
             text-decoration: none;
             color: #000000;
@@ -76,6 +77,7 @@
                 font-family: Arial, Helvetica, sans-serif;
                 margin: 0;
                 padding-top: 300px;
+                font-size: 20px; /* Adjusted font size */
             }
         }
 
@@ -131,7 +133,7 @@
         }
 
         h2 {
-            font-size: 24px;
+            font-size: 20px; /* Adjusted font size */
             margin-bottom: 20px;
             color: #FF8C00;
         }
@@ -142,7 +144,7 @@
         }
 
         label {
-            font-size: 16px;
+            font-size: 20px; /* Adjusted font size */
             margin-bottom: 5px;
             color: #000000;
         }
@@ -155,6 +157,7 @@
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 5px;
+            font-size: 20px; /* Adjusted font size for form elements */
         }
 
         .post-btn, .cancel-btn {
@@ -186,7 +189,7 @@
             padding: 10px;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 20px; /* Adjusted font size */
         }
 
         button:hover {

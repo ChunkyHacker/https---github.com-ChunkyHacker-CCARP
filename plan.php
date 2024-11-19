@@ -23,7 +23,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $type = $_POST['type'] ?? '';
     $more_details = $_POST['more_details'] ?? '';
 
-
     // Simple file upload handling
     $targetDir = "assets/plan/";
     $targetFile = $targetDir . basename($_FILES["Photo"]["name"]);
@@ -42,25 +41,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
     $stmt = mysqli_prepare($conn, $query);
 
-    if ($stmt) {        
+    if ($stmt) {
         mysqli_stmt_bind_param($stmt, "isssssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $more_details, $photoPath);
         
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);
             mysqli_close($conn);
-            header("Location: selectmaterials.php");
+
+            // Prepare a success message
+            $response['success'] = true;
+            $response['message'] = "Your plan has been successfully submitted.";
+
+            // Redirect to the next page with the success message in the URL
+            header("Location: selectmaterials.php?success=true&message=" . urlencode($response['message']));
             exit;
         } else {
-            // Check if the error is due to a duplicate entry
-            if (mysqli_errno($conn) == 1062) {
-                // Plan with the same user_ID already exists
-                $response['success'] = false;
-                $response['message'] = "Error: A plan for this user already exists.";
-            } else {
-                // Handle other errors
-                $response['success'] = false;
-                $response['message'] = "Error: " . mysqli_error($conn);
-            }
+            // Handle errors
+            $response['success'] = false;
+            $response['message'] = "Error: " . mysqli_error($conn);
         }
     } else {
         // Handle NULL values
@@ -72,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     echo json_encode($response);
 } else {
     $response['success'] = false;
-    $response['message'] = "Error: " . mysqli_error($conn);
+    $response['message'] = "Error: Invalid request method.";
 
     header("Content-Type: application/json");
     echo json_encode($response);

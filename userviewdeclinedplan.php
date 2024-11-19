@@ -366,7 +366,7 @@ button:hover {
             echo "<p>Comment <input type='text' value='{$row['comment']}' readonly></p>";   
             echo "<p>Approved by: <input type='text' value='{$row['approved_by']}' readonly></p>";                     
 
-            echo "<form action='deletingdeclinedplan.php' method='post'>";
+            echo "<form action='deletingdeclinedplan.php' method='post' onsubmit='return confirmDeletion()'>";
             echo "<input type='hidden' name='declined_plan_ID' value='{$row['declined_plan_ID']}'>";
             echo "<input type='submit' value='Delete Your Plan'>";
             echo "</form>";
@@ -391,4 +391,9 @@ button:hover {
     ?>
 </div>
 </body>
+<script>
+    function confirmDeletion() {
+        return confirm("Are you sure you want to delete this declined plan?");
+    }
+</script>
 </html>

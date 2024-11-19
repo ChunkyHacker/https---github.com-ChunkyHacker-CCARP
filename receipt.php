@@ -1,5 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
+<?php
+// Check if success parameter is passed in the URL
+if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+    // Sanitize the message to prevent XSS
+    $message = htmlspecialchars($_GET['message']);
+    // Output the alert with the message
+    echo "<script>alert('$message');</script>";
+}
+?>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">

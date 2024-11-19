@@ -13,10 +13,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $sender = $_POST["sender"];
 
     // Prepare the SQL query to insert the payroll data into the database
-    $sql = "INSERT INTO payment (carpenter_name, Netpay, days_of_work, rate_per_day,overall_cost, payment_method, sender) 
-    VALUES (?, ?, ?, ?, ?, ?,?)";
+    $sql = "INSERT INTO payment (carpenter_name, Netpay, days_of_work, rate_per_day, overall_cost, payment_method, sender) 
+            VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    // Prepare statement
+    // Prepare the statement
     if ($stmt = $conn->prepare($sql)) {
         // Bind parameters
         $stmt->bind_param("sssssss", $carpenter_name, $net_pay, $days_of_work, $rate_per_day, $overall_cost, $payment_method, $sender);
@@ -24,27 +24,27 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Attempt to execute the prepared statement
         if ($stmt->execute()) {
             // Get the ID of the last inserted row
-            $Payroll_ID = $stmt->insert_id;
+            $Payroll_ID = $conn->insert_id;
 
-            // If insertion is successful, redirect to a success page with the Payroll_ID
-            header("Location: payrollreceipt.php?Payroll_ID=$Payroll_ID");
+            // Redirect to the success page with the Payroll_ID
+            header("Location: payrollreceipt.php?Payroll_ID=$Payroll_ID&success=true");
             exit();
         } else {
-            // If an error occurs during insertion, display the error message
+            // Display an error message if the execution fails
             echo "Error: " . $stmt->error;
         }
 
-        // Close statement
+        // Close the statement
         $stmt->close();
     } else {
-        // If an error occurs during statement preparation, display the error message
+        // Display an error message if statement preparation fails
         echo "Error: " . $conn->error;
     }
 
-    // Close conn
+    // Close the connection
     $conn->close();
 } else {
-    // If the form was not submitted via POST method, display an error message
+    // Display an error message if the form was not submitted via POST
     echo "Error: The form was not submitted.";
 }
 ?>

@@ -52,8 +52,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Close statement after execution
         $stmt->close();
 
-        // Redirect to profile after successful insertion
-        header("Location: profile.php");
+        // Redirect to profile.php with success message
+        header("Location: profile.php?success=true&message=" . urlencode("Materials have been successfully added."));
         exit(); // Terminate script after redirection
     } else {
         // If no materials are selected, display a message or perform appropriate action

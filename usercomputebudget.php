@@ -1,5 +1,10 @@
 <?php
-    include('config.php');
+      include('config.php');
+
+    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+    $message = htmlspecialchars($_GET['message']);
+    echo "<script>alert('$message');</script>";
+  }
 ?>
 
 <!DOCTYPE html>

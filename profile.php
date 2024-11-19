@@ -10,6 +10,18 @@
 <?php
 session_start();
 include('config.php');
+if (isset($_SESSION['message'])) {
+  echo '<div class="alert">' . $_SESSION['message'] . '</div>';
+  unset($_SESSION['message']); // Unset the message after it is displayed
+}
+
+// Check if success parameter is passed in the URL
+if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+  // Sanitize the message to prevent XSS
+  $message = htmlspecialchars($_GET['message']);
+  // Output the alert with the message
+  echo "<script>alert('$message');</script>";
+}
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $username = $_POST["username"];

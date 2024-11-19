@@ -12,8 +12,9 @@ function deleteDeclinedPlan($declined_plan_ID) {
 
     // Execute the query
     if (mysqli_stmt_execute($deleteStmt)) {
-        echo "Declined Plan has been successfully deleted.";
-        header("Location: userprofile.php"); // Redirect after deletion
+        // Redirect to userprofile.php with success message in URL
+        header("Location: userprofile.php?success=true&message=" . urlencode("Declined Plan has been successfully deleted."));
+        exit(); // Make sure to stop further code execution
     } else {
         echo "Error deleting the plan: " . mysqli_error($conn);
     }

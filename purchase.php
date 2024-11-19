@@ -476,24 +476,5 @@
       <a href="#">Report</a>
   </div>
 </body>
-<script>
-        var voucherCode = "VOUCHER20";
-        var couponCode = "DISCOUNT10";
-
-        document.getElementById("apply-button").addEventListener("click", function() {
-            var select = document.getElementById("coupon-select");
-            var input = document.getElementById("coupon-input").value;
-            var message = document.getElementById("coupon-message");
-            var couponType = select.options[select.selectedIndex].value;
-
-            if (couponType === "voucher" && input === voucherCode) {
-                message.innerHTML = "Voucher applied successfully!";
-            } else if (couponType === "coupon" && input === couponCode) {
-                message.innerHTML = "Coupon applied successfully!";
-            } else {
-                message.innerHTML = "Invalid voucher or coupon code. Please try again.";
-            }
-        });
-</script>
 </html>
   

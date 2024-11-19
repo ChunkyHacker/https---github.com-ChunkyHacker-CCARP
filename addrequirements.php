@@ -59,8 +59,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             mysqli_stmt_bind_param($insertStmt, "isssssssssssssss", $user_ID, $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, $width_floor_area, $square_meter_floor, $initial_budget, $estimated_cost, $start_date, $end_date, $type, $photoPath, $approved_by, $labor_cost, $contractPath);
 
             if (mysqli_stmt_execute($insertStmt)) {
-                echo "Data inserted into projectrequirements table successfully.";
-                header("Location: selectmaterialsrequirement.php");
+                // Redirect to selectmaterialsrequirement.php with a success message
+                header("Location: selectmaterialsrequirement.php?success=true&message=" . urlencode("Data inserted into projectrequirements table successfully."));
                 exit();
             } else {
                 echo "Error inserting data into projectrequirements table: " . mysqli_error($conn);

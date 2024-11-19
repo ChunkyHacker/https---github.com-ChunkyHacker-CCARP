@@ -7,6 +7,11 @@
 // Ensure the existence of the Plan_ID field in the session
 $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
 
+if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+    $message = htmlspecialchars($_GET['message']); // Sanitize the message
+    echo "<script>alert('$message');</script>";
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -15,6 +20,8 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Part</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
     * {
         box-sizing: border-box;
@@ -673,6 +680,28 @@ $PlanID = isset($_SESSION['plan_ID']) ? $_SESSION['plan_ID'] : '';
         // Update the estimated cost input
         document.getElementById("estimated_cost").value = estimatedCost;
     }
+</script>
+<script>
+    window.onload = function() {
+        // Check if success and message are in the URL
+        <?php if ($success == 'true' && $message != ''): ?>
+            var message = "<?php echo $message; ?>";
+            var alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-success alert-dismissible fade show';
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = message + 
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            document.body.prepend(alertDiv); // Add alert at the top of the body
+        <?php elseif ($success == 'false' && $message != ''): ?>
+            var message = "<?php echo $message; ?>";
+            var alertDiv = document.createElement('div');
+            alertDiv.className = 'alert alert-danger alert-dismissible fade show';
+            alertDiv.role = 'alert';
+            alertDiv.innerHTML = message + 
+                '<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>';
+            document.body.prepend(alertDiv); // Add alert at the top of the body
+        <?php endif; ?>
+    };
 </script>
 
 </html>

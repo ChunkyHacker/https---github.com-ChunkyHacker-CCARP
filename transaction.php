@@ -23,8 +23,9 @@ if ($stmt) {
             $prematerials = $result->fetch_all(MYSQLI_ASSOC);
             // Encode the requirements data as JSON
             $prematerials_json = json_encode($prematerials);
-            // Redirect to receipt.php with necessary data
-            header("Location: receipt.php?total_price=$totalprice&payment_method=$paymentmethod&prematerials=$prematerials_json");
+
+            // Redirect to receipt.php with a success message
+            header("Location: receipt.php?success=true&message=" . urlencode("Transaction successful!") . "&total_price=$totalprice&payment_method=$paymentmethod&prematerials=$prematerials_json");
             exit;
         } else {
             echo "Error fetching requirements: " . $conn->error;
@@ -39,4 +40,5 @@ if ($stmt) {
     echo "Error preparing statement: " . $conn->error;
 }
 
+$conn->close();
 ?>

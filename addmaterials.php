@@ -10,7 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $totalcost = $_POST["total_cost"];
 
     // Ensure the existence of the requirement_ID field in the form data
-    if(isset($_POST["requirement_ID"])) {
+    if (isset($_POST["requirement_ID"])) {
         $requirementID = $_POST["requirement_ID"];
     } else {
         // Handle the case where requirement_ID is not provided
@@ -23,9 +23,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     VALUES ('$materialname', '$type', '$quantity', '$cost', '$totalcost', '$requirementID')";
     
     if ($conn->query($sql) === TRUE) {
-        // Item added successfully, redirect back to products.php
+        // Item added successfully, redirect back to usercomputebudget.php with a success message
         $conn->close();
-        header("Location: usercomputebudget.php?requirement_ID=$requirementID");
+        header("Location: usercomputebudget.php?requirement_ID=$requirementID&success=true&message=" . urlencode("Item added successfully!"));
         exit();
     } else {
         echo "Error: " . $sql . "<br>" . $conn->error;

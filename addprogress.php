@@ -1,5 +1,6 @@
 <?php
 include('config.php');
+
 // Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the form data
@@ -10,7 +11,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $totalcost = $_POST["Total_cost"];
     
     // Ensure the existence of the requirement_ID field in the form data
-    if(isset($_POST["requirement_ID"])) {
+    if (isset($_POST["requirement_ID"])) {
         $requirementID = $_POST["requirement_ID"];
     } else {
         // Handle the case where requirement_ID is not provided
@@ -23,16 +24,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             VALUES ('$progressname', '$progresstype', '$materials', '$materialcost', '$totalcost', '$requirementID')";
     
     if ($conn->query($sql) === TRUE) {
-        // Item added successfully, redirect back to progress.php with requirement_ID
+        // Item added successfully, redirect back to progress.php with a success message
         $conn->close();
-        header("Location: progress.php?requirement_ID=$requirementID");
+        header("Location: progress.php?requirement_ID=$requirementID&success=true&message=" . urlencode("Report added successfully!"));
         exit();
     } else {
+        // Display the error message
         echo "Error: " . $sql . "<br>" . $conn->error;
     }
 
     $conn->close();
 } else {
-    echo "Error: There was an error uploading the file.";
+    echo "Error: The form was not submitted correctly.";
 }
 ?>
