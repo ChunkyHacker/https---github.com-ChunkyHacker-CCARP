@@ -9,207 +9,211 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Approved Plan Details</title>
     <style>
-        * {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
-body {
-    font-family: Verdana, sans-serif;
-    margin: 0;
-    background-color: #FF8C00;
-    font-size: 20px; /* Set body font size to 20px */
-}
-
-.container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-}
-
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-    background: #FF8C00;
-    color: #000000;
-    display: flex;
-    align-items: center;
-    text-decoration: none;
-    z-index: 100;
-}
-
-.header h1 {
-    font-size: 20px; /* Adjust header font size */
-    border-left: 20px solid transparent;
-    text-decoration: none;
-}
-
-.right {
-    margin-right: 20px;
-}
-
-.header a {
-    font-size: 20px; /* Set font size to 20px */
-    font-weight: bold;
-    text-decoration: none;
-    color: #000000;
-    margin-right: 15px;
-}
-
-@media screen and (max-width: 600px) {
-    .topnav a, .topnav input[type=text] {
-        float: none;
-        display: block;
-        text-align: left;
-        width: 100%;
+            * {
+        box-sizing: border-box;
         margin: 0;
-        padding: 14px;
-    }
+        padding: 0;
+        }
 
-    .topnav input[type=text] {
-        border: 1px solid #ccc;
-    }
+        body {
+            font-family: Verdana, sans-serif;
+            margin: 0;
+            background-color: #FF8C00;
+            font-size: 20px; /* Set body font size to 20px */
+        }
 
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        margin: 0;
-        padding-top: 300px;
-        font-size: 20px; /* Set font size to 20px */
-    }
-}
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
 
-/* CSS styles for the modal */
-.modal {
-    display: none;
-    position: fixed;
-    z-index: 1;
-    left: 0;
-    top: 0;
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    background-color: rgba(255, 140, 0, 0.4);
-}
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            background: #FF8C00;
+            color: #000000;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            z-index: 100;
+        }
 
-.modal-content {
-    background-color: #FF8C00;
-    margin: 15% auto;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    max-height: 80%;
-    overflow-y: auto;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+        .header h1 {
+            font-size: 20px; /* Adjust header font size */
+            border-left: 20px solid transparent;
+            text-decoration: none;
+        }
 
-.header {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: 10px;
-    text-align: left;
-    background: #FF8C00;
-    color: #000000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-decoration: none;
-    z-index: 100;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+        .right {
+            margin-right: 20px;
+        }
 
-.modal-content {
-    background-color: #fefefe;
-    padding: 20px;
-    border: 1px solid #888;
-    width: 80%;
-    border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-}
+        .header a {
+            font-size: 20px; /* Set font size to 20px */
+            font-weight: bold;
+            text-decoration: none;
+            color: #000000;
+            margin-right: 15px;
+        }
 
-h2 {
-    font-size: 20px; /* Adjust heading size */
-    margin-bottom: 20px;
-    color: #FF8C00;
-}
+        @media screen and (max-width: 600px) {
+            .topnav a, .topnav input[type=text] {
+                float: none;
+                display: block;
+                text-align: left;
+                width: 100%;
+                margin: 0;
+                padding: 14px;
+            }
 
-form {
-    display: flex;
-    flex-direction: column;
-}
+            .topnav input[type=text] {
+                border: 1px solid #ccc;
+            }
 
-label {
-    font-size: 20px; /* Adjust label font size */
-    margin-bottom: 5px;
-    color: #000000;
-}
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                margin: 0;
+                padding-top: 300px;
+                font-size: 20px; /* Set font size to 20px */
+            }
+        }
 
-input,
-select,
-textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 20px; /* Adjust input font size */
-}
+        /* CSS styles for the modal */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(255, 140, 0, 0.4);
+        }
 
-.post-btn, .cancel-btn {
-    margin-bottom: 10px;
-}
+        .modal-content {
+            background-color: #FF8C00;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-height: 80%;
+            overflow-y: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-.table-container {
-    margin-bottom: 20px; /* Adds space between tables */
-    width: 100%; /* Ensures each table takes full width */
-}
+        .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            padding: 10px;
+            text-align: left;
+            background: #FF8C00;
+            color: #000000;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            text-decoration: none;
+            z-index: 100;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-.cancel-btn {
-    background-color: red;
-    color: #fff;
-    padding: 10px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-right: 10px;
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
-    width: 100%;
-    font-size: 20px; /* Set cancel button font size */
-}
+        .modal-content {
+            background-color: #fefefe;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
 
-.cancel-btn:hover {
-    background-color: #000000;
-}
+        h2 {
+            font-size: 20px; /* Adjust heading size */
+            margin-bottom: 20px;
+            color: #FF8C00;
+        }
 
-button {
-    background-color: #FF8C00;
-    color: #fff;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 20px; /* Set button font size */
-}
+        form {
+            display: flex;
+            flex-direction: column;
+        }
 
-button:hover {
-    background-color: #000000;
-}
+        label {
+            font-size: 20px; /* Adjust label font size */
+            margin-bottom: 5px;
+            color: #000000;
+        }
 
-@media screen and (max-width: 600px) {
-    .modal-content {
-        width: 100%;
-    }
-}
+        input,
+        select,
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 20px; /* Adjust input font size */
+        }
+
+        .post-btn, .cancel-btn {
+            margin-bottom: 10px;
+        }
+
+        .table-container {
+            margin-bottom: 20px; /* Adds space between tables */
+            width: 100%; /* Ensures each table takes full width */
+        }
+
+        .cancel-btn {
+            background-color: red;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            font-size: 20px; /* Set cancel button font size */
+        }
+
+        .cancel-btn:hover {
+            background-color: #000000;
+        }
+
+        button {
+            background-color: #FF8C00;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px; /* Set button font size */
+        }
+
+        button:hover {
+            background-color: #000000;
+        }
+
+        .button-container {
+            margin-bottom: 15px; /* Adds space between buttons */
+        }
+
+        @media screen and (max-width: 600px) {
+            .modal-content {
+                width: 100%;
+            }
+        }
 
     </style>
 </head>
@@ -430,17 +434,20 @@ button:hover {
                     
             echo "</form>";
             echo "</div>"; 
-            echo '<button onclick="window.location.href = \'userprofile.php\'">Go back</button>';
-
-            echo "<div class='button-container'>
-                <button onclick=\"window.location.href='usercomputebudget.php?requirement_ID={$row['requirement_ID']}'\">Compute Budget</button>
-            </div>";
+            echo '<div class="button-container">
+                    <button onclick="history.back()">Go back</button>
+                </div>';
             
-            echo "<div class='button-container'>
-                <button onclick=\"window.location.href='userviewprogress.php?requirement_ID={$row['requirement_ID']}'\">Check Progress</button>
-            </div>";
+            echo '<div class="button-container">
+                    <button onclick="window.location.href=\'usercomputebudget.php?requirement_ID=' . htmlspecialchars($row['requirement_ID']) . '\'">Compute Budget</button>
+                </div>';
             
-
+            echo '<div class="button-container">
+                    <button onclick="window.location.href=\'userviewprogress.php?requirement_ID=' . htmlspecialchars($row['requirement_ID']) . '\'">Check Progress</button>
+                </div>';     
+            echo '<div class="button-container">
+                    <button onclick="window.location.href=\'viewexpenses.php?requirement_ID=' . htmlspecialchars($row['requirement_ID']) . '\'">Track expenses on your project</button>
+                </div>';
         } else {
             echo "<div class='main'>";
             echo "<p>No approved plan found with Approved Plan ID: $requirement_ID</p>";

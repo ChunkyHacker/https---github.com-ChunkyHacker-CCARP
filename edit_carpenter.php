@@ -16,7 +16,7 @@ if (isset($_GET['id'])) {
     $carpenter_id = $_GET['id'];
 
     // Fetch the carpenter details from the database
-    $sql = "SELECT * FROM carpenter WHERE Carpenter_ID = ?";
+    $sql = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $carpenter_id);
     $stmt->execute();
@@ -24,7 +24,7 @@ if (isset($_GET['id'])) {
     $carpenter = $result->fetch_assoc();
 } else {
     die("Carpenter ID not specified.");
-}
+}   
 
 // Handle the form submission for editing carpenter details
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -32,20 +32,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $lastname = trim($_POST['lastname']);
     $phone = trim($_POST['phone']);
     $email = trim($_POST['email']);
-    $skills = trim($_POST['skills']);
+    $address = trim($_POST['address']);
+    $dob = trim($_POST['dob']);
+    $experiences = trim($_POST['experiences']);
+    $projects = trim($_POST['projects']);
+    $specialization = trim($_POST['specialization']);
 
     // Validate inputs
-    if (empty($firstname) || empty($lastname) || empty($phone) || empty($email) || empty($skills)) {
+    if (empty($firstname) || empty($lastname) || empty($phone) || empty($email) || empty($address) || empty($dob) || empty($experiences) || empty($projects) || empty($specialization)) {
         die("All fields are required.");
     }
 
     // Prepare and execute the SQL query to update carpenter details
-    $sql_update = "UPDATE carpenter SET First_Name = ?, Last_Name = ?, Phone = ?, Email = ?, Skills = ? WHERE Carpenter_ID = ?";
+    $sql_update = "UPDATE carpenters 
+                   SET First_Name = ?, Last_Name = ?, Phone_Number = ?, Email = ?, Address = ?, Date_Of_Birth = ?, Experiences = ?, Project_Completed = ?, specialization = ? 
+                   WHERE Carpenter_ID = ?";
     $stmt_update = $conn->prepare($sql_update);
-    $stmt_update->bind_param("sssssi", $firstname, $lastname, $phone, $email, $skills, $carpenter_id);
+    $stmt_update->bind_param("sssssssssi", $firstname, $lastname, $phone, $email, $address, $dob, $experiences, $projects, $specialization, $carpenter_id);
 
     if ($stmt_update->execute()) {
-        echo "<script>alert('Carpenter updated successfully!'); window.location.href = 'manage_carpenters.php';</script>";
+        echo "<script>alert('Carpenter updated successfully!'); window.location.href = 'manage_users.php';</script>";
     } else {
         echo "Error: " . $stmt_update->error;
     }
@@ -68,7 +74,7 @@ $conn->close();
 </head>
 <body>
     <div class="container">
-        <h2>Edit Carpenter Details</h2>
+        <h2 class="mt-4">Edit Carpenter Details</h2>
         <form method="POST">
             <div class="mb-3">
                 <label for="firstname" class="form-label">First Name</label>
@@ -80,15 +86,31 @@ $conn->close();
             </div>
             <div class="mb-3">
                 <label for="phone" class="form-label">Phone Number</label>
-                <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $carpenter['Phone']; ?>" required>
+                <input type="text" class="form-control" id="phone" name="phone" value="<?php echo $carpenter['Phone_Number']; ?>" required>
             </div>
             <div class="mb-3">
                 <label for="email" class="form-label">Email</label>
                 <input type="email" class="form-control" id="email" name="email" value="<?php echo $carpenter['Email']; ?>" required>
             </div>
             <div class="mb-3">
-                <label for="skills" class="form-label">Skills</label>
-                <textarea class="form-control" id="skills" name="skills" rows="3" required><?php echo $carpenter['Skills']; ?></textarea>
+                <label for="address" class="form-label">Address</label>
+                <input type="text" class="form-control" id="address" name="address" value="<?php echo $carpenter['Address']; ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="dob" class="form-label">Date of Birth</label>
+                <input type="date" class="form-control" id="dob" name="dob" value="<?php echo $carpenter['Date_Of_Birth']; ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="experiences" class="form-label">Experiences</label>
+                <input type="text" class="form-control" id="experiences" name="experiences" value="<?php echo $carpenter['Experiences']; ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="projects" class="form-label">Projects Completed</label>
+                <input type="text" class="form-control" id="projects" name="projects" value="<?php echo $carpenter['Project_Completed']; ?>" required>
+            </div>
+            <div class="mb-3">
+                <label for="specialization" class="form-label">Specialization</label>
+                <input type="text" class="form-control" id="specialization" name="specialization" value="<?php echo $carpenter['specialization']; ?>" required>
             </div>
             <button type="submit" class="btn btn-primary">Update</button>
         </form>

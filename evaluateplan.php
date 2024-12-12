@@ -209,32 +209,6 @@ session_start();
         font-size: 20px; /* Set button font size to 20px */
     }
 
-    .view-plan-btn {
-        background-color: #FF8C00;
-        color: #fff;
-        border: none;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 20px; /* Set button font size to 20px */
-        text-decoration: none; /* Removes the underline */
-    }
-
-    .view-plan-btn:hover {
-        background-color: #000000;
-    }
-
-    .view-plan-btn, .go-back-btn {
-        display: inline-block;
-        margin-top: 10px; /* Adds some spacing */
-    }
-
-    div {
-        margin-bottom: 15px; /* Adds spacing between buttons */
-    }
-
-
     button:hover {
         background-color: #000000;
     }
@@ -409,12 +383,59 @@ session_start();
                             </a>
                         </div>
                     <?php endif; ?>
-                    <div>
-                        <a href="evaluateplan.php?plan_id=<?php echo htmlspecialchars($row['plan_ID']); ?>" class="view-plan-btn">Evaluate Plan</a>
-                    </div>
-                    <div>
-                        <button onclick="history.back()">Go back</button>
-                    </div>
+
+                    <form id='planForm' method='post' action='approveplan.php'>
+                        <label for='q1'>Were the details of the project suitable for your scope of work?</label>
+                        <select name='q1' required>
+                            <option value='' selected disabled>Select an option</option>
+                            <option value='Yes'>Yes</option>
+                            <option value='No'>No</option>
+                        </select>
+
+                        <label for='q2'>Are you able to finish the project even if there is an overlapping budget?</label>
+                        <select name='q2' required>
+                            <option value='' selected disabled>Select an option</option>
+                            <option value='Yes'>Yes</option>
+                            <option value='No'>No</option>
+                        </select>
+
+                        <label for='q3'>Are you willing to accept an additional task with additional payment?</label>
+                        <select name='q3' required>
+                            <option value='' selected disabled>Select an option</option>
+                            <option value='Yes'>Yes</option>
+                            <option value='No'>No</option>
+                        </select>
+
+                        <label for='q4'>Can you finish the project on time?</label>
+                        <select name='q4' required>
+                            <option value='' selected disabled>Select an option</option>
+                            <option value='Yes'>Yes</option>
+                            <option value='No'>No</option>
+                        </select>
+
+                        <label for='q5'>Will you accept the project?</label>
+                        <select name='q5' required>
+                            <option value='' selected disabled>Select an option</option>
+                            <option value='Yes'>Yes</option>
+                            <option value='No'>No</option>
+                        </select>
+
+                        <label for='comment'>If Yes/No, why?</label>
+                        <textarea name='comment' rows='4' cols='50'></textarea>
+                            <label for='name'>Approved By: </label>
+                            <input type='text' id='name' name='approved_by' value='<?php echo $carpenterData['First_Name'];?> <?php echo $carpenterData['Last_Name'];?>' readonly><br>
+                        <label for='status'>Status:</label>
+                        <select id="status" name="status">
+                            <option value="" selected disabled>Select an option</option>
+                            <option value="approve">Approve</option>
+                            <option value="decline">Decline</option>
+                        </select>
+
+                        <input type='hidden' name='plan_id' value='<?php echo $plan_id; ?>'>
+                        <button type='submit'>Submit</button>
+                    </form>
+
+                    <button onclick="history.back()">Go back</button>
                 </div>
                 <?php
                 mysqli_stmt_close($stmt);
