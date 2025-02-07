@@ -28,7 +28,7 @@ $admin = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard</title>
+    <title>Dashboard</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
@@ -102,9 +102,9 @@ $admin = $result->fetch_assoc();
             <div class="col-md-4">
                 <div class="card dashboard-card">
                     <div class="card-body">
-                        <h5 class="card-title">View Reports</h5>
-                        <p class="card-text">Generate and view system reports.</p>
-                        <a href="view_reports.php" class="btn btn-primary">View Reports</a>
+                        <h5 class="card-title">View Inventory</h5>
+                        <p class="card-text">Generate and view Inventory reports.</p>
+                        <a href="admin_view_inventory.php" class="btn btn-primary">View Inventory</a>
                     </div>
                 </div>
             </div>
