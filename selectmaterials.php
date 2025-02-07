@@ -23,208 +23,207 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"></script>
     <style>
-    * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-    }
-
-    body {
-        font-family: Verdana, sans-serif;
-        margin: 0;
-        font-size: 20px; /* Default font size */
-        line-height: 1.6;
-        padding: 20px; /* Added padding to body */
-    }
-
-    table {
-        display: none;
-        border-collapse: collapse;
-        width: 100%;
-    }
-
-    th, td {
-        border: 1px solid #ddd;
-        text-align: left;
-        padding: 8px;
-        font-size: 20px;
-    }
-
-    /* Header */
-    .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 10px;
-        background: #FF8C00;
-        color: #000;
-        display: flex;
-        align-items: center;
-        z-index: 100;
-    }
-
-    .header h1 {
-        font-size: 20px;
-        margin-left: 10px;
-        border-left: 20px solid transparent;
-    }
-
-    .header a {
-        font-size: 20px;
-        font-weight: bold;
-        color: #000;
-        text-decoration: none;
-        margin-right: 15px;
-    }
-
-    .right {
-        margin-left: auto;
-    }
-
-    /* Box container */
-    .content-box {
-        background-color: #f9f9f9; /* Light grey background */
-        border: 20px solid #FF8600; 
-        border-radius: 0px;
-        padding: 50px; 
-        margin-top: 20px; 
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    }
-
-    .row-container {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 20px;
-    }
-
-    .input-container {
-        flex: 1;
-    }
-
-    /* Media Queries */
-    @media screen and (max-width: 600px) {
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            padding-top: 60px; /* Adjusted for header */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
 
+        body {
+            font-family: Verdana, sans-serif;
+            margin: 0;
+            font-size: 20px; /* Default font size */
+            line-height: 1.6;
+            padding: 20px; /* Added padding to body */
+        }
+
+        table {
+            display: none;
+            border-collapse: collapse;
+            width: 100%;
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            text-align: left;
+            padding: 8px;
+            font-size: 20px;
+        }
+
+        /* Header */
         .header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
             padding: 10px;
-            flex-direction: column;
-            text-align: center;
+            background: #FF8C00;
+            color: #000;
+            display: flex;
+            align-items: center;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            margin-left: 10px;
+            border-left: 20px solid transparent;
         }
 
         .header a {
-            margin-bottom: 10px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #000;
+            text-decoration: none;
+            margin-right: 15px;
         }
 
-        .topnav a, .topnav input[type="text"] {
-            display: block;
+        .right {
+            margin-left: auto;
+        }
+
+        /* Box container */
+        .content-box {
+            background-color: #f9f9f9; /* Light grey background */
+            border: 20px solid #FF8600; 
+            border-radius: 0px;
+            padding: 50px; 
+            margin-top: 20px; 
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .row-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .input-container {
+            flex: 1;
+        }
+
+        /* Media Queries */
+        @media screen and (max-width: 600px) {
+            body {
+                font-family: Arial, Helvetica, sans-serif;
+                padding-top: 60px; /* Adjusted for header */
+            }
+
+            .header {
+                padding: 10px;
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .header a {
+                margin-bottom: 10px;
+            }
+
+            .topnav a, .topnav input[type="text"] {
+                display: block;
+                width: 100%;
+                text-align: left;
+                margin: 0;
+                padding: 14px;
+            }
+
+            .topnav input[type="text"] {
+                border: 1px solid #ccc;
+            }
+
+            .modal-content {
+                width: 100%;
+            }
+
+            /* For mobile views, content box gets full width */
+            .content-box {
+                width: 100%;
+                padding: 15px;
+            }
+        }
+
+        /* CSS for Modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            text-align: left;
-            margin: 0;
-            padding: 14px;
-        }
-
-        .topnav input[type="text"] {
-            border: 1px solid #ccc;
+            height: 100%;
+            background-color: rgba(255, 140, 0, 0.4);
+            z-index: 1000;
+            overflow: auto;
         }
 
         .modal-content {
-            width: 100%;
+            background-color: #FF8C00;
+            margin: 10% auto;
+            padding: 20px;
+            width: 80%;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
 
-        /* For mobile views, content box gets full width */
-        .content-box {
-            width: 100%;
-            padding: 15px;
+        h2 {
+            font-size: 20px;
+            color: #FF8C00;
+            margin-bottom: 20px;
         }
-    }
 
-    /* CSS for Modal */
-    .modal {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(255, 140, 0, 0.4);
-        z-index: 1000;
-        overflow: auto;
-    }
+        form {
+            display: flex;
+            flex-direction: column;
+        }
 
-    .modal-content {
-        background-color: #FF8C00;
-        margin: 10% auto;
-        padding: 20px;
-        width: 80%;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
+        label {
+            font-size: 20px;
+            margin-bottom: 5px;
+            color: #000;
+        }
 
-    h2 {
-        font-size: 20px;
-        color: #FF8C00;
-        margin-bottom: 20px;
-    }
+        input, select, textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 20px;
+        }
 
-    form {
-        display: flex;
-        flex-direction: column;
-    }
+        .post-btn, .cancel-btn {
+            margin-bottom: 10px;
+        }
 
-    label {
-        font-size: 20px;
-        margin-bottom: 5px;
-        color: #000;
-    }
+        .cancel-btn {
+            background-color: red;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-align: center;
+            width: 100%;
+            font-size: 20px;
+        }
 
-    input, select, textarea {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 20px;
-    }
+        .cancel-btn:hover {
+            background-color: #000;
+        }
 
-    .post-btn, .cancel-btn {
-        margin-bottom: 10px;
-    }
+        button {
+            background-color: #FF8C00;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px;
+        }
 
-    .cancel-btn {
-        background-color: red;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        text-align: center;
-        width: 100%;
-        font-size: 20px;
-    }
-
-    .cancel-btn:hover {
-        background-color: #000;
-    }
-
-    button {
-        background-color: #FF8C00;
-        color: white;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 20px;
-    }
-
-    button:hover {
-        background-color: #000;
-    }
-
-</style>
+        button:hover {
+            background-color: #000;
+        }
+    </style>
 
 
 
@@ -238,6 +237,7 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
             <h2>Parts of the House</h2>
             <p>What part of the house do you want to build or to renovate?</p>
 
+            <div>
             <label for="checkboxBedroom">Bedroom</label>
             <input type="checkbox" id="checkboxBedroom" name="part[]" value="Bedroom" onclick="toggleTable('Bedroom')">
 
@@ -252,76 +252,46 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
 
             <label for="checkboxBathroom">Bathroom</label>
             <input type="checkbox" id="checkboxBathroom" name="part[]" value="Bathroom" onclick="toggleTable('Bathroom')">
-
+            </div>
             <div>
                 <!-- Bedroom Table -->
                 <table id="tableBedroom">
                     <thead>
                         <tr>
-                        <th>Select</th>
-                        <th>Materials</th>
-                        <th>Quantity</th>
-                        <th>Price (₱)</th>
-                        <th>Total (₱)</th>
+                            <th>Select</th>
+                            <th>Materials</th>
+                            <th>Quantity</th>
+                            <th>Price (₱)</th>
+                            <th>Total (₱)</th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr>
-                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="800.00" value="Bed" onclick="updateEstimatedCost()"></td>
-                            <td>Bed</td>
-                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                            <td>800.00</td>
-                            <td class="total">800.00</td>
-                            <input type="hidden" class="totalInput" name="total[]" value="800.00">
-                            <input type="hidden" name="name[]" value="Bed">
-                            <input type="hidden" name="price[]" value="800.00">
-                        </tr>
-
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="400.00" value="Curtains" onclick="updateEstimatedCost()"></td>
-                            <td>Curtains</td>
-                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                            <td><span class="price">400.00</span></td>
-                            <td><span class="total">400.00</span></td>
-                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                            <input type="hidden" name="name[]" value="Curtains">
-                            <input type="hidden" name="price[]" value="400.00">
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1200.00" value="Bedding" onclick="updateEstimatedCost()"></td>
-                            <td>Bedding</td>
-                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                            <td><span class="price">400.00</span></td>
-                            <td><span class="total">400.00</span></td>
-                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                            <input type="hidden" name="name[]" value="Bedding">
-                            <input type="hidden" name="price[]" value="400.00">
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="3500.00" value="Matress" onclick="updateEstimatedCost()"></td>
-                            <td>Matress</td>
-                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                            <td><span class="price">400.00</span></td>
-                            <td><span class="total">400.00</span></td>
-                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                            <input type="hidden" name="name[]" value="Matress">
-                            <input type="hidden" name="price[]" value="400.00">
-                        </tr>
-                        <tr>
-                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="600.00" value="Bedside Lamps" onclick="updateEstimatedCost()"></td>
-                            <td>Bedside Lamps</td>
-                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                            <td><span class="price">400.00</span></td>
-                            <td><span class="total">400.00</span></td>
-                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                            <input type="hidden" name="name[]" value="Bedside Lamps">
-                            <input type="hidden" name="price[]" value="400.00">
-
-                        </tr>
-                        <!-- Add more rows as needed for bedroom materials -->
+                        <?php
+                        include 'config.php';
+                        $sql = "SELECT * FROM prematerialsinventory";
+                        $result = $conn->query($sql);
+                        
+                        if ($result->num_rows > 0) {
+                            while ($row = $result->fetch_assoc()) {
+                                echo "<tr>
+                                        <td><input type='checkbox' class='item-checkbox' name='materials[]' data-price='{$row['price']}' value='{$row['name']}' onclick='updateEstimatedCost()'></td>
+                                        <td>{$row['name']}</td>
+                                        <td><input type='number' class='quantity' name='quantity[]' value='1' min='0' oninput='calculateTotal(this)'></td>
+                                        <td>{$row['price']}</td>
+                                        <td class='total'>{$row['price']}</td>
+                                        <input type='hidden' class='totalInput' name='total[]' value='{$row['price']}'>
+                                        <input type='hidden' name='name[]' value='{$row['name']}'>
+                                        <input type='hidden' name='price[]' value='{$row['price']}'>
+                                    </tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='5' class='text-center'>No materials found</td></tr>";
+                        }
+                        $conn->close();
+                        ?>
                     </tbody>
                 </table>
+
 
                 <!-- Dining Room Table -->
                 <table id="tableDining">
@@ -334,127 +304,45 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
                         <th>Total (₱)</th>
                     </tr>
                     </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="2500.00" value="Dining Table" onclick="updateEstimatedCost()"></td>
-                        <td>Dining Table</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Dining Table">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1200.00" value="Dining Chairs" onclick="updateEstimatedCost()"></td>
-                        <td>Dining Chairs</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Dining Chairs">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1800.00" value="Cabinet" onclick="updateEstimatedCost()"></td>
-                        <td>Cabinet</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Cabinet">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="800.00" value="Rug" onclick="updateEstimatedCost()"></td>
-                        <td>Rug</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Rug">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="400.00" value="Table Cloth" onclick="updateEstimatedCost()"></td>
-                        <td>Table Cloth</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Table Cloth">
-                        <input type="hidden" name="price[]" value="400.00">
-
-                    </tr>
-                    <!-- Add more rows as needed for dining room materials -->
-                </tbody>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="2500.00" value="Dining Table" onclick="updateEstimatedCost()"></td>
+                            <td>Dining Table</td>
+                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
+                            <td><span class="price">400.00</span></td>
+                            <td><span class="total">400.00</span></td>
+                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
+                            <input type="hidden" name="name[]" value="Dining Table">
+                            <input type="hidden" name="price[]" value="400.00">
+                        </tr>
+                        <!-- Add more rows as needed for dining room materials -->
+                    </tbody>
                 </table>
 
                 <!-- Living Room Table -->
                 <table id="tableLiving">
-                <thead>
-                    <tr>
-                    <th>Select</th>
-                    <th>Materials</th>
-                    <th>Quantity</th>
-                    <th>Price (₱)</th>
-                    <th>Total (₱)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="3000.00" value="Sofa" onclick="updateEstimatedCost()"></td>
-                        <td>Sofa</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Sofa">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1200.00" value="Rug" onclick="updateEstimatedCost()"></td>
-                        <td>Rug</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Rug">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="800.00" value="Cushion" onclick="updateEstimatedCost()"></td>
-                        <td>Cushion</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Cushion">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1500.00" value="Lights" onclick="updateEstimatedCost()"></td>
-                        <td>Lights</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="800.00">
-                        <input type="hidden" name="name[]" value="Lights">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="2000.00" value="Table" onclick="updateEstimatedCost()"></td>
-                        <td>Table</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Table">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <!-- Add more rows as needed for living room materials -->
-                </tbody>
-
+                    <thead>
+                        <tr>
+                        <th>Select</th>
+                        <th>Materials</th>
+                        <th>Quantity</th>
+                        <th>Price (₱)</th>
+                        <th>Total (₱)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="3000.00" value="Sofa" onclick="updateEstimatedCost()"></td>
+                            <td>Sofa</td>
+                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
+                            <td><span class="price">400.00</span></td>
+                            <td><span class="total">400.00</span></td>
+                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
+                            <input type="hidden" name="name[]" value="Sofa">
+                            <input type="hidden" name="price[]" value="400.00">
+                        </tr>
+                        <!-- Add more rows as needed for living room materials -->
+                    </tbody>
                 </table>
 
                 <!-- Kitchen Table -->
@@ -468,125 +356,45 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
                         <th>Total (₱)</th>
                     </tr>
                     </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1000.00" value="Sink" onclick="updateEstimatedCost()"></td>
-                        <td>Sink</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Sink">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="500.00" value="Dish holder" onclick="updateEstimatedCost()"></td>
-                        <td>Dish holder</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Dish holder">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="800.00" value="Cabinet" onclick="updateEstimatedCost()"></td>
-                        <td>Cabinet</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Cabinet">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1200.00" value="Lights" onclick="updateEstimatedCost()"></td>
-                        <td>Lights</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Lights">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1500.00" value="Table" onclick="updateEstimatedCost()"></td>
-                        <td>Table</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Table">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <!-- Add more rows as needed for kitchen materials -->
-                </tbody>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1000.00" value="Sink" onclick="updateEstimatedCost()"></td>
+                            <td>Sink</td>
+                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
+                            <td><span class="price">400.00</span></td>
+                            <td><span class="total">400.00</span></td>
+                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
+                            <input type="hidden" name="name[]" value="Sink">
+                            <input type="hidden" name="price[]" value="400.00">
+                        </tr>
+                        <!-- Add more rows as needed for kitchen materials -->
+                    </tbody>
                 </table>
 
                 <!-- Bathroom Table -->
                 <table id="tableBathroom">
-                <thead>
-                    <tr>
-                    <th>Select</th>
-                    <th>Materials</th>
-                    <th>Quantity</th>
-                    <th>Price (₱)</th>
-                    <th>Total (₱)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="400.00" value = "Vanity" onclick="updateEstimatedCost()"></td>
-                        <td>Vanity</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">400.00</span></td>
-                        <td><span class="total">400.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="400.00">
-                        <input type="hidden" name="name[]" value="Vanity">
-                        <input type="hidden" name="price[]" value="400.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1800.00" value = "Shower" onclick="updateEstimatedCost()"></td>
-                        <td>Shower</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">1800.00</span></td>
-                        <td><span class="total">1800.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="1800.00">
-                        <input type="hidden" name="name[]" value="Shower">
-                        <input type="hidden" name="price[]" value="1800.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="600.00" value = "Faucet Set" onclick="updateEstimatedCost()"></td>
-                        <td>Faucet Set</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">600.00</span></td>
-                        <td><span class="total">600.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="600.00">
-                        <input type="hidden" name="name[]" value="Faucet Set">
-                        <input type="hidden" name="price[]" value="600.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="1500.00" value = "Bathtub" onclick="updateEstimatedCost()"></td>
-                        <td>Bathtub</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">1500.00</span></td>
-                        <td><span class="total">1500.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="1500.00">
-                        <input type="hidden" name="name[]" value="Baththub">
-                        <input type="hidden" name="price[]" value="1500.00">
-                    </tr>
-                    <tr>
-                        <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="800.00" value = "Toilets" ></td>
-                        <td>Toilets</td>
-                        <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
-                        <td><span class="price">800.00</span></td>
-                        <td><span class="total">800.00</span></td>
-                        <input type="hidden" class="totalInput" name="total[]" value="800.00">
-                        <input type="hidden" name="name[]" value="Toilets">
-                        <input type="hidden" name="price[]" value="800.00">
-                    </tr>
-                    <!-- Add more rows as needed for bathroom materials -->
-                </tbody>
+                    <thead>
+                        <tr>
+                        <th>Select</th>
+                        <th>Materials</th>
+                        <th>Quantity</th>
+                        <th>Price (₱)</th>
+                        <th>Total (₱)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><input type="checkbox" class="item-checkbox" name="materials[]" data-price="400.00" value = "Vanity" onclick="updateEstimatedCost()"></td>
+                            <td>Vanity</td>
+                            <td><input type="number" class="quantity" name="quantity[]" value="1" min="0" oninput="calculateTotal(this)"></td>
+                            <td><span class="price">400.00</span></td>
+                            <td><span class="total">400.00</span></td>
+                            <input type="hidden" class="totalInput" name="total[]" value="400.00">
+                            <input type="hidden" name="name[]" value="Vanity">
+                            <input type="hidden" name="price[]" value="400.00">
+                        </tr>
+                        <!-- Add more rows as needed for bathroom materials -->
+                    </tbody>
                 </table>
             </div>
             <div class="input-container">

@@ -59,7 +59,14 @@
                         <form action="admin_add_prematerialsitem.php" method="POST">
                             <div class="mb-3">
                                 <label for="structure" class="form-label">Structure</label>
-                                <input type="text" class="form-control" id="structure" name="structure" required>
+                                <select class="form-control" id="structure" name="structure" required>
+                                    <option value="">-- Select Part --</option>
+                                    <option value="Bedroom">Bedroom</option>
+                                    <option value="Dining Room">Dining Room</option>
+                                    <option value="Living Room">Living Room</option>
+                                    <option value="Kitchen">Kitchen</option>
+                                    <option value="Bathroom">Bathroom</option>
+                                </select>
                             </div>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name</label>
@@ -87,24 +94,36 @@
                     <div class="modal-body">
                         <form id="editItemForm" action="admin_edit_prematerialsitem.php" method="POST">
                             <input type="hidden" id="editId" name="id">
+                            
                             <div class="mb-3">
                                 <label for="editStructure" class="form-label">Structure</label>
-                                <input type="text" class="form-control" id="editStructure" name="structure" required>
+                                <select class="form-control" id="editStructure" name="structure" required>
+                                    <option value="">-- Select Structure --</option>
+                                    <option value="Bedroom">Bedroom</option>
+                                    <option value="Dining Room">Dining Room</option>
+                                    <option value="Living Room">Living Room</option>
+                                    <option value="Kitchen">Kitchen</option>
+                                    <option value="Bathroom">Bathroom</option>
+                                </select>
                             </div>
+
                             <div class="mb-3">
                                 <label for="editName" class="form-label">Name</label>
                                 <input type="text" class="form-control" id="editName" name="name" required>
                             </div>
+                            
                             <div class="mb-3">
                                 <label for="editPrice" class="form-label">Price</label>
                                 <input type="number" class="form-control" id="editPrice" name="price" required>
                             </div>
+
                             <button type="submit" class="btn btn-primary">Update</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <script>
             function goBack() {
