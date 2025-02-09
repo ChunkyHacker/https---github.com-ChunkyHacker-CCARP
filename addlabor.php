@@ -10,6 +10,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $totallaborcost = $_POST["total_of_laborcost"];
     $additionalcost = $_POST["additional_cost"];
     $overallcost = $_POST["overall_cost"];
+    $task = $_POST["task"];
 
     // Ensure the existence of the requirement_ID field in the form data
     if (isset($_POST["requirement_ID"])) {
@@ -21,8 +22,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Prepare the SQL query to insert the labor data into the database
-    $sql = "INSERT INTO labor (carpenter_name, type_of_work, days_of_work, rate, total_of_laborcost, additional_cost, overall_cost, requirement_ID) 
-    VALUES ('$carpentername', '$typework', '$workdays', '$rate', '$totallaborcost', '$additionalcost', '$overallcost', '$requirementID')";
+    $sql = "INSERT INTO labor (carpenter_name, type_of_work, days_of_work, rate, total_of_laborcost, additional_cost, overall_cost, task, requirement_ID) 
+    VALUES ('$carpentername', '$typework', '$workdays', '$rate', '$totallaborcost', '$additionalcost', '$overallcost','$task', '$requirementID')";
     
     // Attempt to execute the SQL query
     if ($conn->query($sql) === TRUE) {

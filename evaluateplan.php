@@ -22,106 +22,20 @@ session_start();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Client's Plan</title>
     <style>
-    * {
+        * {
         box-sizing: border-box;
         margin: 0;
         padding: 0;
-    }
+        }
 
-    body {
+        body {
         font-family: Verdana, sans-serif;
         margin: 0;
         background-color: #FF8C00;
         font-size: 20px; /* Set base font size to 20px */
-    }
-
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-    }
-
-    .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 10px;
-        text-align: left;
-        background: #FF8C00;
-        color: #000000;
-        display: flex;
-        align-items: center;
-        text-decoration: none;
-        z-index: 100;
-    }
-
-    .header h1 {
-        font-size: 40px; /* Keep h1 larger */
-        border-left: 20px solid transparent;
-        text-decoration: none;
-    }
-
-    .right {
-        margin-right: 20px;
-    }
-
-    .header a {
-        font-size: 25px;
-        font-weight: bold;
-        text-decoration: none;
-        color: #000000;
-        margin-right: 15px;
-    }
-
-    @media screen and (max-width: 600px) {
-        .topnav a, .topnav input[type=text] {
-            float: none;
-            display: block;
-            text-align: left;
-            width: 100%;
-            margin: 0;
-            padding: 14px;
         }
 
-        .topnav input[type=text] {
-            border: 1px solid #ccc;
-        }
-
-        body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding-top: 300px;
-        }
-    }
-
-    /* CSS styles for the modal */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(255, 140, 0, 0.4);
-    }
-
-    .modal-content {
-        background-color: #FF8C00;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-height: 80%;
-        overflow-y: auto;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
-
-    .header {
+        .header {
         position: fixed;
         top: 0;
         left: 0;
@@ -136,50 +50,75 @@ session_start();
         text-decoration: none;
         z-index: 100;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
+        }
 
-    .modal-content {
+        .header h1 {
+        font-size: 40px; /* Keep h1 larger */
+        border-left: 20px solid transparent;
+        text-decoration: none;
+        }
+
+        .right {
+        margin-right: 20px;
+        }
+
+        .header a {
+        font-size: 25px;
+        font-weight: bold;
+        text-decoration: none;
+        color: #000000;
+        margin-right: 15px;
+        }
+
+        /* Modal content styling */
+        .modal-content {
         background-color: #fefefe;
         padding: 20px;
         border: 1px solid #888;
         width: 80%;
+        max-height: 60%;
+        overflow-y: auto;
         border-radius: 8px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    }
+        margin-top: 10%; /* Adjust as needed to give space from the nav bar */
+        margin-left: auto;
+        margin-right: auto;
+        }
 
-    h2 {
+        h2 {
         font-size: 24px; /* Adjusted to be slightly larger than the base font */
         margin-bottom: 20px;
         color: #FF8C00;
-    }
+        }
 
-    form {
+        form {
         display: flex;
         flex-direction: column;
-    }
+        }
 
-    label {
+        label {
         font-size: 20px; /* Set label font size to 20px */
         margin-bottom: 5px;
         color: #000000;
-    }
+        }
 
-    input,
-    select,
-    textarea {
+        input,
+        select,
+        textarea {
         width: 100%;
         padding: 10px;
         margin-bottom: 15px;
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 20px; /* Set input font size to 20px */
-    }
+        }
 
-    .post-btn, .cancel-btn {
+        .post-btn,
+        .cancel-btn {
         margin-bottom: 10px;
-    }
+        }
 
-    .cancel-btn {
+        .cancel-btn {
         background-color: red;
         color: #fff;
         padding: 10px;
@@ -192,13 +131,13 @@ session_start();
         text-align: center;
         width: 100%;
         font-size: 20px; /* Set cancel button font size to 20px */
-    }
+        }
 
-    .cancel-btn:hover {
+        .cancel-btn:hover {
         background-color: #000000;
-    }
+        }
 
-    button {
+        button {
         background-color: #FF8C00;
         color: #fff;
         border: none;
@@ -207,18 +146,33 @@ session_start();
         border-radius: 5px;
         cursor: pointer;
         font-size: 20px; /* Set button font size to 20px */
-    }
-
-    button:hover {
-        background-color: #000000;
-    }
-
-    @media screen and (max-width: 600px) {
-        .modal-content {
-            width: 100%;
         }
-    }
-</style>
+
+        button:hover {
+        background-color: #000000;
+        }
+
+        /* New styling for the radio button groups */
+        .radio-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px; /* Adjust gap as needed */
+        margin-top: 5px;
+        }
+
+        .radio-group label {
+        display: inline-flex;
+        align-items: center;
+        margin: 0; /* Remove extra margin */
+        font-size: 20px;
+        color: #000000;
+        }
+
+        .radio-group input[type="radio"] {
+        margin: 0 5px 0 0; /* Small margin to the right of the radio circle */
+        vertical-align: middle;
+        }
+  </style>
 
 </head>
 <body>
@@ -385,51 +339,88 @@ session_start();
                     <?php endif; ?>
 
                     <form id='planForm' method='post' action='approveplan.php'>
-                        <label for='q1'>Were the details of the project suitable for your scope of work?</label>
-                        <select name='q1' required>
-                            <option value='' selected disabled>Select an option</option>
-                            <option value='Yes'>Yes</option>
-                            <option value='No'>No</option>
-                        </select>
+                    <!-- Example Question 1 -->
+                    <div class="form-section">
+                        <label for="q1">Were the details of the project suitable for your scope of work?</label>
+                        <br>
+                        <div class="radio-group">
+                            <label for="q1_yes">
+                            <input type="radio" id="q1_yes" name="q1" value="Yes" required />Yes
+                            </label>
+                            <label for="q1_no">
+                            <input type="radio" id="q1_no" name="q1" value="No" required />No
+                            </label>
+                        </div>
+                    </div>
 
-                        <label for='q2'>Are you able to finish the project even if there is an overlapping budget?</label>
-                        <select name='q2' required>
-                            <option value='' selected disabled>Select an option</option>
-                            <option value='Yes'>Yes</option>
-                            <option value='No'>No</option>
-                        </select>
+                    <!-- Example Question 2 -->
+                    <div class="form-section">
+                        <label for="q2">Are you able to finish the project even if there is an overlapping budget?</label>
+                        <br>
+                        <div class="radio-group">
+                            <label for="q2_yes">
+                            <input type="radio" id="q2_yes" name="q2" value="Yes" required />Yes
+                            </label>
+                            <label for="q2_no">
+                            <input type="radio" id="q2_no" name="q2" value="No" required />No
+                            </label>
+                        </div>
+                    </div>
 
-                        <label for='q3'>Are you willing to accept an additional task with additional payment?</label>
-                        <select name='q3' required>
-                            <option value='' selected disabled>Select an option</option>
-                            <option value='Yes'>Yes</option>
-                            <option value='No'>No</option>
-                        </select>
+                    <!-- Example Question 3 -->
+                    <div class="form-section">
+                    <label for="q3">Are you willing to accept an additional task with additional payment?</label>
+                    <br>
+                    <div class="radio-group">
+                        <label for="q3_yes">
+                        <input type="radio" id="q3_yes" name="q3" value="Yes" required />Yes
+                        </label>
+                        <label for="q3_no">
+                        <input type="radio" id="q3_no" name="q3" value="No" required />No
+                        </label>
+                    </div>
+                    <br>
+                    </div>
 
-                        <label for='q4'>Can you finish the project on time?</label>
-                        <select name='q4' required>
-                            <option value='' selected disabled>Select an option</option>
-                            <option value='Yes'>Yes</option>
-                            <option value='No'>No</option>
-                        </select>
+                    <!-- Example Question 4 -->
+                    <div class="form-section">
+                    <label for="q4">Can you finish the project on time?</label>
+                    <br>
+                    <div class="radio-group">
+                        <label for="q4_yes">
+                        <input type="radio" id="q4_yes" name="q4" value="Yes" required />Yes
+                        </label>
+                        <label for="q4_no">
+                        <input type="radio" id="q4_no" name="q4" value="No" required />No
+                        </label>
+                    </div>
+                    </div>
 
-                        <label for='q5'>Will you accept the project?</label>
-                        <select name='q5' required>
-                            <option value='' selected disabled>Select an option</option>
-                            <option value='Yes'>Yes</option>
-                            <option value='No'>No</option>
-                        </select>
+                    <!-- Example Question 5 -->
+                    <div class="form-section">
+                    <label for="q5">Will you accept the project?</label>
+                    <br>
+                    <div class="radio-group">
+                        <label for="q5_yes">
+                        <input type="radio" id="q5_yes" name="q5" value="Yes" required />Yes
+                        </label>
+                        <label for="q5_no">
+                        <input type="radio" id="q5_no" name="q5" value="No" required />No
+                        </label>
+                    </div>
+                    </div>
+                        <label for='comment'>If Yes/No, why?</label><br>
+                        <textarea name='comment' rows='4' cols='50'></textarea><br>
 
-                        <label for='comment'>If Yes/No, why?</label>
-                        <textarea name='comment' rows='4' cols='50'></textarea>
-                            <label for='name'>Approved By: </label>
-                            <input type='text' id='name' name='approved_by' value='<?php echo $carpenterData['First_Name'];?> <?php echo $carpenterData['Last_Name'];?>' readonly><br>
+                        <label for='name'>Approved By: </label>
+                        <input type='text' id='name' name='approved_by' value='<?php echo $carpenterData['First_Name'];?> <?php echo $carpenterData['Last_Name'];?>' readonly><br>
+
                         <label for='status'>Status:</label>
                         <select id="status" name="status">
                             <option value="" selected disabled>Select an option</option>
                             <option value="approve">Approve</option>
                             <option value="decline">Decline</option>
-                        </select>
+                        </select><br>
 
                         <input type='hidden' name='plan_id' value='<?php echo $plan_id; ?>'>
                         <button type='submit'>Submit</button>

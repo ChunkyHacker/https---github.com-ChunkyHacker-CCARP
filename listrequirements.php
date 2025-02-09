@@ -413,7 +413,7 @@
             echo "<input type='text' name='labor_cost' id='labor_cost' required>";  
             
             echo "<label for='labor_cost'>Contract</label>";
-            echo "<input type='file' name='contract' required>"; 
+            echo "<input type='file' name='contract' accept='application/pdf' required>"; 
                         
             echo "<input type='submit' value='Submit Requirements'>";
             echo "<input type='button' value='Go back' onclick='window.location.href = \"profile.php\";'>";

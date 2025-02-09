@@ -20,258 +20,260 @@
 <script src="process5\daysofworkxlaborcost.js"></script>
 <script src="process5\additionalcostpluslaborcost.js"></script>
 <style>
-  * {
-  box-sizing: border-box;
-}
-
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  margin: 0;
-  padding-top: 180px;
-  font-size: 20px; /* Set base font size to 20px */
-}
-
-.header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  padding: 10px;
-  background: #FF8C00;
-  color: #000;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  z-index: 100;
-}
-
-.header h1 {
-  font-size: 20px; /* Set header font size to 20px */
-  padding-left: 20px;
-}
-
-.header a {
-  font-size: 20px; /* Set font size of links to 20px */
-  font-weight: bold;
-  text-decoration: none;
-  color: #000;
-}
-
-.topnav {
-  position: fixed;
-  top: 120px;
-  width: 100%;
-  overflow: hidden;
-  background-color: #505050;
-  z-index: 100;
-}
-
-.topnav a {
-  float: left;
-  display: block;
-  color: black;
-  text-align: center;
-  padding: 14px 16px;
-  font-size: 20px; /* Set font size of topnav links to 20px */
-}
-
-.topnav a:hover,
-.topnav a.active:hover {
-  background-color: #FF8C00;
-  color: black;
-}
-
-button {
-  background-color: #FF8C00;
-  color: #FFFFFF;
-  border: none;
-  padding: 10px 20px;
-  font-size: 20px; /* Set button font size to 20px */
-  cursor: pointer;
-  margin: 20px;
-  border-radius: 4px;
-}
-
-button:hover {
-  background-color: #FFA500;
-}
-
-.modal,
-.editModal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-.modal-content,
-.edit-modal-content {
-  background-color: #f2f2f2;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  padding: 20px;
-  border-radius: 5px;
-  width: 70%;
-}
-
-.modal-content h2,
-.edit-modal-content h2 {
-  margin-bottom: 20px;
-  font-size: 20px; /* Set font size of headings in modals to 20px */
-}
-
-.modal-content form div {
-  margin-bottom: 15px;
-}
-
-.modal-content form label,
-.edit-modal-content form label {
-  font-size: 20px; /* Set font size of labels to 20px */
-  font-weight: bold;
-  margin-bottom: 5px;
-}
-
-.modal-content form input,
-.modal-content form textarea,
-.modal-content form select {
-  width: 100%;
-  padding: 8px;
-  font-size: 20px; /* Set font size of inputs, textarea, and selects to 20px */
-  color: #000;
-  background-color: #fff;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-}
-
-.modal-content form button,
-.edit-modal-content form button {
-  font-size: 20px; /* Set font size of buttons inside modals to 20px */
-}
-
-.main {
-  margin: auto;
-  width: 70%;
-  padding: 20px;
-  text-align: left;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  background-color: #f9f9f9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.main h1 {
-  font-size: 20px; /* Set font size of main heading to 20px */
-  margin-bottom: 20px;
-  color: #333;
-}
-
-.row-container h3 {
-  font-size: 20px; /* Set font size of row-container headings to 20px */
-  margin-bottom: 10px;
-  color: #555;
-}
-
-input[type="text"] {
-  width: 100%;
-  padding: 8px;
-  font-size: 20px; /* Set font size of text inputs to 20px */
-  color: #000;
-  background-color: #fff;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  margin-bottom: 10px;
-}
-
-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 4px;
-}
-
-.sort {
-  display: inline-block;
-  margin-bottom: 10px;
-}
-
-.sort select {
-  padding: 8px;
-  font-size: 20px; /* Set font size of sort select to 20px */
-  color: #000;
-  background-color: #fff;
-  border-radius: 4px;
-}
-
-.table-container {
-  border-radius: 8px;
-  overflow: hidden;
-  margin-top: 20px;
-  margin-bottom: 40px;
-}
-
-.styled-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.table-header {
-  padding: 12px;
-  text-align: center;
-  background-color: #FF8C00;
-  color: black;
-  font-weight: bold;
-  border-bottom: 1px solid #333;
-}
-
-.table-cell {
-  padding: 2px;
-  text-align: center;
-  background-color: #f2f2f2;
-  border-bottom: 1px solid #333;
-}
-
-.table-cell img {
-  max-width: 100px;
-  max-height: 100px;
-  border-radius: 4px;
-}
-
-.footer {
-  padding: 10px;
-  text-align: center;
-  background: #FF8C00;
-  position: relative;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-}
-
-@media screen and (max-width: 700px) {
-  .row {
-    flex-direction: column;
+    * {
+    box-sizing: border-box;
   }
+
   body {
-    padding-top: 300px;
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding-top: 180px;
+    font-size: 20px; /* Set base font size to 20px */
   }
-}
 
-@media (max-width: 768px) {
-  .product-card {
-    width: calc(50% - 20px);
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 10px;
+    background: #FF8C00;
+    color: #000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 100;
   }
-}
 
-@media (max-width: 480px) {
-  .product-card {
+  .header h1 {
+    font-size: 20px; /* Set header font size to 20px */
+    padding-left: 20px;
+  }
+
+  .header a {
+    font-size: 20px; /* Set font size of links to 20px */
+    font-weight: bold;
+    text-decoration: none;
+    color: #000;
+  }
+
+  .topnav {
+    position: fixed;
+    top: 120px;
+    width: 100%;
+    overflow: hidden;
+    background-color: #505050;
+    z-index: 100;
+  }
+
+  .topnav a {
+    float: left;
+    display: block;
+    color: black;
+    text-align: center;
+    padding: 14px 16px;
+    font-size: 20px; /* Set font size of topnav links to 20px */
+  }
+
+  .topnav a:hover,
+  .topnav a.active:hover {
+    background-color: #FF8C00;
+    color: black;
+  }
+
+  button {
+    background-color: #FF8C00;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    font-size: 20px; /* Set button font size to 20px */
+    cursor: pointer;
+    margin: 20px;
+    border-radius: 4px;
+  }
+
+  button:hover {
+    background-color: #FFA500;
+  }
+
+    .modal,
+  .editModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto; /* Para maka-scroll ang tibuok modal */
+  }
+  .modal-content,
+  .edit-modal-content {
+    background-color: #f2f2f2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 5px;
+    width: 70%;
+    max-height: 90vh; /* Limit ang height sa modal */
+    overflow-y: auto; /* Enable scrolling kung taas ang sulod */
+  }
+
+  .modal-content h2,
+  .edit-modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px; /* Set font size of headings in modals to 20px */
+  }
+
+  .modal-content form div {
+    margin-bottom: 15px;
+  }
+
+  .modal-content form label,
+  .edit-modal-content form label {
+    font-size: 20px; /* Set font size of labels to 20px */
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+
+  .modal-content form input,
+  .modal-content form textarea,
+  .modal-content form select {
+    width: 100%;
+    padding: 8px;
+    font-size: 20px; /* Set font size of inputs, textarea, and selects to 20px */
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
+
+  .modal-content form button,
+  .edit-modal-content form button {
+    font-size: 20px; /* Set font size of buttons inside modals to 20px */
+  }
+
+  .main {
+    margin: auto;
+    width: 70%;
+    padding: 20px;
+    text-align: left;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .main h1 {
+    font-size: 20px; /* Set font size of main heading to 20px */
+    margin-bottom: 20px;
+    color: #333;
+  }
+
+  .row-container h3 {
+    font-size: 20px; /* Set font size of row-container headings to 20px */
+    margin-bottom: 10px;
+    color: #555;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 20px; /* Set font size of text inputs to 20px */
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  .sort {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  .sort select {
+    padding: 8px;
+    font-size: 20px; /* Set font size of sort select to 20px */
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+  }
+
+  .table-container {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .table-header {
+    padding: 12px;
+    text-align: center;
+    background-color: #FF8C00;
+    color: black;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+  }
+
+  .table-cell {
+    padding: 2px;
+    text-align: center;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #333;
+  }
+
+  .table-cell img {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 4px;
+  }
+
+  .footer {
+    padding: 10px;
+    text-align: center;
+    background: #FF8C00;
+    position: relative;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     width: 100%;
   }
-}
+
+  @media screen and (max-width: 700px) {
+    .row {
+      flex-direction: column;
+    }
+    body {
+      padding-top: 300px;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .product-card {
+      width: calc(50% - 20px);
+    }
+  }
+
+  @media (max-width: 480px) {
+    .product-card {
+      width: 100%;
+    }
+  }
 
 </style>
 </head>
@@ -466,18 +468,26 @@ if (isset($_GET['requirement_ID'])) {
         echo "<p>Labor Cost (Peso ₱): <input type='text' value='{$row['labor_cost']}' readonly></p>";
 
         // Check if the file exists and display it
-        $contractPath = $row['contract'];
-        if (file_exists($contractPath)) {
-            // Display the contract file as a link
-            echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
+        $contractPath = $row['contract']; // Get contract file path
+
+        // Extract file name (kung ang $contractPath naa sa database as full path)
+        $contractFileName = basename($contractPath);
         
-            // Optionally, embed the file if it's a PDF
-            if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
-                echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
-            }
+        // Create a web-accessible URL
+        $contractURL = "http://localhost/SIA/uploads/contracts/" . $contractFileName;
+        
+        // Check if file exists
+        if (file_exists($contractPath)) {
+            echo "<h3>Contract Preview:</h3>";
+            echo "<div style='width: 100%; height: 80vh; overflow: auto; border: 1px solid #ccc;'>
+                    <iframe src='" . htmlspecialchars($contractURL) . "' width='100%' height='100%' style='border: none;'></iframe>
+                  </div>";
         } else {
-            echo "<p>Contract file not found.</p>";
+            echo "<p style='color: red;'>Contract file not found.</p>";
         }
+        
+        
+        
                 
         echo "</form>";
         echo "</div>"; 
@@ -575,6 +585,10 @@ if (isset($_GET['requirement_ID'])) {
                   <label for="overall_cost">Overall Cost: (Rate, Days, and Labor)</label>
                   <input type="number" id="overall_cost" name="overall_cost" step="0.01" min="0" required readonly>
               </div>
+              <div>
+                <label for="task">Task</label>
+                <input type="text" name="task" id="" required>
+              </div>
                 <!-- Hidden input field for requirement_ID -->
                 <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
 
@@ -592,7 +606,7 @@ if (isset($_GET['requirement_ID'])) {
             <form id="addSignedContractForm" method="post" action="addcontract.php" enctype="multipart/form-data">
                 <div>
                     <label for="signedcontract">Signed Contract: </label>
-                    <input type="File" id="signedcontract" name="signedcontract">
+                    <input type="File" id="signedcontract" name="signedcontract" accept="application/pdf" required>
                 </div>
                 <div>
                 <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
@@ -695,6 +709,7 @@ if (isset($_GET['requirement_ID'])) {
             echo '            <th class="table-header">Rate</th>';
             echo '            <th class="table-header">Total</th>';
             echo '            <th class="table-header">Additional Cost</th>';
+            echo '            <th class="table-header">Task</th>';
             echo '            <th class="table-header">Overall Cost</th>';
             echo '        </tr>';
 
@@ -706,6 +721,7 @@ if (isset($_GET['requirement_ID'])) {
                 echo '            <td class="table-cell"><h3>' . $row["rate"] . '</h3></td>';
                 echo '            <td class="table-cell"><h3>' . $row["total_of_laborcost"] . '</h3></td>';
                 echo '            <td class="table-cell"><h3>' . $row["additional_cost"] . '</h3></td>';
+                echo '            <td class="table-cell"><h3>' . $row["task"] . '</h3></td>';
                 echo '            <td class="table-cell"><h3>' . $row["overall_cost"] . '</h3></td>';
                 echo '        </tr>';
             }
@@ -720,56 +736,59 @@ if (isset($_GET['requirement_ID'])) {
 
     <div class="product-container">
         <h2 style="text-align:center">Signed Contract</h2>
+        
         <?php
-        include('config.php');
+include('config.php');
 
-        // Assuming you have a valid $requirementID from the query string or another source
-        if (isset($_GET['requirement_ID'])) {
-            $requirementID = $_GET['requirement_ID'];
+if (isset($_GET['requirement_ID'])) {
+    $requirementID = $_GET['requirement_ID'];
 
-            // Query to fetch the signed contract for the given requirement_ID
-            $sql = "SELECT * FROM signedcontract WHERE requirement_ID = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "i", $requirementID);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+    // Query to fetch the signed contract path
+    $sql = "SELECT signedcontract FROM signedcontract WHERE requirement_ID = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $requirementID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-            // Check if the contract exists for this requirement ID
-            if ($row = mysqli_fetch_assoc($result)) {
-                $contractPath = $row['signedcontract'];  // Path to the uploaded file
+    if ($row = mysqli_fetch_assoc($result)) {
+        $contractPath = str_replace('\\', '/', $row['signedcontract']); // Convert Windows-style path
+        $contractFileName = basename($contractPath); // Extract filename
 
-                // Check if the file exists
-                if (file_exists($contractPath)) {
-                    // Display the contract file as a link
-                    echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
+        // Encode filename to handle spaces
+        $encodedFileName = urlencode($contractFileName);
 
-                    // Optionally, embed the file if it's a PDF
-                    if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
-                        echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
-                    }
-                } else {
-                    echo "<p>Contract file not found.</p>";
-                }
+        // Create a web-accessible URL (adjust this based on your project)
+        $contractURL = "http://localhost/SIA/uploads/signedcontracts/" . $encodedFileName;
+
+        // Check if file exists using absolute path
+        $absolutePath = realpath(__DIR__ . "/uploads/signedcontracts/" . $contractFileName);
+
+        // Check if file exists
+        if ($absolutePath && file_exists($absolutePath)) {
+            if (pathinfo($contractPath, PATHINFO_EXTENSION) == "pdf") {
+                echo "<h3>Signed Contract Preview:</h3>";
+                echo "<iframe src='" . htmlspecialchars($contractURL) . "' width='100%' height='600px' style='border: none;'></iframe>";
             } else {
-                echo "<p>No signed contract found for this requirement.</p>";
+                echo "<p>File is not a PDF. <a href='" . htmlspecialchars($contractURL) . "' download>Click here to download</a></p>";
             }
-
-            // Close the statement
-            mysqli_stmt_close($stmt);
         } else {
-            echo "<p>No requirement ID provided.</p>";
+            echo "<p style='color: red;'>Contract file not found in: " . htmlspecialchars($absolutePath) . "</p>";
         }
+    } else {
+        echo "<p style='color: red;'>No signed contract found for this requirement.</p>";
+    }
 
-        // Close the database connection
-        mysqli_close($conn);
-        ?>
+    mysqli_stmt_close($stmt);
+} else {
+    echo "<p style='color: red;'>No requirement ID provided.</p>";
+}
+
+mysqli_close($conn);
+?>
+
+
+
     </div>
-
-
-
-
-
-
 
     <div class="product-container">
         <?php
@@ -795,12 +814,12 @@ if (isset($_GET['requirement_ID'])) {
         }
 
         // Query to retrieve total labor cost
-        $laborQuery = "SELECT SUM(total_of_laborcost) AS total_labor_cost FROM labor";
+        $laborQuery = "SELECT SUM(overall_cost) AS overall_cost FROM labor";
         $laborResult = $conn->query($laborQuery);
         $totalLaborCost = 0;
         if ($laborResult->num_rows > 0) {
             $totalLaborCostRow = $laborResult->fetch_assoc();
-            $totalLaborCost = $totalLaborCostRow["total_labor_cost"];
+            $totalLaborCost = $totalLaborCostRow["overall_cost"];
         }
 
         // Calculate overall total cost

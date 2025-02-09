@@ -18,20 +18,15 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['signedcontract']) && 
     // Get the file details
     $fileName = $signedContractFile['name'];
     $fileTmpName = $signedContractFile['tmp_name'];
-    $fileSize = $signedContractFile['size'];
-    $fileType = $signedContractFile['type'];
 
     // Define the folder where the file will be uploaded
-    $uploadDir = 'uploads/signedcontracts/';  // Path to the folder where files will be stored
-    $uploadPath = $uploadDir . basename($fileName);  // Full path to the file
+    $uploadDir = 'uploads/signedcontracts/'; // Path to the folder where files will be stored
 
-    // Check if the file already exists in the upload directory
-    if (file_exists($uploadPath)) {
-        echo "Sorry, file already exists.";
-        exit();
-    }
+    // Convert spaces to underscores for consistency and avoid URL encoding issues
+    $cleanFileName = str_replace(" ", "_", $fileName);
+    $uploadPath = $uploadDir . basename($cleanFileName); // Full path to the file
 
-    // Move the uploaded file to the desired directory
+    // Move the uploaded file to the desired directory (overwrite if exists)
     if (move_uploaded_file($fileTmpName, $uploadPath)) {
         // Prepare the SQL query to insert the file path and requirement_ID into the 'signedcontract' table
         $insertQuery = "INSERT INTO signedcontract (signedcontract, requirement_ID) VALUES (?, ?)";
