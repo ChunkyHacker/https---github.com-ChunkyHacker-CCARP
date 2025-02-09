@@ -1,44 +1,47 @@
 <?php
 include('config.php');
 
-$totalprice = $_POST['total_price'];
-$paymentmethod = $_POST['payment_method'];
+if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['receipt'])) {
+    $targetDir = "uploads/transaction/"; // Folder where receipts will be saved
+    $fileName = basename($_FILES["receipt"]["name"]);
+    $targetFilePath = $targetDir . $fileName;
+    $uploadOk = 1;
+    $imageFileType = strtolower(pathinfo($targetFilePath, PATHINFO_EXTENSION));
 
-// Prepare the SQL statement for inserting transaction data
-$stmt = $conn->prepare("INSERT INTO transaction (total_price, payment_method) VALUES (?, ?)");
-
-// Check if the statement was prepared successfully
-if ($stmt) {
-    // Bind parameters for transaction insertion
-    $stmt->bind_param("ss", $totalprice, $paymentmethod);
-
-    // Execute the transaction insertion
-    if ($stmt->execute()) {
-        // Fetch data from the 'requirements' table
-        $query = "SELECT * FROM prematerials";
-        $result = $conn->query($query);
-
-        // Check if the query was successful
-        if ($result) {
-            $prematerials = $result->fetch_all(MYSQLI_ASSOC);
-            // Encode the requirements data as JSON
-            $prematerials_json = json_encode($prematerials);
-
-            // Redirect to receipt.php with a success message
-            header("Location: receipt.php?success=true&message=" . urlencode("Transaction successful!") . "&total_price=$totalprice&payment_method=$paymentmethod&prematerials=$prematerials_json");
-            exit;
-        } else {
-            echo "Error fetching requirements: " . $conn->error;
-        }
-    } else {
-        echo "Error executing transaction: " . $stmt->error;
+    // Check if file is an image
+    $check = getimagesize($_FILES["receipt"]["tmp_name"]);
+    if ($check === false) {
+        echo "File is not an image.";
+        $uploadOk = 0;
     }
 
-    // Close statement
-    $stmt->close();
-} else {
-    echo "Error preparing statement: " . $conn->error;
-}
+    // Allow only specific formats
+    if (!in_array($imageFileType, ["jpg", "jpeg", "png", "gif"])) {
+        echo "Only JPG, JPEG, PNG & GIF files are allowed.";
+        $uploadOk = 0;
+    }
 
-$conn->close();
+    if ($uploadOk == 1) {
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0777, true); // Create folder if it doesn't exist
+        }
+
+        if (move_uploaded_file($_FILES["receipt"]["tmp_name"], $targetFilePath)) {
+            // Insert file path into the database
+            $stmt = $conn->prepare("INSERT INTO transaction (receipt_photo) VALUES (?)");
+            $stmt->bind_param("s", $targetFilePath);
+            
+            if ($stmt->execute()) {
+                header("Location: receipt.php?success=true&receiptPath=" . urlencode($targetFilePath));
+                exit;
+            } else {
+                echo "Error saving to database.";
+            }
+
+            $stmt->close();
+        } else {
+            echo "Error uploading file.";
+        }
+    }
+}
 ?>
