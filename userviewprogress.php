@@ -690,6 +690,87 @@ session_start();
       ?>
   </div>
 
+    <!--Pending Task-->
+
+    <div class="product-container">
+    <h2 style="text-align:center">Pending Tasks</h2>
+    <?php
+        include('config.php');
+
+        // Check if requirement_ID is provided in the URL parameter
+        if(isset($_GET['requirement_ID'])) {
+            $requirementID = $_GET['requirement_ID'];
+
+            // Prepare the SQL query with a WHERE clause to filter by requirement_ID
+            $sql = "SELECT task, details FROM task WHERE requirement_ID = $requirementID";
+
+            $result = $conn->query($sql);
+
+            if ($result->num_rows > 0) {
+                echo '<div class="table-container">';
+                echo '    <table class="styled-table">';
+                echo '        <tr>';
+                echo '            <th class="table-header">Task</th>';
+                echo '            <th class="table-header">Details</th>';
+                echo '        </tr>';
+
+                while ($row = $result->fetch_assoc()) {
+                    echo '        <tr>';
+                    echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["task"]) . '</h3></td>';
+                    echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["details"]) . '</h3></td>';          
+                    echo '        </tr>';
+                }
+
+                echo '    </table>';
+                echo '</div>';
+
+            } else {
+                echo '<p>No pending tasks yet.</p>';
+            }
+        } else {
+            echo '<p>Error: requirement_ID is missing.</p>';
+        }
+        
+        $conn->close();
+    ?>
+</div>
+
+
+
+<div class="product-container">
+    <h2 style="text-align:center">Completed Task</h2>
+    <?php
+        include('config.php');
+
+        // Kuhaa tanan completed tasks
+        $sql = "SELECT name, details FROM completed_task";
+        $result = $conn->query($sql);
+
+        if ($result->num_rows > 0) {
+            echo '<div class="table-container">';
+            echo '    <table class="styled-table">';
+            echo '        <tr>';
+            echo '            <th class="table-header">Name</th>';
+            echo '            <th class="table-header">Details</th>';
+            echo '        </tr>';
+
+            while ($row = $result->fetch_assoc()) {
+                echo '        <tr>';
+                echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["name"]) . '</h3></td>';
+                echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["details"]) . '</h3></td>';          
+                echo '        </tr>';
+            }
+
+            echo '    </table>';
+            echo '</div>';
+        } else {
+            echo '<p>No completed tasks yet.</p>';
+        }
+
+        $conn->close();
+    ?>
+</div>
+
   <div class="product-container">
     <h2 style="text-align:center">Attendance</h2>
     <?php

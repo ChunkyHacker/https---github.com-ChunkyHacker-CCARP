@@ -123,12 +123,29 @@
         border-radius: 4px;
     }
 
+    #addTaskBtn {
+        background-color: #FF8C00;
+        color: #FFFFFF;
+        border: none;
+        padding: 10px 20px;
+        font-size: 20px;
+        cursor: pointer;
+        margin: 20px;
+        border-radius: 4px;
+    }
+
+
+
     #addLaborBtn:hover {
         background-color: #FFA500;
     }
 
     #addMaterialBtn:hover {
         background-color: #FFA500;
+    }
+
+    #addTaskBtn:hover {
+        background-color: #FFA500; /* Darker green */
     }
 
     /* Modal Styles */
@@ -300,6 +317,49 @@
         border-radius: 4px;
     }
 
+    .product-container {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        width: 100%;
+        margin: 20px auto;
+    }
+
+    .table-container {
+        display: flex;
+        justify-content: center;
+        width: 100%;
+        margin-top: 20px;
+    }
+
+    .styled-table {
+        border-collapse: collapse;
+        width: 80%;
+        max-width: 800px;
+        background-color: #fff;
+        text-align: center;
+        border-radius: 5px;
+        overflow: hidden;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    .styled-table th, .styled-table td {
+        border: 1px solid #ddd;
+        padding: 12px;
+    }
+
+    .styled-table th {
+        background-color: #FF8C00;
+        color: white;
+    }
+
+    .styled-table tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+
     /* Sort */
     .sort {
         display: inline-block;
@@ -429,6 +489,10 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
       <a href="#">Project</a>
   </div>
 </head>
+<div id="successAlert" style="display: none; background-color: #28a745; color: white; padding: 10px; text-align: center; font-size: 18px; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
+    Changes saved successfully!
+</div>
+
 <body>
 
 <?php
@@ -718,6 +782,33 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
           </form>
       </div>
   </div>
+
+    <button id="addTaskBtn">Add Task</button>
+
+    <div id="addTaskModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close">&times;</span>
+            <h2>Add Task</h2>
+            <form id="addTaskForm" method="post" action="addtask.php" enctype="multipart/form-data">
+                
+                <div>
+                    <label for="task">Task:</label>
+                    <input type="text" id="task" name="task" required>
+                </div>
+
+                <div>
+                    <label for="details">Details:</label>
+                    <textarea id="details" name="details" rows="4" required></textarea>
+                </div>
+
+                <!-- Hidden input field for requirement_ID -->
+                <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
+
+                <button type="submit">Add Task</button>
+            </form>
+        </div>
+    </div>
+
   <!--TABLE-->
   <div class="product-container">
       <h2 style="text-align:center">Progress</h2>
@@ -764,6 +855,122 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
           }
       ?>
   </div>
+
+  <div class="product-container">
+    <h2 style="text-align:center">Tasks</h2>
+    <?php
+    include('config.php');
+
+    if (isset($_GET['requirement_ID'])) {
+        $requirementID = $_GET['requirement_ID'];
+
+        // Fetch pending tasks
+        $sql = "SELECT * FROM task WHERE requirement_ID = $requirementID AND task_id NOT IN (SELECT task_id FROM completed_task)";
+        $result = $conn->query($sql);
+
+        echo '<h3>Pending Tasks</h3>';
+        echo '<div class="table-container">';
+        echo '<table class="styled-table">';
+        echo '<tr>';
+        echo '<th>Mark as Completed</th>';
+        echo '<th>Task</th>';
+        echo '<th>Details</th>';
+        echo '</tr>';
+
+        if ($result->num_rows > 0) {
+            while ($row = $result->fetch_assoc()) {
+                echo '<tr>';
+                echo '<td class="table-cell">
+                        <input type="checkbox" class="task-checkbox" value="' . $row["task_id"] . '" data-task-name="' . $row["task"] . '" data-task-details="' . $row["details"] . '">
+                      </td>';
+                echo '<td class="table-cell"><h3>' . $row["task"] . '</h3></td>';
+                echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
+                echo '</tr>';
+            }
+        } else {
+            echo '<tr><td colspan="3">No pending tasks</td></tr>';
+        }
+
+        echo '</table>';
+        echo '</div>';
+
+        echo '<button id="saveChangesBtn" style="background-color: #FF8C00; color: #FFFFFF; border: none; padding: 10px 20px; font-size: 20px; cursor: pointer; margin: 20px; border-radius: 4px; display: none;">Save Changes</button>';
+
+        // Fetch completed tasks
+        $sqlCompleted = "SELECT * FROM completed_task";
+        $resultCompleted = $conn->query($sqlCompleted);
+        
+        echo '<h3>Completed Tasks</h3>';
+        echo '<div class="table-container">';
+        echo '<table class="styled-table">';
+        echo '<tr>';
+        echo '<th>Task</th>';
+        echo '<th>Details</th>';
+        echo '<th>Status</th>';
+        echo '</tr>';
+
+        if ($resultCompleted->num_rows > 0) {
+            while ($row = $resultCompleted->fetch_assoc()) {
+                echo '<tr>';
+                echo '<td class="table-cell"><h3>' . $row["name"] . '</h3></td>';
+                echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
+                echo '<td class="table-cell"><h3>' . ucfirst($row["status"]) . '</h3></td>';
+                echo '</tr>';
+            }
+        } else {
+            echo '<tr><td colspan="3">No completed tasks</td></tr>';
+        }
+
+        echo '</table>';
+        echo '</div>';
+    } else {
+        echo '<p>Error: requirement_ID is missing.</p>';
+    }
+    ?>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const checkboxes = document.querySelectorAll(".task-checkbox");
+        const saveButton = document.getElementById("saveChangesBtn");
+
+        checkboxes.forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                let anyChecked = Array.from(checkboxes).some(cb => cb.checked);
+                saveButton.style.display = anyChecked ? "block" : "none";
+            });
+        });
+
+        saveButton.addEventListener("click", function () {
+            let selectedTasks = [];
+
+            checkboxes.forEach(checkbox => {
+                if (checkbox.checked) {
+                    selectedTasks.push({
+                        task_id: checkbox.value,
+                        task_name: checkbox.dataset.taskName,
+                        task_details: checkbox.dataset.taskDetails
+                    });
+                }
+            });
+
+            if (selectedTasks.length > 0) {
+                fetch("move_task.php", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(selectedTasks)
+                })
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    location.reload();
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        });
+    });
+</script>
+
 
   <div class="product-container">
     <h2 style="text-align:center">Attendance</h2>
@@ -831,44 +1038,48 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
   </div>
 </body>
 <script>
-  // Function to open the modal
-function openModal() {
-  document.getElementById('timeOutModal').style.display = 'block';
-}
+    // Function to open the modal
+    function openModal() {
+    document.getElementById('timeOutModal').style.display = 'block';
+    }
 
-// Function to close the modal
-function closeModal() {
-  document.getElementById('timeOutModal').style.display = 'none';
-}
+    // Function to close the modal
+    function closeModal() {
+    document.getElementById('timeOutModal').style.display = 'none';
+    }
 
-// Function to add timestamp to the time out field
-function addTimestamp() {
-  var currentDate = new Date();
-  var formattedDateTime = currentDate.toLocaleString(); // Format timestamp as desired
-  document.getElementById('timeOutField').value = formattedDateTime;
-}
-</script>
-<script>
-function addTimeStamp() {
-    // Get the current date and time
+    // Function to add timestamp to the time out field
+    function addTimestamp() {
     var currentDate = new Date();
-    
-    // Format the date and time as desired
-    var formattedDateTime = currentDate.toLocaleString(); // You can adjust the format based on your preference
-    
-    // Get the input element
-    var additionalCostInput = document.getElementById("Time_in");
-    
-    // Set the input value to the formatted timestamp
-    additionalCostInput.value = formattedDateTime;
-}
+    var formattedDateTime = currentDate.toLocaleString(); // Format timestamp as desired
+    document.getElementById('timeOutField').value = formattedDateTime;
+    }
 </script>
 <script>
-    //labormaterialmodal.js
+    function addTimeStamp() {
+        // Get the current date and time
+        var currentDate = new Date();
+        
+        // Format the date and time as desired
+        var formattedDateTime = currentDate.toLocaleString(); // You can adjust the format based on your preference
+        
+        // Get the input element
+        var additionalCostInput = document.getElementById("Time_in");
+        
+        // Set the input value to the formatted timestamp
+        additionalCostInput.value = formattedDateTime;
+    }
+</script>
+<script>
+    // labormaterialmodal.js
     var materialsModal = document.getElementById('addMaterialsModal');
     var laborModal = document.getElementById('addLaborModal');
+    var taskModal = document.getElementById('addTaskModal');
+
     var materialsBtn = document.getElementById('addMaterialsBtn');
     var laborBtn = document.getElementById('addLaborBtn');
+    var taskBtn = document.getElementById('addTaskBtn');
+
     var closeBtns = document.getElementsByClassName('close');
 
     materialsBtn.onclick = function() {
@@ -879,17 +1090,23 @@ function addTimeStamp() {
         laborModal.style.display = 'block';
     }
 
+    taskBtn.onclick = function() {
+        taskModal.style.display = 'block';
+    }
+
     for (var i = 0; i < closeBtns.length; i++) {
         closeBtns[i].onclick = function() {
             materialsModal.style.display = 'none';
             laborModal.style.display = 'none';
+            taskModal.style.display = 'none';
         }
     }
 
     window.onclick = function(event) {
-        if (event.target == materialsModal || event.target == laborModal) {
+        if (event.target == materialsModal || event.target == laborModal || event.target == taskModal) {
             materialsModal.style.display = 'none';
             laborModal.style.display = 'none';
+            taskModal.style.display = 'none';
         }
     }
 </script>
