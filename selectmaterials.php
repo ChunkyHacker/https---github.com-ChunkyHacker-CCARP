@@ -232,12 +232,9 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
     <div class="content-box">
         <form id="postForm" enctype="multipart/form-data" method="POST" action="selectingmaterials.php">
 
-            <input type="hidden" id="Plan_ID" name="plan_ID" value="<?php echo $PlanID; ?>">
-
             <h2>Parts of the House</h2>
             <p>What part of the house do you want to build or to renovate?</p>
-
-            <div>
+        
             <label for="checkboxBedroom">Bedroom</label>
             <input type="checkbox" id="checkboxBedroom" name="part[]" value="Bedroom" onclick="toggleTable('Bedroom')">
 
@@ -252,7 +249,7 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
 
             <label for="checkboxBathroom">Bathroom</label>
             <input type="checkbox" id="checkboxBathroom" name="part[]" value="Bathroom" onclick="toggleTable('Bathroom')">
-            </div>
+
             <div>
                 <!-- Bedroom Table -->
                 <table id="tableBedroom">
