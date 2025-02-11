@@ -168,9 +168,11 @@
         }
 
         .table-container {
-            margin-bottom: 20px; /* Adds space between tables */
-            width: 100%; /* Ensures each table takes full width */
-        }
+            margin-bottom: 20px; /* Adds spacing between tables */
+            padding: 10px;
+            border: 1px solid #ccc; /* Optional: Adds a light border to separate */
+            border-radius: 5px; /* Optional: Rounded corners */
+            background-color: #f9f9f9; /* Optional: Light background for separation */        }
 
         .cancel-btn {
             background-color: red;
@@ -349,7 +351,7 @@
             echo '</tbody>';
             echo '</table>';
             echo '</div>'; // End of prematerials table container
-        
+            
             // Table for requiredmaterials
             echo '<div class="table-container">';  // Create another div to separate this table
             echo '<table style="border-collapse: collapse; width: 100%;">';

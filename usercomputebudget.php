@@ -738,115 +738,59 @@ if (isset($_GET['requirement_ID'])) {
         <h2 style="text-align:center">Signed Contract</h2>
         
         <?php
-include('config.php');
+          include('config.php');
 
-if (isset($_GET['requirement_ID'])) {
-    $requirementID = $_GET['requirement_ID'];
+          if (isset($_GET['requirement_ID'])) {
+              $requirementID = $_GET['requirement_ID'];
 
-    // Query to fetch the signed contract path
-    $sql = "SELECT signedcontract FROM signedcontract WHERE requirement_ID = ?";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "i", $requirementID);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
+              // Query to fetch the signed contract path
+              $sql = "SELECT signedcontract FROM signedcontract WHERE requirement_ID = ?";
+              $stmt = mysqli_prepare($conn, $sql);
+              mysqli_stmt_bind_param($stmt, "i", $requirementID);
+              mysqli_stmt_execute($stmt);
+              $result = mysqli_stmt_get_result($stmt);
 
-    if ($row = mysqli_fetch_assoc($result)) {
-        $contractPath = str_replace('\\', '/', $row['signedcontract']); // Convert Windows-style path
-        $contractFileName = basename($contractPath); // Extract filename
+              if ($row = mysqli_fetch_assoc($result)) {
+                  $contractPath = str_replace('\\', '/', $row['signedcontract']); // Convert Windows-style path
+                  $contractFileName = basename($contractPath); // Extract filename
 
-        // Encode filename to handle spaces
-        $encodedFileName = urlencode($contractFileName);
+                  // Encode filename to handle spaces
+                  $encodedFileName = urlencode($contractFileName);
 
-        // Create a web-accessible URL (adjust this based on your project)
-        $contractURL = "http://localhost/SIA/uploads/signedcontracts/" . $encodedFileName;
+                  // Create a web-accessible URL (adjust this based on your project)
+                  $contractURL = "http://localhost/SIA/uploads/signedcontracts/" . $encodedFileName;
 
-        // Check if file exists using absolute path
-        $absolutePath = realpath(__DIR__ . "/uploads/signedcontracts/" . $contractFileName);
+                  // Check if file exists using absolute path
+                  $absolutePath = realpath(__DIR__ . "/uploads/signedcontracts/" . $contractFileName);
 
-        // Check if file exists
-        if ($absolutePath && file_exists($absolutePath)) {
-            if (pathinfo($contractPath, PATHINFO_EXTENSION) == "pdf") {
-                echo "<h3>Signed Contract Preview:</h3>";
-                echo "<iframe src='" . htmlspecialchars($contractURL) . "' width='100%' height='600px' style='border: none;'></iframe>";
-            } else {
-                echo "<p>File is not a PDF. <a href='" . htmlspecialchars($contractURL) . "' download>Click here to download</a></p>";
-            }
-        } else {
-            echo "<p style='color: red;'>Contract file not found in: " . htmlspecialchars($absolutePath) . "</p>";
-        }
-    } else {
-        echo "<p style='color: red;'>No signed contract found for this requirement.</p>";
-    }
+                  // Check if file exists
+                  if ($absolutePath && file_exists($absolutePath)) {
+                      if (pathinfo($contractPath, PATHINFO_EXTENSION) == "pdf") {
+                          echo "<h3>Signed Contract Preview:</h3>";
+                          echo "<iframe src='" . htmlspecialchars($contractURL) . "' width='100%' height='600px' style='border: none;'></iframe>";
+                      } else {
+                          echo "<p>File is not a PDF. <a href='" . htmlspecialchars($contractURL) . "' download>Click here to download</a></p>";
+                      }
+                  } else {
+                      echo "<p style='color: red;'>Contract file not found in: " . htmlspecialchars($absolutePath) . "</p>";
+                  }
+              } else {
+                  echo "<p style='color: red;'>No signed contract found for this requirement.</p>";
+              }
 
-    mysqli_stmt_close($stmt);
-} else {
-    echo "<p style='color: red;'>No requirement ID provided.</p>";
-}
+              mysqli_stmt_close($stmt);
+          } else {
+              echo "<p style='color: red;'>No requirement ID provided.</p>";
+          }
 
-mysqli_close($conn);
-?>
+          mysqli_close($conn);
+          ?>
 
 
 
     </div>
 
-    <div class="product-container">
-        <?php
-        include('config.php');
 
-
-        // Query to retrieve total cost
-        $transactionQuery = "SELECT SUM(total_price) AS total_budget_cost FROM transaction";
-        $totalResult = $conn->query($transactionQuery);
-        $totalprice = 0;
-        if ($totalResult->num_rows > 0) {
-            $totalPriceRow = $totalResult->fetch_assoc();
-            $totalPriceRow = $totalPriceRow["total_budget_cost"];
-        }
-
-        // Query to retrieve total material cost
-        $materialsQuery = "SELECT SUM(total_cost) AS total_material_cost FROM constructionmaterials";
-        $materialsResult = $conn->query($materialsQuery);
-        $totalMaterialCost = 0;
-        if ($materialsResult->num_rows > 0) {
-            $totalMaterialCostRow = $materialsResult->fetch_assoc();
-            $totalMaterialCost = $totalMaterialCostRow["total_material_cost"];
-        }
-
-        // Query to retrieve total labor cost
-        $laborQuery = "SELECT SUM(overall_cost) AS overall_cost FROM labor";
-        $laborResult = $conn->query($laborQuery);
-        $totalLaborCost = 0;
-        if ($laborResult->num_rows > 0) {
-            $totalLaborCostRow = $laborResult->fetch_assoc();
-            $totalLaborCost = $totalLaborCostRow["overall_cost"];
-        }
-
-        // Calculate overall total cost
-        $overallTotalCost = + $totalMaterialCost + $totalLaborCost + $totalprice;
-
-        // Close the database conn
-        $conn->close();
-        
-        // Display total cost information
-        echo '<div class="table-container">';
-        echo '    <table class="styled-table">';
-        echo '        <tr>';
-        echo '            <td class="table-header">Total Bought Materials</td>';
-        echo '            <td class="table-header">Total Material Cost</td>';
-        echo '            <td class="table-header">Total Labor Cost</td>';
-        echo '            <td class="table-header">Over all total cost</td>';
-        echo '        </tr>';
-        echo '        <tr>';
-        echo '            <td class="table-cell"><h3>' . $totalPriceRow . '</h3></td>';
-        echo '            <td class="table-cell"><h3>' . $totalMaterialCost . '</h3></td>';
-        echo '            <td class="table-cell"><h3>' . $totalLaborCost . '</h3></td>';
-        echo '            <td class="table-cell"><h3>' . $overallTotalCost . '</h3></td>';
-        echo '        </tr>';
-        echo '    </table>';
-        echo '</div>';
-        ?>
-    </div>
 
 
   <!-- Modal for Edit -->
