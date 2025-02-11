@@ -872,7 +872,7 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
         echo '<div class="table-container">';
         echo '<table class="styled-table">';
         echo '<tr>';
-        echo '<th>Mark as Completed</th>';
+        echo '<th>Status</th>';
         echo '<th>Task</th>';
         echo '<th>Details</th>';
         echo '</tr>';
@@ -881,8 +881,15 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
             while ($row = $result->fetch_assoc()) {
                 echo '<tr>';
                 echo '<td class="table-cell">
-                        <input type="checkbox" class="task-checkbox" value="' . $row["task_id"] . '" data-task-name="' . $row["task"] . '" data-task-details="' . $row["details"] . '">
-                      </td>';
+                        <select name="status" class="task-status" data-task-id="' . $row["task_id"] . '" data-task-name="' . $row["task"] . '" data-task-details="' . $row["details"] . '" 
+                            style="padding: 8px; font-size: 16px; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; cursor: pointer;">
+                            <option value="" disabled selected>Choose</option>
+                            <option value="Not yet started">Not yet started</option>
+                            <option value="Working">Working</option>
+                            <option value="Done">Done</option>
+                        </select>
+                        </td>';
+            
                 echo '<td class="table-cell"><h3>' . $row["task"] . '</h3></td>';
                 echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
                 echo '</tr>';
@@ -894,7 +901,7 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
         echo '</table>';
         echo '</div>';
 
-        echo '<button id="saveChangesBtn" style="background-color: #FF8C00; color: #FFFFFF; border: none; padding: 10px 20px; font-size: 20px; cursor: pointer; margin: 20px; border-radius: 4px; display: none;">Save Changes</button>';
+        echo '<button id="saveChangesBtn" style="display:none; margin-top:10px; background-color:#FF8C00; color:#FFFFFF; border:none; padding:10px 20px; font-size:20px; cursor:pointer; margin:20px; border-radius:4px;">Save Changes</button>';
 
         // Fetch completed tasks
         $sqlCompleted = "SELECT * FROM completed_task";
@@ -931,46 +938,55 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        const checkboxes = document.querySelectorAll(".task-checkbox");
-        const saveButton = document.getElementById("saveChangesBtn");
+        let updatedTasks = [];
 
-        checkboxes.forEach(checkbox => {
-            checkbox.addEventListener("change", function () {
-                let anyChecked = Array.from(checkboxes).some(cb => cb.checked);
-                saveButton.style.display = anyChecked ? "block" : "none";
+        document.querySelectorAll(".task-status").forEach(function (dropdown) {
+            dropdown.addEventListener("change", function () {
+                let taskID = this.getAttribute("data-task-id");
+                let taskName = this.getAttribute("data-task-name");
+                let taskDetails = this.getAttribute("data-task-details");
+                let status = this.value;
+
+                let taskIndex = updatedTasks.findIndex(task => task.task_id === taskID);
+                if (taskIndex !== -1) {
+                    updatedTasks[taskIndex].status = status;
+                } else {
+                    updatedTasks.push({
+                        task_id: taskID,
+                        task_name: taskName,
+                        task_details: taskDetails,
+                        status: status
+                    });
+                }
+
+                if (updatedTasks.length > 0) {
+                    document.getElementById("saveChangesBtn").style.display = "block";
+                }
             });
         });
 
-        saveButton.addEventListener("click", function () {
-            let selectedTasks = [];
-
-            checkboxes.forEach(checkbox => {
-                if (checkbox.checked) {
-                    selectedTasks.push({
-                        task_id: checkbox.value,
-                        task_name: checkbox.dataset.taskName,
-                        task_details: checkbox.dataset.taskDetails
-                    });
-                }
-            });
-
-            if (selectedTasks.length > 0) {
-                fetch("move_task.php", {
-                    method: "POST",
-                    headers: { "Content-Type": "application/json" },
-                    body: JSON.stringify(selectedTasks)
-                })
-                .then(response => response.text())
-                .then(data => {
-                    console.log(data);
-                    location.reload();
-                })
-                .catch(error => console.error("Error:", error));
+        document.getElementById("saveChangesBtn").addEventListener("click", function () {
+            if (updatedTasks.length === 0) {
+                alert("No tasks selected!");
+                return;
             }
+
+            fetch("move_task.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedTasks)
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                location.reload();
+            })
+            .catch(error => console.error("Error:", error));
         });
     });
 </script>
-
 
   <div class="product-container">
     <h2 style="text-align:center">Attendance</h2>
