@@ -52,36 +52,19 @@
             <div class="modal-dialog">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title" id="addItemModalLabel">Add Item</h5>
+                        <h5 class="modal-title" id="addItemModalLabel">Upload Item</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
-                        <form action="admin_add_prematerialsitem.php" method="POST">
-                            <div class="mb-3">
-                                <label for="structure" class="form-label">Structure</label>
-                                <select class="form-control" id="structure" name="structure" required>
-                                    <option value="">-- Select Part --</option>
-                                    <option value="Bedroom">Bedroom</option>
-                                    <option value="Dining Room">Dining Room</option>
-                                    <option value="Living Room">Living Room</option>
-                                    <option value="Kitchen">Kitchen</option>
-                                    <option value="Bathroom">Bathroom</option>
-                                </select>
-                            </div>
-                            <div class="mb-3">
-                                <label for="name" class="form-label">Name</label>
-                                <input type="text" class="form-control" id="name" name="name" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="price" class="form-label">Price</label>
-                                <input type="number" class="form-control" id="price" name="price" required>
-                            </div>
-                            <button type="submit" class="btn btn-primary">Save</button>
+                        <form action="admin_add_prematerialsitem.php" method="POST" enctype="multipart/form-data">
+                            <input type="file" name="csv_file" accept=".csv" required>
+                            <button type="submit" class="btn btn-primary">Import</button>
                         </form>
                     </div>
                 </div>
             </div>
         </div>
+
 
         <!-- Edit Item Modal -->
         <div class="modal fade" id="editItemModal" tabindex="-1" aria-labelledby="editItemModalLabel" aria-hidden="true">
