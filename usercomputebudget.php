@@ -225,6 +225,56 @@
       border-radius: 5px;
       box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   }
+    /* Signed Contract */
+
+    .signedcontract-modal {
+        display: none; /* Remove second display: flex */
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        align-items: center; /* Centers modal vertically */
+        justify-content: center; /* Centers modal horizontally */
+        padding: 20px; /* Prevents touching the edges */
+    }
+
+
+  .signedcontract-modal-content {
+      background: white;
+      width: 80%;
+      max-width: 900px;
+      border-radius: 8px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      max-height: 85vh; /* Prevents modal from being too tall */
+      overflow-y: auto; /* Allows scrolling if needed */
+      padding: 20px;
+      position: relative;
+      margin: auto; /* Ensures centering */
+  }
+
+  .close-modal {
+      float: right;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+  }
+
+  .close-modal:hover, .close-modal:focus {
+      color: black;
+      text-decoration: none;
+      cursor: pointer;
+  }
+
+  .signedcontract-img {
+      width: 80%;
+      max-width: 500px;
+      border-radius: 10px;
+      box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+      margin-top: 15px;
+  }
 
   .main {
     margin: auto;
@@ -759,25 +809,6 @@ echo "<script>
         </div>
   </div>
 
-  <button id="addContractBtn">Add signed contract</button>
-
-  <div id="addContractModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Signed Contract</h2>
-            <form id="addSignedContractForm" method="post" action="addcontract.php" enctype="multipart/form-data">
-                <div>
-                    <label for="signedcontract">Signed Contract: </label>
-                    <input type="File" id="signedcontract" name="signedcontract" accept="application/pdf" required>
-                </div>
-                <div>
-                <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
-                </div>
-                <button type="submit">Add Signed Contract</button>
-            </form>
-        </div>
-  </div>
-
 
 
   <div class="sort">
@@ -898,60 +929,119 @@ echo "<script>
 
     <div class="product-container">
         <h2 style="text-align:center">Signed Contract</h2>
-        
+
         <?php
-          include('config.php');
+        include('config.php');
 
-          if (isset($_GET['requirement_ID'])) {
-              $requirementID = $_GET['requirement_ID'];
+        if (isset($_GET['requirement_ID'])) {
+            $requirementID = $_GET['requirement_ID'];
 
-              // Query to fetch the signed contract path
-              $sql = "SELECT signedcontract FROM signedcontract WHERE requirement_ID = ?";
-              $stmt = mysqli_prepare($conn, $sql);
-              mysqli_stmt_bind_param($stmt, "i", $requirementID);
-              mysqli_stmt_execute($stmt);
-              $result = mysqli_stmt_get_result($stmt);
+            // Query to fetch signed contract details with client's full name and created_at
+            $sql = "SELECT sc.requirement_ID, u.First_Name, u.Last_Name, sc.contractor_name, 
+                            sc.length_lot_area, sc.width_lot_area, sc.square_meter_lot, 
+                            sc.length_floor_area, sc.width_floor_area, sc.square_meter_floor, 
+                            sc.type, sc.initial_budget, sc.photo_path, 
+                            sc.start_date, sc.end_date, sc.created_at 
+                    FROM signed_contracts sc
+                    JOIN users u ON sc.client_ID = u.user_ID
+                    WHERE sc.requirement_ID = ?";
+            $stmt = mysqli_prepare($conn, $sql);
+            mysqli_stmt_bind_param($stmt, "i", $requirementID);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
 
-              if ($row = mysqli_fetch_assoc($result)) {
-                  $contractPath = str_replace('\\', '/', $row['signedcontract']); // Convert Windows-style path
-                  $contractFileName = basename($contractPath); // Extract filename
+            if ($signed_contract = mysqli_fetch_assoc($result)) {
+                $clientName = htmlspecialchars($signed_contract['First_Name'] . " " . $signed_contract['Last_Name']);
+                $formattedCreatedAt = date("F j, Y - g:i A", strtotime($signed_contract['created_at'])); // Format Date & Time
 
-                  // Encode filename to handle spaces
-                  $encodedFileName = urlencode($contractFileName);
+                // Display Contract Button
+                echo "<h3>Contract:</h3>";
+                echo "<div style='text-align: center; margin-top: 20px;'>
+                        <button onclick='openSignedContractModal()' 
+                          style='padding: 12px 20px; font-size: 16px; 
+                                  font-weight: bold; color: white; background-color: #007BFF; 
+                                  border: none; cursor: pointer; border-radius: 5px; 
+                                  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);'>
+                            View Signed Contract
+                        </button>
+                      </div>";
 
-                  // Create a web-accessible URL (adjust this based on your project)
-                  $contractURL = "http://localhost/SIA/uploads/signedcontracts/" . $encodedFileName;
+                // Signed Contract Modal
+                echo "<div id='signedContractModal' class='signedcontract-modal'>
+                        <div class='signedcontract-modal-content'>
+                            <span onclick='closeSignedContractModal()' class='close-modal'>&times;</span>
+                            <h2>Signed Construction Agreement</h2>
 
-                  // Check if file exists using absolute path
-                  $absolutePath = realpath(__DIR__ . "/uploads/signedcontracts/" . $contractFileName);
+                            <div class='signedcontract-container'>
+                                <p><strong>Requirement ID:</strong> {$signed_contract['requirement_ID']}</p>
 
-                  // Check if file exists
-                  if ($absolutePath && file_exists($absolutePath)) {
-                      if (pathinfo($contractPath, PATHINFO_EXTENSION) == "pdf") {
-                          echo "<h3>Signed Contract Preview:</h3>";
-                          echo "<iframe src='" . htmlspecialchars($contractURL) . "' width='100%' height='600px' style='border: none;'></iframe>";
-                      } else {
-                          echo "<p>File is not a PDF. <a href='" . htmlspecialchars($contractURL) . "' download>Click here to download</a></p>";
-                      }
-                  } else {
-                      echo "<p style='color: red;'>Contract file not found in: " . htmlspecialchars($absolutePath) . "</p>";
-                  }
-              } else {
-                  echo "<p style='color: red;'>No signed contract found for this requirement.</p>";
-              }
+                                <p class='signedcontract-text'>
+                                    This agreement is made between <span class='highlight'>" . $clientName . "</span> (Client) and <span class='highlight'>" . htmlspecialchars($signed_contract['contractor_name']) . "</span> (Contractor), regarding the construction project with the following details:
+                                </p>
 
-              mysqli_stmt_close($stmt);
-          } else {
-              echo "<p style='color: red;'>No requirement ID provided.</p>";
-          }
+                                <p><strong>Lot Area:</strong> {$signed_contract['length_lot_area']}m x {$signed_contract['width_lot_area']}m ({$signed_contract['square_meter_lot']} sqm)</p>
+                                <p><strong>Floor Area:</strong> {$signed_contract['length_floor_area']}m x {$signed_contract['width_floor_area']}m ({$signed_contract['square_meter_floor']} sqm)</p>
+                                <p><strong>Project Type:</strong> {$signed_contract['type']}</p>
+                                <p><strong>Initial Budget:</strong> PHP " . number_format($signed_contract['initial_budget'], 2) . "</p>
 
-          mysqli_close($conn);
-          ?>
+                                <div class='signedcontract-photo'>
+                                    <h3>Project Photo</h3>";
+                                    if (!empty($signed_contract['photo_path']) && file_exists($signed_contract['photo_path'])) {
+                                        echo "<a href='#' onclick='openPhotoModal(\"" . htmlspecialchars($signed_contract['photo_path']) . "\")'>
+                                                <img src='" . htmlspecialchars($signed_contract['photo_path']) . "' alt='Project Photo' class='signedcontract-img'>
+                                              </a>";
+                                    } else {
+                                        echo "<p>No project photo available.</p>";
+                                    }
+                                echo "</div>
 
+                                <p class='signedcontract-text'>
+                                    The project is approved by <span class='highlight'>" . htmlspecialchars($signed_contract['contractor_name']) . "</span> and will proceed according to the agreed terms.
+                                </p>
 
+                                <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($signed_contract['start_date'])) . "</p>
+                                <p><strong>End Date:</strong> " . date("F j, Y", strtotime($signed_contract['end_date'])) . "</p>
 
+                                <p class='signedcontract-text'>
+                                    Both parties have agreed to the terms and conditions. The contractor is responsible for completing the project within the agreed timeframe and budget.
+                                </p>
+
+                                <p><strong>Signed By:</strong> <span class='highlight'>" . $clientName . "</span></p>
+                                <p><strong>Signed on:</strong> <span class='highlight'>" . $formattedCreatedAt . "</span></p>
+                            </div>
+                        </div>
+                      </div>";
+
+                mysqli_stmt_close($stmt);
+            } else {
+                echo "<p style='color: red;'>No signed contract found for this requirement.</p>";
+            }
+        } else {
+            echo "<p style='color: red;'>No requirement ID provided.</p>";
+        }
+
+        mysqli_close($conn);
+        ?>
     </div>
 
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+        document.getElementById('signedContractModal').style.display = 'none';
+    });
+
+    function openSignedContractModal() {
+        document.getElementById('signedContractModal').style.display = 'flex';
+    }
+
+    function closeSignedContractModal() {
+        document.getElementById('signedContractModal').style.display = 'none';
+    }
+
+    function openPhotoModal(photoUrl) {
+        window.open(photoUrl, '_blank');
+    }
+</script>
 
 
 

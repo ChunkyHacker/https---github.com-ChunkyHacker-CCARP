@@ -48,8 +48,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     );
 
     if (mysqli_stmt_execute($stmt)) {
-        echo "Contract successfully submitted to client.";
-    } else {
+        $requirementID = $_POST['requirement_ID']; // Get the requirement ID
+        echo "<script>
+                alert('Contract successfully submitted to client.');
+                window.location.href = 'viewaddedrequirements.php?requirement_ID=$requirementID';
+              </script>";
+        exit();
+    }
+     else {
         echo "Error: " . mysqli_error($conn);
     }
 }
