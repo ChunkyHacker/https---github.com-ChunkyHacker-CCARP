@@ -1,3 +1,12 @@
+<?php
+    session_start(); 
+    include('config.php');
+
+    if (!isset($_SESSION['Carpenter_ID'])) {
+    header('Location: login.html');
+    exit();
+    }
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -677,7 +686,7 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
             $requirementID = $_GET['requirement_ID'];
 
             // Query to fetch the signed contract for the given requirement_ID
-            $sql = "SELECT * FROM signedcontract WHERE requirement_ID = ?";
+            $sql = "SELECT * FROM signed_contracts WHERE requirement_ID = ?";
             $stmt = mysqli_prepare($conn, $sql);
             mysqli_stmt_bind_param($stmt, "i", $requirementID);
             mysqli_stmt_execute($stmt);

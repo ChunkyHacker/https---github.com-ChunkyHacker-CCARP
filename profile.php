@@ -8,68 +8,68 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <?php
-session_start();
-include('config.php');
-if (isset($_SESSION['message'])) {
-  echo '<div class="alert">' . $_SESSION['message'] . '</div>';
-  unset($_SESSION['message']); // Unset the message after it is displayed
-}
+  session_start();
+  include('config.php');
+  if (isset($_SESSION['message'])) {
+    echo '<div class="alert">' . $_SESSION['message'] . '</div>';
+    unset($_SESSION['message']); // Unset the message after it is displayed
+  }
 
-// Check if success parameter is passed in the URL
-if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
-  // Sanitize the message to prevent XSS
-  $message = htmlspecialchars($_GET['message']);
-  // Output the alert with the message
-  echo "<script>alert('$message');</script>";
-}
+  // Check if success parameter is passed in the URL
+  if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+    // Sanitize the message to prevent XSS
+    $message = htmlspecialchars($_GET['message']);
+    // Output the alert with the message
+    echo "<script>alert('$message');</script>";
+  }
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
+      $username = $_POST["username"];
+      $password = $_POST["password"];
 
-    $query_carpenters = "SELECT * FROM carpenters WHERE username = ?";
+      $query_carpenters = "SELECT * FROM carpenters WHERE username = ?";
 
-    $stmt_carpenters = mysqli_prepare($conn, $query_carpenters);
-    mysqli_stmt_bind_param($stmt_carpenters, "s", $username);
-    mysqli_stmt_execute($stmt_carpenters);
-    $result_carpenters = mysqli_stmt_get_result($stmt_carpenters);
+      $stmt_carpenters = mysqli_prepare($conn, $query_carpenters);
+      mysqli_stmt_bind_param($stmt_carpenters, "s", $username);
+      mysqli_stmt_execute($stmt_carpenters);
+      $result_carpenters = mysqli_stmt_get_result($stmt_carpenters);
 
-    if (mysqli_num_rows($result_carpenters) > 0) {
-        $row = mysqli_fetch_assoc($result_carpenters);
+      if (mysqli_num_rows($result_carpenters) > 0) {
+          $row = mysqli_fetch_assoc($result_carpenters);
 
-        if ($password === $row['password']) {
-            $_SESSION['Carpenter_ID'] = $row['Carpenter_ID'];
-            $_SESSION['First_Name'] = $row['First_Name'];
-            $_SESSION['Last_Name'] = $row['Last_Name'];
-            $_SESSION['Phone_Number'] = $row['Phone_Number'];
-            $_SESSION['Email'] = $row['Email'];
-            $_SESSION['Address'] = $row['Address'];
-            $_SESSION['Date_Of_Birth'] = $row['Date_Of_Birth'];
-            $_SESSION['Project_Completed'] = $row['Project_Completed'];
-            $_SESSION['Specialization'] = $row['Specialization'];
-            $_SESSION['username'] = $row['username'];
+          if ($password === $row['password']) {
+              $_SESSION['Carpenter_ID'] = $row['Carpenter_ID'];
+              $_SESSION['First_Name'] = $row['First_Name'];
+              $_SESSION['Last_Name'] = $row['Last_Name'];
+              $_SESSION['Phone_Number'] = $row['Phone_Number'];
+              $_SESSION['Email'] = $row['Email'];
+              $_SESSION['Address'] = $row['Address'];
+              $_SESSION['Date_Of_Birth'] = $row['Date_Of_Birth'];
+              $_SESSION['Project_Completed'] = $row['Project_Completed'];
+              $_SESSION['Specialization'] = $row['Specialization'];
+              $_SESSION['username'] = $row['username'];
 
-            header("Location: profile.php");
-            exit;
-        } else {
-            echo "<script>alert('Invalid password. Please try again.');</script>";
-            echo "<script>
-                    setTimeout(function() {
-                        window.location.href = 'cslogin.html';
-                    }, 100); // Redirect after 1 second
-                  </script>";
-            exit;
-        }
-    } else {
-        echo "<script>alert('User not found. Please try again.');</script>";
-        echo "<script>
-                setTimeout(function() {
-                    window.location.href = 'cslogin.html';
-                }, 1000); // Redirect after 1 second
-              </script>";
-        exit;
-    }
-}
+              header("Location: profile.php");
+              exit;
+          } else {
+              echo "<script>alert('Invalid password. Please try again.');</script>";
+              echo "<script>
+                      setTimeout(function() {
+                          window.location.href = 'cslogin.html';
+                      }, 100); // Redirect after 1 second
+                    </script>";
+              exit;
+          }
+      } else {
+          echo "<script>alert('User not found. Please try again.');</script>";
+          echo "<script>
+                  setTimeout(function() {
+                      window.location.href = 'cslogin.html';
+                  }, 1000); // Redirect after 1 second
+                </script>";
+          exit;
+      }
+  }
 
 ?>
 

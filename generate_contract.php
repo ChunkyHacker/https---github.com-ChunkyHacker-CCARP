@@ -1,5 +1,15 @@
 <?php
+    session_start(); 
+    include('config.php');
+
+    if (!isset($_SESSION['Carpenter_ID'])) {
+    header('Location: login.html');
+    exit();
+    }
+?>
+<?php
 include('config.php');
+
 
 if (!isset($_GET['id'])) {
     die("Project ID is required.");
