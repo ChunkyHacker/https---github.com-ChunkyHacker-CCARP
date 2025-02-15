@@ -1,5 +1,11 @@
 <?php
+    session_start(); 
     include('config.php');
+
+    if (!isset($_SESSION['User_ID'])) {
+    header('Location: login.html');
+    exit();
+    }
 ?>
 <!DOCTYPE html>
 <html lang="en">
