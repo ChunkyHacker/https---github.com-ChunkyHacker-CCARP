@@ -1,22 +1,20 @@
 <?php
-      include('config.php');
+    session_start();
+
+    include('config.php');
 
     if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
     $message = htmlspecialchars($_GET['message']);
     echo "<script>alert('$message');</script>";
   }
-
-  // Check if user is logged in
-  if (!isset($_SESSION['User_ID'])) {
-    echo "<script>
-            alert('You need to log in first.');
-            window.location.href = 'login.php';
-          </script>";
-    exit;
-  }
-
-  // Get logged-in user ID
-  $user_ID = $_SESSION['User_ID'];
+  
+    if (!isset($_SESSION['User_ID'])) {
+        echo "<script>alert('You need to log in first.'); window.location.href='login.php';</script>";
+        exit();
+    }
+    
+    $user_ID = $_SESSION['User_ID']; // Corrected session variable
+  
 ?>
 
 <!DOCTYPE html>
