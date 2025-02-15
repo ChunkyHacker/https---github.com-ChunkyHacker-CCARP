@@ -5,6 +5,18 @@
     $message = htmlspecialchars($_GET['message']);
     echo "<script>alert('$message');</script>";
   }
+
+  // Check if user is logged in
+  if (!isset($_SESSION['User_ID'])) {
+    echo "<script>
+            alert('You need to log in first.');
+            window.location.href = 'login.php';
+          </script>";
+    exit;
+  }
+
+  // Get logged-in user ID
+  $user_ID = $_SESSION['User_ID'];
 ?>
 
 <!DOCTYPE html>
@@ -118,10 +130,11 @@
     padding: 20px;
     border-radius: 5px;
     width: 70%;
-    max-height: 90vh; /* Limit ang height sa modal */
-    overflow-y: auto; /* Enable scrolling kung taas ang sulod */
+    max-height: 80vh; /* Dili molapas sa screen */
+    overflow-y: auto; /* Maka-scroll kung taas ang sulod */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
   }
-
+  
   .modal-content h2,
   .edit-modal-content h2 {
     margin-bottom: 20px;
@@ -154,6 +167,65 @@
   .modal-content form button,
   .edit-modal-content form button {
     font-size: 20px; /* Set font size of buttons inside modals to 20px */
+  }
+
+  /* Contract Modal Overlay */
+  #contractModal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      align-items: center; /* Centers modal vertically */
+      justify-content: center; /* Centers modal horizontally */
+      padding: 20px; /* Prevents touching the edges */
+  }
+
+  /* Modal Content */
+  .contract-modal-content {
+      background: white;
+      width: 80%;
+      max-width: 900px;
+      border-radius: 8px;
+      box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.3);
+      max-height: 85vh; /* Prevents modal from being too tall */
+      overflow-y: auto; /* Allows scrolling if needed */
+      padding: 20px;
+      position: relative;
+      margin: auto; /* Ensures centering */
+  }
+
+  /* Close Button */
+  .close-modal {
+      float: right;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+  }
+
+  /* Project Image */
+  .project-img {
+      width: 700px;
+      height: 400px;
+      border: 1px solid #ccc;
+      padding: 5px;
+  }
+
+  /* Submit Button */
+  .submit-btn {
+      padding: 12px 20px;
+      font-size: 16px;
+      font-weight: bold;
+      color: white;
+      background-color: #28a745;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+      box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.2);
   }
 
   .main {
@@ -299,17 +371,17 @@
 
   <?php
 
-if (isset($_GET['requirement_ID'])) {
-    $requirement_ID = $_GET['requirement_ID'];
+    if (isset($_GET['requirement_ID'])) {
+        $requirement_ID = $_GET['requirement_ID'];
 
-    $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
-    $stmt = mysqli_prepare($conn, $query);
-    mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
-    mysqli_stmt_execute($stmt);
-    $result = mysqli_stmt_get_result($stmt);
-    $row = mysqli_fetch_assoc($result);
+        $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
+        $stmt = mysqli_prepare($conn, $query);
+        mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
+        mysqli_stmt_execute($stmt);
+        $result = mysqli_stmt_get_result($stmt);
+        $row = mysqli_fetch_assoc($result);
 
-    if ($row) {
+        if ($row) {
         echo "<div class='main'>";
         echo "<h1>Client's Plan Details</h1>";
 
@@ -465,31 +537,123 @@ if (isset($_GET['requirement_ID'])) {
           echo "</a>";
         }
         
-        echo "<p>Labor Cost (Peso ₱): <input type='text' value='{$row['labor_cost']}' readonly></p>";
+        // Get contract details from `contracts` table
+        $requirement_ID = $_GET['requirement_ID'] ?? null;
+        $contract = null;
 
-        // Check if the file exists and display it
-        $contractPath = $row['contract']; // Get contract file path
+        if ($requirement_ID) {
+            $query = "SELECT * FROM contracts WHERE requirement_ID = ?";
+            $stmt = mysqli_prepare($conn, $query);
+            mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
+            mysqli_stmt_execute($stmt);
+            $result = mysqli_stmt_get_result($stmt);
 
-        // Extract file name (kung ang $contractPath naa sa database as full path)
-        $contractFileName = basename($contractPath);
-        
-        // Create a web-accessible URL
-        $contractURL = "http://localhost/SIA/uploads/contracts/" . $contractFileName;
-        
-        // Check if file exists
-        if (file_exists($contractPath)) {
-            echo "<h3>Contract Preview:</h3>";
-            echo "<div style='width: 100%; height: 80vh; overflow: auto; border: 1px solid #ccc;'>
-                    <iframe src='" . htmlspecialchars($contractURL) . "' width='100%' height='100%' style='border: none;'></iframe>
-                  </div>";
+            if ($contract = mysqli_fetch_assoc($result)) {
+                $client_name = $contract['client_name'];
+                $contractor_name = $contract['contractor_name'];
+            } else {
+                die("Contract not found.");
+            }
         } else {
-            echo "<p style='color: red;'>Contract file not found.</p>";
+            die("Requirement ID missing.");
         }
-        
-        
-        
+
+        // Display Contract Button
+        echo "<h3>Contract:</h3>";
+        echo "<div style='text-align: center; margin-top: 20px;'>
+                <button onclick='openContractModal()' 
+                  style='padding: 12px 20px; font-size: 16px; 
+                          font-weight: bold; color: white; background-color: #007BFF; 
+                          border: none; cursor: pointer; border-radius: 5px; 
+                          box-shadow: 2px 2px 5px rgba(0,0,0,0.2);'>
+                    View Contract
+                </button>
+              </div>";
+
+        // Contract Modal
+        echo "<div id='contractModal'>
+        <div class='contract-modal-content'>
+            <span onclick='closeContractModal()' class='close-modal'>&times;</span>
+            <h2>Construction Agreement</h2>
+
+            <div class='contract-container'>
+                <p class='contract-text'>
+                    This agreement is made between <span class='highlight'>$client_name</span> (Client) and <span class='highlight'>$contractor_name</span> (Contractor), regarding the construction project with the following details:
+                </p>
+
+                <p><strong>Lot Area:</strong> {$contract['length_lot_area']}m x {$contract['width_lot_area']}m ({$contract['square_meter_lot']} sqm)</p>
+                <p><strong>Floor Area:</strong> {$contract['length_floor_area']}m x {$contract['width_floor_area']}m ({$contract['square_meter_floor']} sqm)</p>
+                <p><strong>Project Type:</strong> {$contract['type']}</p>
+                <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>
+
+                <div class='project-photo'>
+                    <h3>Project Photo</h3>";
+                    if (!empty($contract['photo_path']) && file_exists($contract['photo_path'])) {
+                        echo "<a href='#' onclick='openPhotoModal(\"{$contract['photo_path']}\")'>
+                                <img src='{$contract['photo_path']}' alt='Project Photo' class='project-img'>
+                              </a>";
+                    } else {
+                        echo "<p>No project photo available.</p>";
+                    }
+                echo "</div>
+
+                <p class='contract-text'>
+                    The project is approved by <span class='highlight'>$contractor_name</span> and will proceed according to the agreed terms.
+                </p>
+
+                <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
+                <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
+
+                <p class='contract-text'>
+                    Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
+                </p>
+
+                <form method='POST' action='save_signed_contract.php'>
+                    <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
+                    
+                    <!-- Checkbox for Agreement -->
+                    <div style='margin-top: 15px;'>
+                        <input type='checkbox' id='agreeCheckbox' onchange='toggleSubmitButton()'>
+                        <label for='agreeCheckbox'>I agree to the terms and conditions.</label>
+                    </div>
                 
-        echo "</form>";
+                    <!-- Submit Button (Disabled by Default) -->
+                    <button type='submit' id='submitBtn' class='submit-btn' disabled>
+                        Sign Contract
+                    </button>
+                  </form>
+            
+            </div>
+        </div>
+      </div>";
+
+echo "<script>
+    function toggleSubmitButton() {
+        let checkbox = document.getElementById('agreeCheckbox');
+        let submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = !checkbox.checked;
+    }
+</script>";
+
+        // JavaScript Functions for Modal
+        echo "<script>
+        window.onload = function() {
+            document.getElementById('contractModal').style.display = 'none';
+        };
+
+        function openContractModal() {
+            document.getElementById('contractModal').style.display = 'flex';
+        }
+
+        function closeContractModal() {
+            document.getElementById('contractModal').style.display = 'none';
+        }
+
+        function openPhotoModal(photoUrl) {
+            window.open(photoUrl, '_blank');
+        }
+    </script>";                      
+                  
         echo "</div>"; 
         
       } else {
@@ -504,7 +668,7 @@ if (isset($_GET['requirement_ID'])) {
       echo "<p>Approved Plan ID is missing.</p>";
       echo "</div>"; 
     }
-?>
+  ?>
 
 
   <h2 style="text-align:center">Compute Budget</h2>

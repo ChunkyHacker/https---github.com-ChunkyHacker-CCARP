@@ -301,10 +301,6 @@
             echo "<label for='initial_budget'>Initial Budget</label>";
             echo "<input type='text' id='initial_budget' name='initial_budget' value='{$row['initial_budget']}' readonly>";
             echo "</div>";
-            // Estimated Cost on the right
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<h3>Estimated Cost</h3>";
-            echo "</div>";
             echo "</div>";
             
             echo "<div class=\"row-container\">";
@@ -387,39 +383,27 @@
             echo "</div>";
 
             echo '<form action="addrequirements.php" method="post" enctype="multipart/form-data">';
-            echo "<h2>Add New Requirements</h2>";
-            echo "<input type='hidden' name='approved_plan_id' value='$approved_plan_ID'>";
-                        
-
-            $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
-            $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "i", $approved_plan_ID);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-            
-            if ($row = mysqli_fetch_assoc($result)) {
-                // Check if 'estimated_cost' is present in the fetched row
-                if (isset($row['estimated_cost'])) {
-                    echo "<label id='estimated_cost_label' for='estimated_cost'>Estimated Cost</label>";
-                    echo "<input type='hidden' id='estimated_cost' name='estimated_cost' value='" . $ec . "'>";
+                echo "<input type='hidden' name='approved_plan_id' value='$approved_plan_ID'>";
+                $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $approved_plan_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+                
+                if ($row = mysqli_fetch_assoc($result)) {
+                    // Check if 'estimated_cost' is present in the fetched row
+                    if (isset($row['estimated_cost'])) {
+                        echo "<label id='estimated_cost_label' for='estimated_cost'>Estimated Cost</label>";
+                        echo "<input type='hidden' id='estimated_cost' name='estimated_cost' value='" . $ec . "'>";
+                    } else {
+                        echo "Estimated Cost not found in the fetched row.";
+                    }
                 } else {
-                    echo "Estimated Cost not found in the fetched row.";
+                    echo "No data found for the specified approved_plan_ID.";
                 }
-            } else {
-                echo "No data found for the specified approved_plan_ID.";
-            }
-                        
-            echo "<label for='labor_cost'>Labor Cost (Pesos ₱):</label>";
-            echo "<input type='text' name='labor_cost' id='labor_cost' required>";  
-            
-            echo "<label for='labor_cost'>Contract</label>";
-            echo "<input type='file' name='contract' accept='application/pdf' required>"; 
-                        
-            echo "<input type='submit' value='Submit Requirements'>";
-            echo "<input type='button' value='Go back' onclick='window.location.href = \"profile.php\";'>";
-            
+                echo "<input type='submit' value='Generate Contract'>";
+                echo "<input type='button' value='Go back' onclick='window.location.href = \"profile.php\";'>";
             echo "</form>";
-                        
             echo "</div>"; // Close main div
             } else {
             echo "<div class='main'>";
