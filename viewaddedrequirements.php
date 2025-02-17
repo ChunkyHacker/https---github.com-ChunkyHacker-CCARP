@@ -269,12 +269,6 @@
             echo "</div>";
 
             echo "<div class=\"row-container\">";
-            echo "<h3>Estimated Cost</h3>";
-            echo "<label for='estimated_cost'>Estimated Cost</label>";
-            echo "<input type='text' id='estimated_cost' name='estimated_cost' value='{$row['estimated_cost']}' readonly><br>";
-            echo "</div>";
-
-            echo "<div class=\"row-container\">";
             echo "<h3>Project Dates</h3>";
             echo "<p>Start Date: <input type='text' value='{$row['start_date']}' readonly></p>";
             echo "<p>End Date: <input type='text' value='{$row['end_date']}' readonly></p>";        
@@ -373,22 +367,7 @@
                 echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 900px; height: 400px;'>";
                 echo "</a>";
             }
-               
-            echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
-
-            // Check if the file exists and display it
-            $contractPath = $row['contract'];
-            if (file_exists($contractPath)) {
-                // Display the contract file as a link
-                echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
             
-                // Optionally, embed the file if it's a PDF
-                if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
-                    echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
-                }
-            } else {
-                echo "<p>Contract file not found.</p>";
-            }
             
             echo "</div>"; 
             echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';

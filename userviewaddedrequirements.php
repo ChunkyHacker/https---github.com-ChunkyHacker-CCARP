@@ -342,11 +342,6 @@
             echo "<input type='text' id='initial_budget' name='initial_budget' value='{$row['initial_budget']}' readonly><br>";
             echo "</div>";
 
-            echo "<div class=\"row-container\">";
-            echo "<h3>Estimated Cost</h3>";
-            echo "<label for='estimated_cost'>Estimated Cost</label>";
-            echo "<input type='text' id='estimated_cost' name='estimated_cost' value='{$row['estimated_cost']}' readonly><br>";
-            echo "</div>";
 
             echo "<div class=\"row-container\">";
             echo "<h3>Project Dates</h3>";
@@ -485,86 +480,85 @@
             echo "</a>";
         }
                
-        // Display Contract Button
-            echo "<h3>Contract:</h3>";
-            echo "<div style='text-align: center; margin-top: 20px;'>
-                        <button onclick='openContractModal()' 
-                          style='padding: 12px 20px; font-size: 16px; 
-                                  font-weight: bold; color: white; background-color: #007BFF; 
-                                  border: none; cursor: pointer; border-radius: 5px; 
-                                  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);'>
-                            View Contract
-                        </button>
-                      </div>";
+// Display Contract Button
+echo "<h3>Contract:</h3>";
+echo "<div style='text-align: center; margin-top: 20px;'>
+        <button onclick='openContractModal()' 
+          style='padding: 12px 20px; font-size: 16px; 
+                  font-weight: bold; color: white; background-color: #007BFF; 
+                  border: none; cursor: pointer; border-radius: 5px; 
+                  box-shadow: 2px 2px 5px rgba(0,0,0,0.2);'>
+            View Contract
+        </button>
+      </div>";
 
-                    // Get contract details from `contracts` table
-                    $requirement_ID = $_GET['requirement_ID'] ?? null;
-                    $contract = null;
+// Get contract details from `contracts` table
+$requirement_ID = $_GET['requirement_ID'] ?? null;
+$contract = null;
 
-                    if ($requirement_ID) {
-                        $query = "SELECT * FROM contracts WHERE requirement_ID = ?";
-                        $stmt = mysqli_prepare($conn, $query);
-                        mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
-                        mysqli_stmt_execute($stmt);
-                        $result = mysqli_stmt_get_result($stmt);
+if ($requirement_ID) {
+    $query = "SELECT * FROM contracts WHERE requirement_ID = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-                        if ($contract = mysqli_fetch_assoc($result)) {
-                            $client_name = $contract['client_name'];
-                            $contractor_name = $contract['contractor_name'];
-                            $labor_cost = $contract['labor_cost']; // Assuming labor cost is already stored in the `contracts` table
-                        } else {
-                            die("Contract not found.");
-                        }
-                    } else {
-                        die("Requirement ID missing.");
-                    }
+    if ($contract = mysqli_fetch_assoc($result)) {
+        $client_name = $contract['client_name'];
+        $contractor_name = $contract['contractor_name'];
+        $labor_cost = $contract['labor_cost'];
+    } else {
+        die("Contract not found.");
+    }
+} else {
+    die("Requirement ID missing.");
+}
 
-                    echo "<div id='contractModal' style='display: none;'>
-                            <div class='contract-modal-content'>
-                                <span onclick='closeContractModal()' class='close-modal'>&times;</span>
-                                <h2>Construction Agreement</h2>
+echo "<div id='contractModal' style='display: none;'>
+        <div class='contract-modal-content'>
+            <span onclick='closeContractModal()' class='close-modal'>&times;</span>
+            <h2>Construction Agreement</h2>
 
-                                <div class='contract-container'>
-                                    <p class='contract-text'>
-                                        This agreement is made between <span class='highlight'>$client_name</span> (Client) and <span class='highlight'>$contractor_name</span> (Contractor), regarding the construction project with the following details:
-                                    </p>
+            <div class='contract-container'>
+                <p class='contract-text'>
+                    This agreement is made between <span class='highlight'>$client_name</span> (Client) and <span class='highlight'>$contractor_name</span> (Contractor), regarding the construction project with the following details:
+                </p>
 
-                                    <p><strong>Lot Area:</strong> {$contract['length_lot_area']}m x {$contract['width_lot_area']}m ({$contract['square_meter_lot']} sqm)</p>
-                                    <p><strong>Floor Area:</strong> {$contract['length_floor_area']}m x {$contract['width_floor_area']}m ({$contract['square_meter_floor']} sqm)</p>
-                                    <p><strong>Project Type:</strong> {$contract['type']}</p>
-                                    <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>
+                <p><strong>Lot Area:</strong> {$contract['length_lot_area']}m x {$contract['width_lot_area']}m ({$contract['square_meter_lot']} sqm)</p>
+                <p><strong>Floor Area:</strong> {$contract['length_floor_area']}m x {$contract['width_floor_area']}m ({$contract['square_meter_floor']} sqm)</p>
+                <p><strong>Project Type:</strong> {$contract['type']}</p>
+                <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>";
 
-                                    <div class='project-photo'>
-                                        <h3>Project Photo</h3>";
-                                        if (!empty($contract['photo_path']) && file_exists($contract['photo_path'])) {
-                                            echo "<a href='#' onclick='openPhotoModal(\"{$contract['photo_path']}\")'>
-                                                    <img src='{$contract['photo_path']}' alt='Project Photo' class='project-img'>
-                                                </a>";
-                                        } else {
-                                            echo "<p>No project photo available.</p>";
-                                        }
-                                echo "</div>
+            // Display the resized photo with a link to open the modal
+            if (!empty($contract['Photo']) && file_exists($contract['Photo'])) {
+                echo "<p><strong>Photo:</strong></p>";
+                echo "<div style='text-align: center;'>";
+                echo "<a href='#' onclick='openModal(\"{$contract['Photo']}\")'>";
+                echo "<img src='{$contract['Photo']}' alt='Plan Photo' style='width: 700px; height: 400px;'>";
+                echo "</a>";
+                echo "</div>";
+            }
 
-                                <p class='contract-text'>
-                                    The project is approved by <span class='highlight'>$contractor_name</span> and will proceed according to the agreed terms.
-                                </p>
+echo "      <p class='contract-text'>
+                The project is approved by <span class='highlight'>$contractor_name</span> and will proceed according to the agreed terms.
+            </p>
 
-                                <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
-                                <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
+            <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
+            <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
 
-                                <!-- Display Labor Cost -->
-                                <p><strong>Labor Cost:</strong> PHP " . number_format($labor_cost, 2) . "</p>
+            <!-- Display Labor Cost -->
+            <p><strong>Labor Cost:</strong> PHP " . number_format($labor_cost, 2) . "</p>
 
-                                <p class='contract-text'>
-                                    Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
-                                </p>
+            <p class='contract-text'>
+                Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
+            </p>
 
-                                <form method='POST' action='save_agreement.php'>
-                                    <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
-                                </form>
-                            </div>
-                        </div>
-                    </div>";
+            <form method='POST' action='save_agreement.php'>
+                <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
+            </form>
+        </div>
+    </div>
+</div>";
                             // JavaScript Functions for Modal
                 echo "<script>
                     window.onload = function() {

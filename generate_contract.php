@@ -122,16 +122,24 @@ $photoPath = $contract['Photo'];
         <p><strong>Initial Budget:</strong> PHP <?php echo number_format($contract['initial_budget'], 2); ?></p>
 
         <div class="project-photo">
-            <?php if (!empty($photoPath) && file_exists($photoPath)): ?>
-                <div style='text-align: center;'>
-                    <a href='#' onclick='openModal("<?php echo $photoPath; ?>")'>
-                        <img src="<?php echo $photoPath; ?>" alt="Project Photo" style="width: 700px; height: 400px;">
-                    </a>
-                </div>
-            <?php else: ?>
-                <p>No project photo available.</p>
-            <?php endif; ?>
-        </div>
+        <?php 
+        if (!empty($photoPath)) {
+            $absolutePath = "http://localhost/SIA/" . $photoPath; // Adjust depende sa imong setup
+            if (file_exists($photoPath)) {
+                echo "<div style='text-align: center;'>
+                        <a href='#' onclick='openModal(\"$absolutePath\")'>
+                            <img src=\"$absolutePath\" alt=\"Project Photo\" style=\"width: 700px; height: 400px;\">
+                        </a>
+                    </div>";
+            } else {
+                echo "<p>File does not exist: $photoPath</p>";
+            }
+        } else {
+            echo "<p>No project photo available.</p>";
+        }
+        ?>
+    </div>
+
 
         <p class="contract-text">
             The project is approved by <span class="highlight"><?php echo $contract['approved_by']; ?></span> and will proceed according to the agreed terms.
