@@ -626,62 +626,62 @@
 
             <div class='contract-container'>
                 <p class='contract-text'>
-                    This agreement is made between <span class='highlight'>$client_name</span> (Client) and <span class='highlight'>$contractor_name</span> (Contractor), regarding the construction project with the following details:
+                    This agreement is made between <span class='highlight'>{$client_name}</span> (Client) and <span class='highlight'>{$contractor_name}</span> (Contractor), regarding the construction project with the following details:
                 </p>
 
                 <p><strong>Lot Area:</strong> {$contract['length_lot_area']}m x {$contract['width_lot_area']}m ({$contract['square_meter_lot']} sqm)</p>
                 <p><strong>Floor Area:</strong> {$contract['length_floor_area']}m x {$contract['width_floor_area']}m ({$contract['square_meter_floor']} sqm)</p>
                 <p><strong>Project Type:</strong> {$contract['type']}</p>
-                <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>
+                <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>";
 
-                <div class='project-photo'>
-                    <h3>Project Photo</h3>";
-                    if (!empty($contract['photo_path']) && file_exists($contract['photo_path'])) {
-                        echo "<a href='#' onclick='openPhotoModal(\"{$contract['photo_path']}\")'>
-                                <img src='{$contract['photo_path']}' alt='Project Photo' class='project-img'>
-                              </a>";
-                    } else {
-                        echo "<p>No project photo available.</p>";
-                    }
-                echo "</div>
+        // Fetch the stored file path from the database
+        $photoPath = $contract['Photo']; // This now contains the file path instead of BLOB
 
-                <p class='contract-text'>
-                    The project is approved by <span class='highlight'>$contractor_name</span> and will proceed according to the agreed terms.
-                </p>
+        if (!empty($photoPath) && file_exists($photoPath)) {
+            echo "<p>Photo:</p>";
+            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 900px; height: 400px;'>";
+        } else {
+            echo "<p>No project photo available.</p>";
+        }
 
-                <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
-                <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
 
-                <p class='contract-text'>
-                    Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
-                </p>
+    echo "<p class='contract-text'>
+            The project is approved by <span class='highlight'>{$contractor_name}</span> and will proceed according to the agreed terms.
+        </p>
 
-                <form method='POST' action='save_signed_contract.php'>
-                    <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
-                    
-                    <!-- Checkbox for Agreement -->
-                    <div style='margin-top: 15px;'>
-                        <input type='checkbox' id='agreeCheckbox' onchange='toggleSubmitButton()'>
-                        <label for='agreeCheckbox'>I agree to the terms and conditions.</label>
-                    </div>
-                
-                    <!-- Submit Button (Disabled by Default) -->
-                    <button type='submit' id='submitBtn' class='submit-btn' disabled>
-                        Sign Contract
-                    </button>
-                  </form>
-            
+        <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
+        <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
+
+        <p class='contract-text'>
+            Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
+        </p>
+
+        <form method='POST' action='save_signed_contract.php'>
+            <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
+
+            <!-- Checkbox for Agreement -->
+            <div style='margin-top: 15px;'>
+                <input type='checkbox' id='agreeCheckbox' onchange='toggleSubmitButton()'>
+                <label for='agreeCheckbox'>I agree to the terms and conditions.</label>
             </div>
-        </div>
-      </div>";
 
-echo "<script>
-    function toggleSubmitButton() {
-        let checkbox = document.getElementById('agreeCheckbox');
-        let submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = !checkbox.checked;
-    }
-</script>";
+            <!-- Submit Button (Disabled by Default) -->
+            <button type='submit' id='submitBtn' class='submit-btn' disabled>
+                Sign Contract
+            </button>
+        </form>
+
+    </div>
+    </div>
+    </div>";
+
+    echo "<script>
+        function toggleSubmitButton() {
+            let checkbox = document.getElementById('agreeCheckbox');
+            let submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = !checkbox.checked;
+        }
+    </script>";
 
         // JavaScript Functions for Modal
         echo "<script>
@@ -940,7 +940,7 @@ echo "<script>
             $sql = "SELECT sc.requirement_ID, u.First_Name, u.Last_Name, sc.contractor_name, 
                             sc.length_lot_area, sc.width_lot_area, sc.square_meter_lot, 
                             sc.length_floor_area, sc.width_floor_area, sc.square_meter_floor, 
-                            sc.type, sc.initial_budget, sc.photo_path, 
+                            sc.type, sc.initial_budget, sc.Photo, 
                             sc.start_date, sc.end_date, sc.created_at 
                     FROM signed_contracts sc
                     JOIN users u ON sc.client_ID = u.user_ID
@@ -986,9 +986,9 @@ echo "<script>
 
                                 <div class='signedcontract-photo'>
                                     <h3>Project Photo</h3>";
-                                    if (!empty($signed_contract['photo_path']) && file_exists($signed_contract['photo_path'])) {
-                                        echo "<a href='#' onclick='openPhotoModal(\"" . htmlspecialchars($signed_contract['photo_path']) . "\")'>
-                                                <img src='" . htmlspecialchars($signed_contract['photo_path']) . "' alt='Project Photo' class='signedcontract-img'>
+                                    if (!empty($signed_contract['Photo']) && file_exists($signed_contract['Photo'])) {
+                                        echo "<a href='#' onclick='openPhotoModal(\"" . htmlspecialchars($signed_contract['Photo']) . "\")'>
+                                                <img src='" . htmlspecialchars($signed_contract['Photo']) . "' alt='Project Photo' class='signedcontract-img'>
                                               </a>";
                                     } else {
                                         echo "<p>No project photo available.</p>";
