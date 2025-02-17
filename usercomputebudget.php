@@ -634,46 +634,50 @@
                 <p><strong>Project Type:</strong> {$contract['type']}</p>
                 <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>";
 
-        // Fetch the stored file path from the database
-        $photoPath = $contract['Photo']; // This now contains the file path instead of BLOB
+            // Fetch the stored file path from the database
+            $photoPath = $contract['Photo']; // This now contains the file path instead of BLOB
 
-        if (!empty($photoPath) && file_exists($photoPath)) {
-            echo "<p>Photo:</p>";
-            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 900px; height: 400px;'>";
-        } else {
-            echo "<p>No project photo available.</p>";
-        }
+            if (!empty($photoPath) && file_exists($photoPath)) {
+                echo "<p>Photo:</p>";
+                echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 900px; height: 400px;'>";
+            } else {
+                echo "<p>No project photo available.</p>";
+            }
 
+            echo "<p class='contract-text'>
+                    The project is approved by <span class='highlight'>{$contractor_name}</span> and will proceed according to the agreed terms.
+                </p>
 
-    echo "<p class='contract-text'>
-            The project is approved by <span class='highlight'>{$contractor_name}</span> and will proceed according to the agreed terms.
-        </p>
+                <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
+                <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>";
 
-        <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
-        <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
+            // Display Labor Cost
+            // Assuming the labor cost is stored in the database and is fetched correctly.
+            $labor_cost = $contract['labor_cost']; // Make sure to adjust this as per your database column name
+            echo "<p><strong>Labor Cost:</strong> PHP " . number_format($labor_cost, 2) . "</p>";
 
-        <p class='contract-text'>
-            Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
-        </p>
+            echo "<p class='contract-text'>
+                    Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
+                </p>
 
-        <form method='POST' action='save_signed_contract.php'>
-            <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
+                <form method='POST' action='save_signed_contract.php'>
+                    <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'> 
 
-            <!-- Checkbox for Agreement -->
-            <div style='margin-top: 15px;'>
-                <input type='checkbox' id='agreeCheckbox' onchange='toggleSubmitButton()'>
-                <label for='agreeCheckbox'>I agree to the terms and conditions.</label>
+                    <!-- Checkbox for Agreement -->
+                    <div style='margin-top: 15px;'>
+                        <input type='checkbox' id='agreeCheckbox' onchange='toggleSubmitButton()'>
+                        <label for='agreeCheckbox'>I agree to the terms and conditions.</label>
+                    </div>
+
+                    <!-- Submit Button (Disabled by Default) -->
+                    <button type='submit' id='submitBtn' class='submit-btn' disabled>
+                        Sign Contract
+                    </button>
+                </form>
+
             </div>
-
-            <!-- Submit Button (Disabled by Default) -->
-            <button type='submit' id='submitBtn' class='submit-btn' disabled>
-                Sign Contract
-            </button>
-        </form>
-
-    </div>
-    </div>
-    </div>";
+        </div>
+        </div>";
 
     echo "<script>
         function toggleSubmitButton() {

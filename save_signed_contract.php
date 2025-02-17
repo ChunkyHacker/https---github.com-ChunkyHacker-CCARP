@@ -2,6 +2,7 @@
 include 'config.php';
 session_start(); // Ensure session is started
 
+// Check if the user is logged in
 if (!isset($_SESSION['User_ID'])) {
     echo "<script>alert('You need to log in first.'); window.location.href='login.php';</script>";
     exit();
@@ -44,21 +45,58 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $square_meter_floor = $contract['square_meter_floor'];
         $type = $contract['type'];
         $initial_budget = $contract['initial_budget'];
-        $photo_path = $contract['photo_path'];
+        $Photo = $contract['Photo'];
         $start_date = $contract['start_date'];
         $end_date = $contract['end_date'];
+        $labor_cost = $contract['labor_cost']; // Fetching labor cost from the contract
 
-        $insert_query = "INSERT INTO signed_contracts (contract_ID, requirement_ID, client_ID, client_name, contractor_name, length_lot_area, width_lot_area, square_meter_lot, length_floor_area, width_floor_area, square_meter_floor, type, initial_budget, photo_path, start_date, end_date, signed_by) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        // Set the photo parameter (ensure it's not NULL)
+        $photo_param = !empty($Photo) ? $Photo : 'default.jpg'; // Use a default value if no photo
+
+        // Insert signed contract with labor cost
+        $insert_query = "INSERT INTO signed_contracts 
+            (contract_ID, 
+            requirement_ID, 
+            client_ID, 
+            client_name, 
+            contractor_name, 
+            length_lot_area, 
+            width_lot_area, 
+            square_meter_lot, 
+            length_floor_area, 
+            width_floor_area, 
+            square_meter_floor, 
+            type, 
+            initial_budget, 
+            labor_cost, 
+            Photo, 
+            start_date, 
+            end_date, 
+            signed_by) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
         $insert_stmt = mysqli_prepare($conn, $insert_query);
-        mysqli_stmt_bind_param($insert_stmt, "iiissdddddddsdssi", 
-            $contract_ID, $requirement_ID, $client_ID, $client_name, $contractor_name, 
-            $length_lot_area, $width_lot_area, $square_meter_lot, $length_floor_area, 
-            $width_floor_area, $square_meter_floor, $type, $initial_budget, 
-            $photo_path, $start_date, $end_date, $user_ID
-        );
 
+        // Bind parameters for the query
+        mysqli_stmt_bind_param($insert_stmt, "iiissdddddddsdssis", 
+            $contract_ID, 
+            $requirement_ID, 
+            $client_ID, 
+            $client_name, 
+            $contractor_name, 
+            $length_lot_area, 
+            $width_lot_area, 
+            $square_meter_lot, 
+            $length_floor_area, 
+            $width_floor_area, 
+            $square_meter_floor, 
+            $type, $initial_budget, 
+            $labor_cost, 
+            $photo_param, 
+            $start_date, 
+            $end_date, 
+            $user_ID
+        );
 
         if (mysqli_stmt_execute($insert_stmt)) {
             echo "<script>
@@ -68,14 +106,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         } else {
             echo "<script>alert('Error signing contract.');</script>";
         }
+
+        // Close connection
+        mysqli_stmt_close($stmt);
+        mysqli_stmt_close($insert_stmt);
+        mysqli_close($conn);
     } else {
         echo "<script>alert('Contract not found.');</script>";
     }
-
-    // Close connection
-    mysqli_stmt_close($stmt);
-    mysqli_stmt_close($insert_stmt);
-    mysqli_close($conn);
 } else {
     echo "<script>alert('Invalid request.');</script>";
 }

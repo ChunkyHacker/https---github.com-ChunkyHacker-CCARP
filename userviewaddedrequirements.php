@@ -497,70 +497,75 @@
                         </button>
                       </div>";
 
-         // Get contract details from `contracts` table
-        $requirement_ID = $_GET['requirement_ID'] ?? null;
-        $contract = null;
-        
-        if ($requirement_ID) {
-            $query = "SELECT * FROM contracts WHERE requirement_ID = ?";
-            $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-        
-            if ($contract = mysqli_fetch_assoc($result)) {
-                $client_name = $contract['client_name'];
-                $contractor_name = $contract['contractor_name'];
-            } else {
-                die("Contract not found.");
-            }
-            } else {
-                die("Requirement ID missing.");
-            }
-            echo "<div id='contractModal' style='display: none;'>
-                <div class='contract-modal-content'>
-                    <span onclick='closeContractModal()' class='close-modal'>&times;</span>
-                    <h2>Construction Agreement</h2>
+                    // Get contract details from `contracts` table
+                    $requirement_ID = $_GET['requirement_ID'] ?? null;
+                    $contract = null;
 
-                    <div class='contract-container'>
-                    <p class='contract-text'>
-                        This agreement is made between <span class='highlight'>$client_name</span> (Client) and <span class='highlight'>$contractor_name</span> (Contractor), regarding the construction project with the following details:
-                    </p>
+                    if ($requirement_ID) {
+                        $query = "SELECT * FROM contracts WHERE requirement_ID = ?";
+                        $stmt = mysqli_prepare($conn, $query);
+                        mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
+                        mysqli_stmt_execute($stmt);
+                        $result = mysqli_stmt_get_result($stmt);
 
-                    <p><strong>Lot Area:</strong> {$contract['length_lot_area']}m x {$contract['width_lot_area']}m ({$contract['square_meter_lot']} sqm)</p>
-                    <p><strong>Floor Area:</strong> {$contract['length_floor_area']}m x {$contract['width_floor_area']}m ({$contract['square_meter_floor']} sqm)</p>
-                    <p><strong>Project Type:</strong> {$contract['type']}</p>
-                    <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>
+                        if ($contract = mysqli_fetch_assoc($result)) {
+                            $client_name = $contract['client_name'];
+                            $contractor_name = $contract['contractor_name'];
+                            $labor_cost = $contract['labor_cost']; // Assuming labor cost is already stored in the `contracts` table
+                        } else {
+                            die("Contract not found.");
+                        }
+                    } else {
+                        die("Requirement ID missing.");
+                    }
 
-                    <div class='project-photo'>
-                        <h3>Project Photo</h3>";
-                            if (!empty($contract['photo_path']) && file_exists($contract['photo_path'])) {
-                                echo "<a href='#' onclick='openPhotoModal(\"{$contract['photo_path']}\")'>
-                                        <img src='{$contract['photo_path']}' alt='Project Photo' class='project-img'>
-                                    </a>";
-                            } else {
-                                echo "<p>No project photo available.</p>";
-                            }
-                echo "</div>
+                    echo "<div id='contractModal' style='display: none;'>
+                            <div class='contract-modal-content'>
+                                <span onclick='closeContractModal()' class='close-modal'>&times;</span>
+                                <h2>Construction Agreement</h2>
 
-                            <p class='contract-text'>
-                                The project is approved by <span class='highlight'>$contractor_name</span> and will proceed according to the agreed terms.
-                            </p>
+                                <div class='contract-container'>
+                                    <p class='contract-text'>
+                                        This agreement is made between <span class='highlight'>$client_name</span> (Client) and <span class='highlight'>$contractor_name</span> (Contractor), regarding the construction project with the following details:
+                                    </p>
 
-                            <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
-                            <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
+                                    <p><strong>Lot Area:</strong> {$contract['length_lot_area']}m x {$contract['width_lot_area']}m ({$contract['square_meter_lot']} sqm)</p>
+                                    <p><strong>Floor Area:</strong> {$contract['length_floor_area']}m x {$contract['width_floor_area']}m ({$contract['square_meter_floor']} sqm)</p>
+                                    <p><strong>Project Type:</strong> {$contract['type']}</p>
+                                    <p><strong>Initial Budget:</strong> PHP " . number_format($contract['initial_budget'], 2) . "</p>
 
-                            <p class='contract-text'>
-                                Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
-                            </p>
+                                    <div class='project-photo'>
+                                        <h3>Project Photo</h3>";
+                                        if (!empty($contract['photo_path']) && file_exists($contract['photo_path'])) {
+                                            echo "<a href='#' onclick='openPhotoModal(\"{$contract['photo_path']}\")'>
+                                                    <img src='{$contract['photo_path']}' alt='Project Photo' class='project-img'>
+                                                </a>";
+                                        } else {
+                                            echo "<p>No project photo available.</p>";
+                                        }
+                                echo "</div>
 
-                            <form method='POST' action='save_agreement.php'>
-                                <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
-                            </form>
+                                <p class='contract-text'>
+                                    The project is approved by <span class='highlight'>$contractor_name</span> and will proceed according to the agreed terms.
+                                </p>
+
+                                <p><strong>Start Date:</strong> " . date("F j, Y", strtotime($contract['start_date'])) . "</p>
+                                <p><strong>End Date:</strong> " . date("F j, Y", strtotime($contract['end_date'])) . "</p>
+
+                                <!-- Display Labor Cost -->
+                                <p><strong>Labor Cost:</strong> PHP " . number_format($labor_cost, 2) . "</p>
+
+                                <p class='contract-text'>
+                                    Both parties agree to the conditions stated above. The contractor is responsible for completing the project within the agreed timeframe and budget.
+                                </p>
+
+                                <form method='POST' action='save_agreement.php'>
+                                    <input type='hidden' name='requirement_ID' value='{$contract['requirement_ID']}'>
+                                </form>
+                            </div>
                         </div>
-                    </div>
-                </div>";
-                        // JavaScript Functions for Modal
+                    </div>";
+                            // JavaScript Functions for Modal
                 echo "<script>
                     window.onload = function() {
                         document.getElementById('contractModal').style.display = 'none';
