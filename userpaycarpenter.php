@@ -1,21 +1,62 @@
-<?php 
-  session_start();
-  include('config.php');
+<?php
+    include('config.php');
+    session_start();
 
-  $requirement_ID = $_GET['requirement_ID'];
-  $User_ID = $_GET['User_ID'];
+    if (!isset($_SESSION['User_ID'])) {
+        echo "<script>alert('You need to log in first.'); window.location.href='login.php';</script>";
+        exit();
+    }
 
-  // Fetch user data
-  $query1 = "SELECT * FROM users WHERE User_ID = '$User_ID'";
-  $result1 = mysqli_query($conn, $query1);
-  $userData = mysqli_fetch_assoc($result1);
+    $user_ID = $_SESSION['User_ID']; // Get logged-in user ID
 
-  // Fetch labor data
-  $query = "SELECT * FROM labor WHERE requirement_ID = '$requirement_ID'";
-  $result = mysqli_query($conn, $query);
-  $laborData = mysqli_fetch_assoc($result);
+    // Get user details
+    $sql = "SELECT * FROM users WHERE User_ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_ID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $userDetails = $result->fetch_assoc();
+
+    // Check if we have a valid contract_ID
+    if (isset($_GET['contract_ID'])) {
+        $contract_ID = $_GET['contract_ID'];
+    } else {
+        echo "Contract ID is not set.";
+        exit();
+    }
+
+    // Debugging: Display User_ID and Contract_ID
+    echo "<script>console.log('Debug: User_ID = $user_ID, Contract_ID = $contract_ID');</script>";
+
+    // Fetch contract details including Duration & Carpenter_ID
+    $contractQuery = "SELECT labor_cost, duration, Carpenter_ID FROM contracts WHERE Contract_ID = ? AND (User_ID = ? OR Carpenter_ID = ?)";
+    $contractStmt = mysqli_prepare($conn, $contractQuery);
+    mysqli_stmt_bind_param($contractStmt, "iii", $contract_ID, $user_ID, $user_ID);
+    mysqli_stmt_execute($contractStmt);
+    $contractResult = mysqli_stmt_get_result($contractStmt);
+    $contract = mysqli_fetch_assoc($contractResult);
+
+    // Check if contract exists
+    if (!$contract) {
+        echo "<script>console.log('Debug: No matching contract found for User_ID = $user_ID, Contract_ID = $contract_ID');</script>";
+        echo "<p>No contract found for this user.</p>";
+        exit();
+    }
+
+    // Get labor cost & duration
+    $labor_cost = $contract['labor_cost'];
+    $duration = $contract['duration'];
+    $carpenter_ID = $contract['Carpenter_ID'];
+
+    // Fetch carpenter details
+    $carpenterQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
+    $carpenterStmt = $conn->prepare($carpenterQuery);
+    $carpenterStmt->bind_param("i", $carpenter_ID);
+    $carpenterStmt->execute();
+    $carpenterResult = $carpenterStmt->get_result();
+    $carpenter = $carpenterResult->fetch_assoc();
+    $carpenter_name = $carpenter ? $carpenter['First_Name'] . " " . $carpenter['Last_Name'] : "Unknown Carpenter";
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -23,7 +64,7 @@
 <title>Pay Carpenter</title>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 <style>
   * {
     box-sizing: border-box;
@@ -37,70 +78,61 @@
     font-size: 20px; /* Adjusted font size to 20px */
   }
 
-  /* Header*/
-  .header {
+  .sidenav {
+    height: 100%;
+    width: 250px;
     position: fixed;
+    z-index: 1;
     top: 0;
     left: 0;
-    width: 100%;
-    text-align: left;
-    background: #FF8C00;
-    color: #000000;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    text-decoration: none;
-  }
-
-  /* Increase the font size of the heading */
-  .header h1 {
-    font-size: 40px;
-    border-left: 20px solid transparent; 
-    padding-left: 20px; /* Adjust padding */
-    text-decoration: none;
-  }
-
-  .right {
-    margin-right: 20px;
-  }
-
-  .header a{
-    font-size: 20px; /* Adjusted font size to 20px */
-    font-weight: bold;
-    text-decoration: none;
-    color: #000000;
-  }
-
-  .topnav {
-    position: fixed;
-    top: 120px; /* Adjust the top position as per your needs */
-    width: 100%;
-    overflow: hidden;
-    background-color: #505050;
-    z-index: 100;
-  }
-
-  /* Style the links inside the navigation bar */
-  .topnav a {
-    position: sticky;
-    float: left;
-    display: block;
-    color: black;
-    text-align: center;
-    padding: 14px 16px;
-    text-decoration: none;
-    font-size: 20px; /* Adjusted font size to 20px */
-  }
-
-  .topnav a,
-  .topnav a.active {
-    color: black;
-  }
-
-  .topnav a:hover,
-  .topnav a.active:hover {
     background-color: #FF8C00;
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+
+  .sidenav .profile-section {
+    text-align: center;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+  }
+
+  .sidenav .profile-section img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid white;
+  }
+
+  .sidenav h3 {
+    font-size: 24px;
+    margin-bottom: 5px;
     color: black;
+  }
+
+  .sidenav p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: black;
+  }
+
+  .sidenav a {
+    padding: 12px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
+    display: block;
+    transition: 0.3s;
+  }
+
+  .sidenav a:hover {
+    background-color: rgba(0,0,0,0.1);
+  }
+
+  .sidenav a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
   }
 
   /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
@@ -229,19 +261,6 @@
     }
   }
 
-  /* Footer */
-  .footer {
-    padding: 10px;
-    text-align: center;
-    background: #FF8C00;
-    position: relative;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 100%;
-    font-size: 20px; /* Adjusted font size to 20px */
-  }
-
   /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
   @media screen and (max-width: 700px) {
     .row {   
@@ -261,81 +280,74 @@
 
 </head>
 <body>
-  <div class="header">
-      <a href="comment.php">
-          <h1>
-              <img src="assets/img/logos/logo.png" alt=""  style="width: 75px; margin-right: 10px;">
-          </h1>
-      </a>
-      <div class="right">
-          <a href="logout.php" style="text-decoration: none; color: black; margin-right: 20px;">Log Out</a>
-      </div>
-  </div>
+<!-- Add Sidebar Navigation -->
+<div class="sidenav">
+    <div class="profile-section">
+        <?php
+        // Display profile picture
+        if (isset($userDetails['Photo']) && !empty($userDetails['Photo'])) {
+            echo '<img src="' . $userDetails['Photo'] . '" alt="Profile Picture">';
+        } else {
+            echo '<img src="assets/img/default-avatar.png" alt="Default Profile Picture">';
+        }
+        
+        // Display name and ID
+        echo "<h3>" . $userDetails['First_Name'] . ' ' . $userDetails['Last_Name'] . "</h3>";
+        echo "<p>User ID: " . $user_ID . "</p>";
+        ?>
+    </div>
+    <div class="sidebar-section">
+        <a href="usercomment.php"><i class="fas fa-home"></i> Home</a>
+        <a href="userprofile.php"><i class="fas fa-user"></i> Profile</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
+</div>
 
-  <div class="topnav">
-      <a class="active" href="comment.php">Home</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#">Project</a>
-  </div>
 
     <div class="signup">
-        <form action="payingcarpenter.php" method="post" enctype="multipart/form-data">
-            <div class="container">
-                <hr>
-                <label for="carpenter_name"><b>Carpenter Name</b></label>
-                <input type="text" name="carpenter_name"  
-                      value="<?php echo isset($laborData['carpenter_name']) ? $laborData['carpenter_name'] : ''; ?>" 
-                      readonly>
+      <form action="payingcarpenter.php" method="post" enctype="multipart/form-data">
+        <div class="container">
+            <hr>
 
-                <label for="Netpay"><b>Net pay (Pesos)</b></label>
-                <input type="text" name="Netpay" 
-                      value="<?php echo isset($laborData['total_of_laborcost']) ? $laborData['total_of_laborcost'] : ''; ?>" 
-                      readonly>
+            <!-- Contract ID (Hidden) -->
+            <input type="hidden" name="Contract_ID" value="<?php echo $contract_ID; ?>">
 
-                <label for="Days_Of_Work"><b>Days of Work</b></label>
-                <input type="text"  name="Days_Of_Work"  
-                      value="<?php echo isset($laborData['days_of_work']) ? $laborData['days_of_work'] : ''; ?>" 
-                      readonly>
+            <!-- Carpenter ID (Hidden) -->
+            <input type="hidden" name="Carpenter_ID" value="<?php echo $carpenter_ID; ?>">
 
-                <label for="Rate_per_day"><b>Rate per day (Pesos)</b></label>
-                <input type="text"  name="Rate_per_day"  
-                      value="<?php echo isset($laborData['rate']) ? $laborData['rate'] : ''; ?>" 
-                      readonly>
+            <label for="carpenter_name"><b>Carpenter Name</b></label>
+            <input type="text" name="carpenter_name" value="<?php echo $carpenter_name; ?>" readonly>
 
-                <label for="overall_cost"><b>Overall Cost</b></label>
-                <input type="text"  name="overall_cost"  
-                      value="<?php echo isset($laborData['overall_cost']) ? $laborData['overall_cost'] : ''; ?>" 
-                      readonly>
+            <label for="Days_Of_Work"><b>Duration</b></label>
+            <input type="text" name="Duration" value="<?php echo $duration; ?>" readonly>
 
-                <label for="payment_method"><b>Payment Method</b></label><br>
-                <select id="payment_method" name="payment_method" required>
-                    <option value="" disabled selected>Select a payment method</option> <!-- Default option prompting selection -->
-                    <option value="cash on hand">Cash on hand</option>
-                    <option value="creditcard">Credit Card</option>
-                    <option value="Gcash">Gcash</option>
-                </select>
+            <label for="overall_cost"><b>Labor Cost</b></label>
+            <input type="text" name="Labor_Cost" value="<?php echo $labor_cost; ?>" readonly>
 
-                <!-- Hidden input field for requirement_ID -->
-                <label for="sender"><b>Sender</b></label>
-                <input type="text" name="sender" value="<?php echo isset($userData['First_Name']) ? $userData['First_Name'] : ''; ?> <?php echo isset($userData['Last_Name']) ? $userData['Last_Name'] : ''; ?>" readonly>
+            <label for="Payment_Method"><b>Payment Method</b></label><br>
+            <select id="Payment_Method" name="Payment_Method" required>
+                <option value="" disabled selected>Select a payment method</option>
+                <option value="cash on hand">Cash on hand</option>
+                <option value="creditcard">Credit Card</option>
+                <option value="Gcash">Gcash</option>
+            </select>
 
-                <div class="clearfix">
+            <label for="Payment_Date"><b>Payment Date</b></label>
+            <input type="text" name="Payment_Date" value="<?php echo date('Y-m-d'); ?>" readonly>
+
+            <!-- Sender (User) -->
+            <input type="hidden" name="User_ID" value="<?php echo $user_ID; ?>">
+
+            <label for="sender"><b>Sender</b></label>
+            <input type="text" value="<?php echo $userDetails['First_Name'] . ' ' . $userDetails['Last_Name']; ?>" readonly>
+
+            <div class="clearfix">
                 <button type="button" class="cancelbtn" onclick="history.back()">Go Back</button>
-                    <button type="submit" class="signupbtn">Submit</button>
-                </div>
+                <button type="submit" class="signupbtn">Submit</button>
             </div>
-        </form>
+        </div>
+      </form>
     </div>
-
-
-  <div class="footer">
-      <h2>E-Panday all rights reserved @2023</h2>
-      <a href="#">Link 1</a> |
-      <a href="#">Link 1</a> |
-      <a href="#">Link 1</a> |
-      <a href="#">Link 1</a>
-  </div>
 </body>
 </html>
   

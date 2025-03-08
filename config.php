@@ -1,8 +1,8 @@
 <?php
 $host = "localhost";
-$dbname = "ccarpcurrentsystem";
+$dbname = "ccarpcurrentsystem"; // Ilisi sa imong database name
 $username = "root";
-$password = "";
+$password = ""; // Blank lang ni kung default sa XAMPP/MAMP
 
 $conn = new mysqli ($host, $username, $password, $dbname);
 

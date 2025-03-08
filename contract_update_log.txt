@@ -1,0 +1,337 @@
+2025-02-25 17:12:41 - Request: Array
+(
+    [plan_ID] => 1
+    [status] => rejected
+    [rejection_reason] => www
+)
+
+2025-02-25 17:12:41 - Extracted values: plan_id=0, status=rejected
+2025-02-25 17:12:42 - Request: Array
+(
+    [plan_ID] => 1
+    [status] => rejected
+    [rejection_reason] => www
+)
+
+2025-02-25 17:12:42 - Extracted values: plan_id=0, status=rejected
+2025-02-25 17:12:42 - Request: Array
+(
+    [plan_ID] => 1
+    [status] => rejected
+    [rejection_reason] => www
+)
+
+2025-02-25 17:12:42 - Extracted values: plan_id=0, status=rejected
+2025-02-25 17:13:55 - Request: Array
+(
+    [plan_ID] => 1
+    [status] => rejected
+    [rejection_reason] => wwww
+)
+
+2025-02-25 17:13:55 - Extracted values: plan_id=0, status=rejected
+2025-02-25 17:14:17 - Request: Array
+(
+    [plan_ID] => 1
+    [status] => rejected
+    [rejection_reason] => wwww
+)
+
+2025-02-25 17:14:17 - Extracted values: plan_id=0, status=rejected
+2025-02-25 17:20:04 - Request: Array
+(
+    [plan_id] => 1
+    [status] => rejected
+    [reason] => www
+)
+
+2025-02-25 17:20:04 - Extracted values: plan_id=1, status=rejected, reason=www
+2025-02-25 17:20:04 - Updating existing contract ID: 6
+2025-02-25 17:20:04 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-25 17:20:04 - Success: Contract status updated to rejected
+2025-02-25 17:22:34 - Request: Array
+(
+    [plan_id] => 1
+    [status] => rejected
+    [reason] => www
+)
+
+2025-02-25 17:22:34 - Extracted values: plan_id=1, status=rejected, reason=www
+2025-02-25 17:22:34 - Updating existing contract ID: 6
+2025-02-25 17:22:34 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-25 17:22:34 - Success: Contract status updated to rejected
+2025-02-25 17:24:11 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-25 17:24:11 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-25 17:24:11 - Updating existing contract ID: 6
+2025-02-25 17:24:11 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-25 17:24:11 - Success: Contract status updated to accepted
+2025-02-25 17:26:15 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-25 17:26:15 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-25 17:26:15 - Updating existing contract ID: 6
+2025-02-25 17:26:15 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-25 17:26:15 - Success: Contract status updated to accepted
+2025-02-25 17:26:34 - Request: Array
+(
+    [plan_id] => 1
+    [status] => rejected
+    [reason] => ww
+)
+
+2025-02-25 17:26:34 - Extracted values: plan_id=1, status=rejected, reason=ww
+2025-02-25 17:26:34 - Updating existing contract ID: 6
+2025-02-25 17:26:34 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-25 17:26:34 - Success: Contract status updated to rejected
+2025-02-25 17:27:54 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-25 17:27:54 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-25 17:27:54 - Updating existing contract ID: 6
+2025-02-25 17:27:54 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-25 17:27:54 - Success: Contract status updated to accepted
+2025-02-25 17:45:42 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-25 17:45:42 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-25 17:45:42 - Updating existing contract ID: 1
+2025-02-25 17:45:42 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-25 17:45:42 - Success: Contract status updated to accepted
+2025-02-26 13:37:25 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-26 13:37:25 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-26 13:37:25 - Updating existing contract ID: 6
+2025-02-26 13:37:25 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-26 13:37:25 - Success: Contract status updated to accepted
+2025-02-26 13:41:55 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-26 13:41:55 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-26 13:41:55 - Updating existing contract ID: 1
+2025-02-26 13:41:55 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-26 13:41:55 - Success: Contract status updated to accepted
+2025-02-26 14:34:30 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-26 14:34:30 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-26 14:34:30 - Updating existing contract ID: 1
+2025-02-26 14:34:30 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-26 14:34:30 - Success: Contract status updated to accepted
+2025-02-26 18:11:20 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-26 18:11:20 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-26 18:11:20 - Updating existing contract ID: 3
+2025-02-26 18:11:20 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-26 18:11:20 - Success: Contract status updated to accepted
+2025-02-27 01:35:15 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-27 01:35:15 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-27 01:35:15 - Updating existing contract ID: 1
+2025-02-27 01:35:15 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 01:35:15 - Success: Contract status updated to accepted
+2025-02-27 01:53:12 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-27 01:53:12 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-27 01:53:12 - Updating existing contract ID: 1
+2025-02-27 01:53:12 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 01:53:12 - Success: Contract status updated to accepted
+2025-02-27 02:05:25 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-27 02:05:25 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-27 02:05:25 - Updating existing contract ID: 1
+2025-02-27 02:05:25 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:05:25 - Success: Contract status updated to accepted
+2025-02-27 02:06:20 - Request: Array
+(
+    [plan_id] => 1
+    [status] => rejected
+    [reason] => BULOK SI FOREMAN
+)
+
+2025-02-27 02:06:20 - Extracted values: plan_id=1, status=rejected, reason=BULOK SI FOREMAN
+2025-02-27 02:06:20 - Updating existing contract ID: 1
+2025-02-27 02:06:20 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:06:20 - Success: Contract status updated to rejected
+2025-02-27 02:07:52 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-27 02:07:52 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-27 02:07:52 - Updating existing contract ID: 1
+2025-02-27 02:07:52 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:07:52 - Success: Contract status updated to accepted
+2025-02-27 02:08:04 - Request: Array
+(
+    [plan_id] => 1
+    [status] => rejected
+    [reason] => WW
+)
+
+2025-02-27 02:08:04 - Extracted values: plan_id=1, status=rejected, reason=WW
+2025-02-27 02:08:04 - Updating existing contract ID: 1
+2025-02-27 02:08:04 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:08:04 - Success: Contract status updated to rejected
+2025-02-27 02:08:12 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-27 02:08:12 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-27 02:08:12 - Updating existing contract ID: 1
+2025-02-27 02:08:12 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:08:12 - Success: Contract status updated to accepted
+2025-02-27 02:20:11 - Request: Array
+(
+    [plan_id] => 1
+    [status] => rejected
+    [reason] => www
+)
+
+2025-02-27 02:20:11 - Extracted values: plan_id=1, status=rejected, reason=www
+2025-02-27 02:20:11 - Updating existing contract ID: 1
+2025-02-27 02:20:11 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:20:11 - Success: Contract status updated to rejected
+2025-02-27 02:21:47 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-27 02:21:47 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-27 02:21:47 - Updating existing contract ID: 1
+2025-02-27 02:21:47 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:21:47 - Success: Contract status updated to accepted
+2025-02-27 02:21:58 - Request: Array
+(
+    [plan_id] => 1
+    [status] => rejected
+    [reason] => www
+)
+
+2025-02-27 02:21:58 - Extracted values: plan_id=1, status=rejected, reason=www
+2025-02-27 02:21:58 - Updating existing contract ID: 1
+2025-02-27 02:21:58 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:21:58 - Success: Contract status updated to rejected
+2025-02-27 02:22:06 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-02-27 02:22:06 - Extracted values: plan_id=1, status=accepted, reason=
+2025-02-27 02:22:06 - Updating existing contract ID: 1
+2025-02-27 02:22:06 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-02-27 02:22:06 - Success: Contract status updated to accepted
+2025-03-02 15:26:14 - Request: Array
+(
+    [plan_id] => 3
+    [status] => accepted
+)
+
+2025-03-02 15:26:14 - Extracted values: plan_id=3, status=accepted, reason=
+2025-03-02 15:26:14 - Updating existing contract ID: 2
+2025-03-02 15:26:14 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-03-02 15:26:14 - Success: Contract status updated to accepted
+2025-03-02 17:28:52 - Request: Array
+(
+    [plan_id] => 3
+    [status] => accepted
+)
+
+2025-03-02 17:28:52 - Extracted values: plan_id=3, status=accepted, reason=
+2025-03-02 17:28:52 - Updating existing contract ID: 1
+2025-03-02 17:28:52 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-03-02 17:28:52 - Success: Contract status updated to accepted
+2025-03-02 19:05:45 - Request: Array
+(
+    [plan_id] => 3
+    [status] => accepted
+)
+
+2025-03-02 19:05:45 - Extracted values: plan_id=3, status=accepted, reason=
+2025-03-02 19:05:45 - Updating existing contract ID: 3
+2025-03-02 19:05:45 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-03-02 19:05:45 - Success: Contract status updated to accepted
+2025-03-03 17:58:06 - Request: Array
+(
+    [plan_id] => 3
+    [status] => accepted
+)
+
+2025-03-03 17:58:06 - Extracted values: plan_id=3, status=accepted, reason=
+2025-03-03 17:58:06 - Updating contract ID: 3
+2025-03-03 17:58:06 - Query: UPDATE contracts SET status = ?, rejection_reason = ? WHERE contract_ID = ?
+2025-03-03 17:58:06 - Success: Contract status updated to accepted
+2025-03-03 18:02:19 - Request: Array
+(
+    [plan_id] => 3
+    [status] => accepted
+)
+
+2025-03-03 18:02:19 - Extracted values: plan_id=3, status=accepted, reason=
+2025-03-03 18:02:19 - Updating contract ID: 3 with User_ID: 1
+2025-03-03 18:02:19 - Query: UPDATE contracts SET status = ?, rejection_reason = ?, User_ID = ? WHERE contract_ID = ?
+2025-03-03 18:02:19 - Success: Contract status updated to accepted
+2025-03-05 21:47:50 - Request: Array
+(
+    [plan_id] => 3
+    [status] => accepted
+)
+
+2025-03-05 21:47:50 - Extracted values: plan_id=3, status=accepted, reason=
+2025-03-05 21:47:50 - Updating contract ID: 5 with User_ID: 1
+2025-03-05 21:47:50 - Query: UPDATE contracts SET status = ?, rejection_reason = ?, User_ID = ? WHERE contract_ID = ?
+2025-03-05 21:47:50 - Success: Contract status updated to accepted
+2025-03-05 22:10:55 - Request: Array
+(
+    [plan_id] => 2
+    [status] => accepted
+)
+
+2025-03-05 22:10:55 - Extracted values: plan_id=2, status=accepted, reason=
+2025-03-05 22:10:55 - Updating contract ID: 1 with User_ID: 1
+2025-03-05 22:10:55 - Query: UPDATE contracts SET status = ?, rejection_reason = ?, User_ID = ? WHERE contract_ID = ?
+2025-03-05 22:10:55 - Success: Contract status updated to accepted

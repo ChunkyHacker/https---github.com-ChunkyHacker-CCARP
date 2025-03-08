@@ -1,50 +1,50 @@
 <?php
 include('config.php');
 
-// Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the form data
-    $carpenter_name = $_POST["carpenter_name"];
-    $net_pay = $_POST["Netpay"];
-    $days_of_work = $_POST["Days_Of_Work"];
-    $rate_per_day = $_POST["Rate_per_day"];
-    $overall_cost = $_POST["overall_cost"];
-    $payment_method = $_POST["payment_method"];
-    $sender = $_POST["sender"];
+    $contract_id = $_POST["Contract_ID"];
+    $carpenter_id = $_POST["Carpenter_ID"];
+    $user_id = $_POST["User_ID"];
+    $labor_cost = $_POST["Labor_Cost"];
+    $duration = $_POST["Duration"];
+    $payment_method = $_POST["Payment_Method"];
+    $payment_date = date("Y-m-d");
 
-    // Prepare the SQL query to insert the payroll data into the database
-    $sql = "INSERT INTO payment (carpenter_name, Netpay, days_of_work, rate_per_day, overall_cost, payment_method, sender) 
+    // 🔍 Check if payment already exists for this contract and user
+    $check_query = "SELECT * FROM payment WHERE Contract_ID = ? AND User_ID = ?";
+    $stmt = $conn->prepare($check_query);
+    $stmt->bind_param("ii", $contract_id, $user_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    if ($result->num_rows > 0) {
+        // 🚫 Payment already exists, show an alert and redirect
+        echo "<script>alert('You have already paid for this contract.'); window.location.href='userpaycarpenter.php?contract_ID=$contract_id&sucess=true';</script>";
+        exit();
+    }
+
+    // ✅ Insert new payment if no previous record
+    $sql = "INSERT INTO payment (Contract_ID, Carpenter_ID, User_ID, Labor_Cost, Duration, Payment_Method, Payment_Date) 
             VALUES (?, ?, ?, ?, ?, ?, ?)";
 
-    // Prepare the statement
     if ($stmt = $conn->prepare($sql)) {
-        // Bind parameters
-        $stmt->bind_param("sssssss", $carpenter_name, $net_pay, $days_of_work, $rate_per_day, $overall_cost, $payment_method, $sender);
+        $stmt->bind_param("iiidiss", $contract_id, $carpenter_id, $user_id, $labor_cost, $duration, $payment_method, $payment_date);
 
-        // Attempt to execute the prepared statement
         if ($stmt->execute()) {
-            // Get the ID of the last inserted row
-            $Payroll_ID = $conn->insert_id;
-
-            // Redirect to the success page with the Payroll_ID
-            header("Location: payrollreceipt.php?Payroll_ID=$Payroll_ID&success=true");
+            $payment_id = $conn->insert_id;
+            header("Location: payrollreceipt.php?Payment_ID=$payment_id&success=true");
             exit();
         } else {
-            // Display an error message if the execution fails
             echo "Error: " . $stmt->error;
         }
 
-        // Close the statement
         $stmt->close();
     } else {
-        // Display an error message if statement preparation fails
         echo "Error: " . $conn->error;
     }
 
-    // Close the connection
     $conn->close();
 } else {
-    // Display an error message if the form was not submitted via POST
     echo "Error: The form was not submitted.";
 }
 ?>

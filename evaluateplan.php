@@ -1,15 +1,21 @@
 <?php
-
 session_start();
-        include('config.php');
+include('config.php');
 
-        $Carpeneter_ID = $_SESSION['Carpenter_ID'];
+if (!isset($_SESSION['Carpenter_ID'])) {
+    header('Location: login.html');
+    exit();
+}
 
-        $carpenterquery = "SELECT *FROM carpenters WHERE Carpenter_ID = $Carpeneter_ID";
-        $carpenterresult = mysqli_query($conn, $carpenterquery);
-        $carpenterData = mysqli_fetch_assoc($carpenterresult);
+$Carpenter_ID = $_SESSION['Carpenter_ID'];
 
-
+// Get carpenter details
+$sql = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $Carpenter_ID);
+$stmt->execute();
+$result = $stmt->get_result();
+$carpenterDetails = $result->fetch_assoc();
 ?>
 
 
@@ -20,7 +26,8 @@ session_start();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Client's Plan</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <title>Evaluate Plan</title>
     <style>
         * {
         box-sizing: border-box;
@@ -31,86 +38,141 @@ session_start();
         body {
         font-family: Verdana, sans-serif;
         margin: 0;
-        background-color: #FF8C00;
+        background-color:rgb(255, 255, 255);
         font-size: 20px; /* Set base font size to 20px */
         }
 
-        .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 10px;
-        text-align: left;
-        background: #FF8C00;
-        color: #000000;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-decoration: none;
-        z-index: 100;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        /* Sidebar styles */
+        .sidenav {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #FF8C00;
+            overflow-x: hidden;
+            padding-top: 20px;
         }
 
-        .header h1 {
-        font-size: 40px; /* Keep h1 larger */
-        border-left: 20px solid transparent;
-        text-decoration: none;
+        .sidenav .profile-section {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 10px;
         }
 
-        .right {
-        margin-right: 20px;
+        .sidenav .profile-section img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 5px;
         }
 
-        .header a {
-        font-size: 25px;
-        font-weight: bold;
-        text-decoration: none;
-        color: #000000;
-        margin-right: 15px;
+        .sidenav a {
+            padding: 8px 15px;
+            text-decoration: none;
+            font-size: 24px;
+            color: #000000;
+            display: block;
+            transition: 0.3s;
+            margin-bottom: 2px;
         }
 
-        /* Modal content styling */
-        .modal-content {
-        background-color: #fefefe;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-height: 60%;
-        overflow-y: auto;
-        border-radius: 8px;
-        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        margin-top: 10%; /* Adjust as needed to give space from the nav bar */
-        margin-left: auto;
-        margin-right: auto;
+        .sidenav a:hover {
+            background-color: #000000;
+            color: #FF8C00;
         }
 
-        h2 {
-        font-size: 24px; /* Adjusted to be slightly larger than the base font */
-        margin-bottom: 20px;
-        color: #FF8C00;
+        /* Adjust main content area */
+        .container {
+            margin-left: 250px;
+            padding: 20px;
         }
 
-        form {
-        display: flex;
-        flex-direction: column;
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-item {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: none;  /* Remove shadow */
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+            font-weight: bold;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: bold;
         }
 
         label {
-        font-size: 20px; /* Set label font size to 20px */
-        margin-bottom: 5px;
-        color: #000000;
+            display: block;
+            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: normal;
         }
 
-        input,
-        select,
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 22px;
+        }
+
         textarea {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 15px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 20px; /* Set input font size to 20px */
+            width: 100%;
+            min-height: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 22px;
+            resize: none;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border: none;  /* Remove border */
+            box-shadow: none;  /* Remove shadow */
+        }
+
+        /* Client photo style */
+        .client-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        /* Project Budget and Dates sections */
+        .grid-item:nth-child(4),
+        .grid-item:nth-child(5) {
+            margin-top: 20px;
+        }
+
+        body {
+            font-family: Verdana, sans-serif;
+            margin: 0;
+            background-color: white;
+            font-size: 24px;
         }
 
         .post-btn,
@@ -154,300 +216,246 @@ session_start();
 
         /* New styling for the radio button groups */
         .radio-group {
-        display: inline-flex;
-        align-items: center;
-        gap: 10px; /* Adjust gap as needed */
-        margin-top: 5px;
+            display: flex;
+            gap: 20px; /* Space between Yes and No */
+            align-items: center;
         }
 
         .radio-group label {
-        display: inline-flex;
-        align-items: center;
-        margin: 0; /* Remove extra margin */
-        font-size: 20px;
-        color: #000000;
-        }
-
-        .radio-group input[type="radio"] {
-        margin: 0 5px 0 0; /* Small margin to the right of the radio circle */
-        vertical-align: middle;
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Space between radio button and text */
+            cursor: pointer;
         }
   </style>
 
 </head>
 <body>
-    <div class="header">
-        <a href="comment.php">
-            <h1>
-                <img src="assets/img/logos/logo.png" alt=""  style="width: 75px; margin-right: 10px;">
-            </h1>
-        </a>
-        <div class="right">
-            <a href="logout.php" style="text-decoration: none; color: black; margin-right: 20px;">Log Out</a>
-            <a class="active" href="comment.php">Home</a>
-            <a href="about/index.html">About</a>
-            <a href="#contact">Get Ideas</a>
-            <a href="plan.php">Project</a>
+    <div class="sidenav">
+        <div class="profile-section">
+            <?php
+            // Display profile picture
+            if (isset($carpenterDetails['Photo']) && !empty($carpenterDetails['Photo'])) {
+                echo '<img src="' . $carpenterDetails['Photo'] . '" alt="Profile Picture">';
+            } else {
+                echo '<img src="assets/img/default-avatar.png" alt="Default Profile Picture">';
+            }
+            
+            // Display name and ID
+            echo "<h3>" . $carpenterDetails['First_Name'] . ' ' . $carpenterDetails['Last_Name'] . "</h3>";
+            echo "<p>Carpenter ID: " . $Carpenter_ID . "</p>";
+            ?>
         </div>
+        <a href="home.php"><i class="fas fa-home"></i> Home</a>
+        <a href="about.php"><i class="fas fa-info-circle"></i> About</a>
+        <a href="getideas.php"><i class="fas fa-lightbulb"></i> Get Ideas</a>
+        <a href="project.php"><i class="fas fa-project-diagram"></i> Project</a>
+        <a href="profile.php"><i class="fas fa-user"></i> Profile</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
-<div class="container">
-    <div class="modal-content">
-        <?php
-        
 
-        if (isset($_GET['plan_id'])) {
-            $plan_id = $_GET['plan_id'];
-
-            $query = "SELECT * FROM plan WHERE plan_ID = ?";
-            $stmt = mysqli_prepare($conn, $query);
-            mysqli_stmt_bind_param($stmt, "i", $plan_id);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
-
-            if ($row = mysqli_fetch_assoc($result)) {
-                $userId = $row['User_ID'];
-                $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-                $userStmt = mysqli_prepare($conn, $userQuery);
-                mysqli_stmt_bind_param($userStmt, "i", $userId);
-                mysqli_stmt_execute($userStmt);
-                $userResult = mysqli_stmt_get_result($userStmt);
-
-                $userName = "";
-                if ($userRow = mysqli_fetch_assoc($userResult)) {
-                    $userName = "{$userRow['First_Name']} {$userRow['Last_Name']}";
+    <div class="container">
+        <div class="modal-content">
+            <?php
+                if (!isset($_GET['plan_ID']) || empty($_GET['plan_ID'])) {
+                    die("<div class='main'><p>Plan ID is missing.</p></div>");
                 }
 
-                $photoPath = $row['Photo'];
-                ?>
-                <div class='main'>
-                    <h1>Client's Plan Details</h1>
-                    <label for='name'>Client Name: </label>
-                    <input type='text' id='name' name='User_ID' value='<?php echo $userName; ?>' readonly><br>
+                $plan_ID = intval($_GET['plan_ID']);
 
-                    <div class="row-container" style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; text-align: left;'>
-                        <h3>Lot Area</h3>
-                        <div style='grid-column: 1; display: flex; flex-direction: column;'>
-                            <label for='length_lot_area'>Length for lot area</label>
-                            <input type='text' id='length_lot_area' name='length_lot_area' value='<?php echo $row['length_lot_area']; ?>' readonly>
-                        </div>
-                        <div style='grid-column: 2; display: flex; flex-direction: column;'>
-                            <label for='width_lot_area'>Width for lot area</label>
-                            <input type='text' id='width_lot_area' name='width_lot_area' value='<?php echo $row['width_lot_area']; ?>' readonly>
-                        </div>
-                        <div style='grid-column: 3; display: flex; flex-direction: column;'>
-                            <label for='square_meter_lot'>Square Meter(Sq):</label>
-                            <input type='text' id='square_meter_lot' name='square_meter_lot' value='<?php echo $row['square_meter_lot']; ?>' readonly>
-                        </div>
-                    </div>
+                // Fetch Plan Details
+                $query = "SELECT * FROM plan WHERE plan_ID = ?";
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $plan_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
 
-                    <div class="row-container" style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; text-align: left;'>
-                        <h3>Floor Area</h3>
-                        <div style='grid-column: 1; display: flex; flex-direction: column;'>
-                            <label for='length_floor_area'>Length for floor area</label>
-                            <input type='text' id='length_floor_area' name='length_floor_area' value='<?php echo $row['length_floor_area']; ?>' readonly>
-                        </div>
-                        <div style='grid-column: 2; display: flex; flex-direction: column;'>
-                            <label for='width_floor_area'>Width for floor area</label>
-                            <input type='text' id='width_floor_area' name='width_floor_area' value='<?php echo $row['width_floor_area']; ?>' readonly>
-                        </div>
-                        <div style='grid-column: 3; display: flex; flex-direction: column;'>
-                            <label for='square_meter_floor'>Square Meter(Sq):</label>
-                            <input type='text' id='square_meter_floor' name='square_meter_floor' value='<?php echo $row['square_meter_floor']; ?>' readonly>
-                        </div>
-                    </div>
+                if ($row = mysqli_fetch_assoc($result)) {
+                    echo "<div class='main'>";
+                    echo "<h1>Client's Plan Details</h1>";
 
-                    <div class="row-container" style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px; text-align: left;'>
-                        <div style='display: flex; flex-direction: column;'>
-                            <h3>Initial Budget</h3>
-                            <label for='initial_budget'>Initial Budget</label>
-                            <input type='text' id='initial_budget' name='initial_budget' value='<?php echo $row['initial_budget']; ?>' readonly>
-                        </div>
-                        <div style='display: flex; flex-direction: column;'>
-                        </div>
-                    </div>
+                    // Fetch Client Name
+                    $userId = $row['User_ID'];
+                    $userQuery = "SELECT First_Name, Last_Name, Photo FROM users WHERE User_ID = ?";
+                    $userStmt = mysqli_prepare($conn, $userQuery);
+                    mysqli_stmt_bind_param($userStmt, "i", $userId);
+                    mysqli_stmt_execute($userStmt);
+                    $userResult = mysqli_stmt_get_result($userStmt);
+                    $userDetails = mysqli_fetch_assoc($userResult);
+                    $clientName = ($userDetails) ? "{$userDetails['First_Name']} {$userDetails['Last_Name']}" : "Unknown Client";
 
-                    <div class="row-container">
-                        <h3>Project Dates</h3>
-                        <div style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;'>
-                            <div style='display: flex; flex-direction: column;'>
-                                <label>Start Date:</label>
-                                <input type='text' value='<?php echo $row['start_date']; ?>' readonly>
-                            </div>
-                            <div style='display: flex; flex-direction: column;'>
-                                <label>End Date:</label>
-                                <input type='text' value='<?php echo $row['end_date']; ?>' readonly>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row-container">
-                        <h3>More Details:</h3>
-                        <div style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;'>
-                            <div style='display: flex; flex-direction: column;'>
-                                <label>More Details:</label>
-                                <input type='text' value='<?php echo $row['more_details']; ?>' readonly>
-                            </div>
-                        </div>
-                    </div>
+                    // Grid container for plan details
+                    echo "<div class='grid-container'>";
+                    
+                    // Client Info
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Client Information</h3>";
+                    if (!empty($userDetails['Photo'])) {
+                        echo "<img src='" . $userDetails['Photo'] . "' style='width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block;'>";
+                    } else {
+                        echo "<img src='assets/img/default-avatar.png' style='width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block;'>";
+                    }
+                    echo "<label>Client Name:</label>";
+                    echo "<input type='text' value='{$clientName}' readonly>";
+                    echo "</div>";
 
-                    <div class="row-container">
-                        <h3>Further Details</h3>
+                    // Lot Area
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Lot Area</h3>";
+                    echo "<label>Length:</label>";
+                    echo "<input type='text' value='{$row['length_lot_area']}' readonly>";
+                    echo "<label>Width:</label>";
+                    echo "<input type='text' value='{$row['width_lot_area']}' readonly>";
+                    echo "<label>Square Meter:</label>";
+                    echo "<input type='text' value='{$row['square_meter_lot']}' readonly>";
+                    echo "</div>";
 
-                        <table style="border-collapse: collapse; width: 100%;">
-                            <thead>
-                                <tr>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Part</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Name</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>
-                                    <th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                $query_materials = "SELECT * FROM prematerials";
-                                $stmt_materials = mysqli_prepare($conn, $query_materials);
-                                mysqli_stmt_execute($stmt_materials);
-                                $result_materials = mysqli_stmt_get_result($stmt_materials);
+                    // Floor Area
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Floor Area</h3>";
+                    echo "<label>Length:</label>";
+                    echo "<input type='text' value='{$row['length_floor_area']}' readonly>";
+                    echo "<label>Width:</label>";
+                    echo "<input type='text' value='{$row['width_floor_area']}' readonly>";
+                    echo "<label>Square Meter:</label>";
+                    echo "<input type='text' value='{$row['square_meter_floor']}' readonly>";
+                    echo "</div>";
 
-                                while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                                    ?>
-                                    <tr>
-                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['part']); ?></td>
-                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['materials']); ?></td>
-                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['name']); ?></td>
-                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['quantity']); ?></td>
-                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['price']); ?></td>
-                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['total']); ?></td>
-                                        <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['estimated_cost']); ?></td>
-                                    </tr>
-                                    <?php
-                                }
-                                ?>
-                            </tbody>
-                        </table>
-                    </div>
+                    // Project Budget
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Project Budget</h3>";
+                    echo "<label>Initial Budget:</label>";
+                    echo "<input type='text' value='{$row['initial_budget']}' readonly>";
+                    echo "</div>";
 
-                    <?php if (!empty($photoPath) && file_exists($photoPath)): ?>
-                        <p>Photo:</p>
-                        <div style='text-align: center;'>
-                            <a href='#' onclick='openModal("<?php echo $photoPath; ?>")'>
-                                <img src='<?php echo $photoPath; ?>' alt='Plan Photo' style='width: 700px; height: 400px;'>
-                            </a>
-                        </div>
-                    <?php endif; ?>
+                    // Project Dates
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Project Dates</h3>";
+                    echo "<label>Start Date:</label>";
+                    echo "<input type='text' value='{$row['start_date']}' readonly>";
+                    echo "<label>End Date:</label>";
+                    echo "<input type='text' value='{$row['end_date']}' readonly>";
+                    echo "</div>";
 
-                    <form id='planForm' method='post' action='approveplan.php'>
-                    <!-- Example Question 1 -->
-                    <div class="form-section">
-                        <label for="q1">Were the details of the project suitable for your scope of work?</label>
-                        <br>
-                        <div class="radio-group">
-                            <label for="q1_yes">
-                            <input type="radio" id="q1_yes" name="q1" value="Yes" required />Yes
-                            </label>
-                            <label for="q1_no">
-                            <input type="radio" id="q1_no" name="q1" value="No" required />No
-                            </label>
-                        </div>
-                    </div>
+                    // More Details
+                    echo "<div class='grid-item'>";
+                    echo "<h3>More Details</h3>";
+                    echo "<textarea readonly>{$row['more_details']}</textarea>";
+                    echo "</div>";
 
-                    <!-- Example Question 2 -->
-                    <div class="form-section">
-                        <label for="q2">Are you able to finish the project even if there is an overlapping budget?</label>
-                        <br>
-                        <div class="radio-group">
-                            <label for="q2_yes">
-                            <input type="radio" id="q2_yes" name="q2" value="Yes" required />Yes
-                            </label>
-                            <label for="q2_no">
-                            <input type="radio" id="q2_no" name="q2" value="No" required />No
-                            </label>
-                        </div>
-                    </div>
+                    echo "<div class='grid-item' style='grid-column: span 3;'>";
+                    echo "<table style='border-collapse: collapse; width: 100%;'>";
+                    echo "<thead>";
+                    echo "<tr>";
+                    echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Part</th>";
+                    echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Materials</th>";
+                    echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Name</th>";
+                    echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
+                    echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
+                    echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
+                    echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Estimated Cost</th>";
+                    echo "</tr>";
+                    echo "</thead>";
+                    echo "<tbody>";
+                    $query_materials = "SELECT * FROM prematerials";
+                    $stmt_materials = mysqli_prepare($conn, $query_materials);
+                    mysqli_stmt_execute($stmt_materials);
+                    $result_materials = mysqli_stmt_get_result($stmt_materials);
 
-                    <!-- Example Question 3 -->
-                    <div class="form-section">
-                    <label for="q3">Are you willing to accept an additional task with additional payment?</label>
-                    <br>
-                    <div class="radio-group">
-                        <label for="q3_yes">
-                        <input type="radio" id="q3_yes" name="q3" value="Yes" required />Yes
-                        </label>
-                        <label for="q3_no">
-                        <input type="radio" id="q3_no" name="q3" value="No" required />No
-                        </label>
-                    </div>
-                    <br>
-                    </div>
+                    while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                        ?>
+                        <tr>
+                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['part']); ?></td>
+                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['materials']); ?></td>
+                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['name']); ?></td>
+                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['quantity']); ?></td>
+                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['price']); ?></td>
+                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['total']); ?></td>
+                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['estimated_cost']); ?></td>
+                        </tr>
+                        <?php
+                    }
+                    echo "</tbody>";
+                    echo "</table>";
+                    echo "</div>";
 
-                    <!-- Example Question 4 -->
-                    <div class="form-section">
-                    <label for="q4">Can you finish the project on time?</label>
-                    <br>
-                    <div class="radio-group">
-                        <label for="q4_yes">
-                        <input type="radio" id="q4_yes" name="q4" value="Yes" required />Yes
-                        </label>
-                        <label for="q4_no">
-                        <input type="radio" id="q4_no" name="q4" value="No" required />No
-                        </label>
-                    </div>
-                    </div>
+                    // Plan Photos (spanning full width)
+                    echo "<div class='grid-item' style='grid-column: span 3;'>";
+                    echo "<h3>Plan Photos</h3>";
+                    
+                    // Fetch plan photos
+                    $photoQuery = "SELECT Photo FROM plan WHERE plan_ID = ?";
+                    $photoStmt = mysqli_prepare($conn, $photoQuery);
+                    mysqli_stmt_bind_param($photoStmt, "i", $plan_ID);
+                    mysqli_stmt_execute($photoStmt);
+                    $photoResult = mysqli_stmt_get_result($photoStmt);
+                    
+                    echo "<div style='display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;'>";
+                    while ($photo = mysqli_fetch_assoc($photoResult)) {
+                        echo "<img src='{$photo['Photo']}' style='width: 300px; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;'>";
+                    }
+                    echo "</div>";
+                    
+                    echo"<h2>Evaluation Form</h2>";
+                    echo"<form method='post' action='approveplan.php'>";
+                    echo"<!-- Fix: Ensure correct plan_ID input field -->";
+                    echo "<input type='hidden' name='plan_ID' value='{$plan_ID}'>";
 
-                    <!-- Example Question 5 -->
-                    <div class="form-section">
-                    <label for="q5">Will you accept the project?</label>
-                    <br>
-                    <div class="radio-group">
-                        <label for="q5_yes">
-                        <input type="radio" id="q5_yes" name="q5" value="Yes" required />Yes
-                        </label>
-                        <label for="q5_no">
-                        <input type="radio" id="q5_no" name="q5" value="No" required />No
-                        </label>
-                    </div>
-                    </div>
-                        <label for='comment'>If Yes/No, why?</label><br>
-                        <textarea name='comment' rows='4' cols='50'></textarea><br>
+                    echo "<label>Were the details of the project suitable for your scope of work?</label>";
+                    echo "<div class='radio-group'>";
+                    echo "<label><input type='radio' name='q1' value='Yes' required> Yes</label>";
+                    echo "<label><input type='radio' name='q1' value='No' required> No</label>";
+                    echo "</div>";
 
-                        <label for='name'>Approved By: </label>
-                        <input type='text' id='name' name='approved_by' value='<?php echo $carpenterData['First_Name'];?> <?php echo $carpenterData['Last_Name'];?>' readonly><br>
+                    echo "<label>Are you able to finish the project even if there is an overlapping budget?</label>";
+                    echo "<div class='radio-group'>";
+                    echo "<label><input type='radio' name='q2' value='Yes' required> Yes</label>";
+                    echo "<label><input type='radio' name='q2' value='No' required> No</label>";
+                    echo "</div>";
 
-                        <label for='status'>Status:</label>
-                        <select id="status" name="status">
-                            <option value="" selected disabled>Select an option</option>
-                            <option value="approve">Approve</option>
-                            <option value="decline">Decline</option>
-                        </select><br>
+                    echo "<label>Are you willing to accept an additional task with additional payment?</label>";
+                    echo "<div class='radio-group'>";
+                    echo "<label><input type='radio' name='q3' value='Yes' required> Yes</label>";
+                    echo "<label><input type='radio' name='q3' value='No' required> No</label>";
+                    echo "</div>";
 
-                        <input type='hidden' name='plan_id' value='<?php echo $plan_id; ?>'>
-                        <button type='submit'>Submit</button>
-                    </form>
+                    echo "<label>Can you finish the project on time?</label>";
+                    echo "<div class='radio-group'>";
+                    echo "<label><input type='radio' name='q4' value='Yes' required> Yes</label>";
+                    echo "<label><input type='radio' name='q4' value='No' required> No</label>";
+                    echo "</div>";
 
-                    <button onclick="history.back()">Go back</button>
-                </div>
-                <?php
-                mysqli_stmt_close($stmt);
-                mysqli_close($conn);
-            } else {
-                ?>
-                <div class='main'>
-                    <p>No client's plan found with Plan ID: <?php echo $plan_id; ?></p>
-                </div>
-                <?php
-            }
-        } else {
+                    echo "<label>Will you accept the project?</label>";
+                    echo "<div class='radio-group'>";
+                    echo "<label><input type='radio' name='q5' value='Yes' required> Yes</label>";
+                    echo "<label><input type='radio' name='q5' value='No' required> No</label>";
+                    echo "</div>";
+
+                    echo "<label>If Yes/No, why?</label><br>";
+                    echo "<textarea name='comment' rows='4' cols='50'></textarea><br>";
+
+                    echo "<label>Approved By: </label>";
+                    echo "<input type='text' name='approved_by' value='" . htmlspecialchars($carpenterDetails['First_Name'] . ' ' . $carpenterDetails['Last_Name']) . "' readonly><br>";
+
+                    echo "<label>Status:</label>";
+                    echo "<select name='status' style='width: 200px; height: 40px; margin-bottom: 20px;'>";
+                    echo "<option value='' disabled selected>Select an option</option>";
+                    echo "<option value='approve'>Approve</option>";
+                    echo "<option value='decline'>Decline</option>";
+                    echo "</select><br>";
+
+                    echo "<button type='submit'>Submit</button>";
+                    echo "</form>";
+
+                    echo "<button onclick=\"history.back()\">Go back</button>";
+                    echo "</div>";
+                } else {
+                    echo "<div class='main'><p>No client's plan found with Plan ID: " . htmlspecialchars($plan_ID) . "</p></div>";
+                }
             ?>
-            <div class='main'>
-                <p>Plan ID is missing.</p>
-            </div>
-            <?php
-        }
-        ?>
+        </div>
     </div>
-</div>
+
 
 </body>
 <script>

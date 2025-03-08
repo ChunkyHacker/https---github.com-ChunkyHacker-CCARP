@@ -1,830 +1,869 @@
 <?php
-session_start();
     include('config.php');
+    session_start();
 
-    $requirement_ID = $_GET['requirement_ID'];
-    $User_ID = $_SESSION['User_ID'];
+    if (!isset($_SESSION['User_ID'])) {
+        echo "<script>alert('You need to log in first.'); window.location.href='login.php';</script>";
+        exit();
+    }
 
+    $user_ID = $_SESSION['User_ID']; // Get logged-in user ID
 
-    $query1 = "SELECT *FROM projectrequirements WHERE requirement_ID = '$requirement_ID'";
-    $result1 = mysqli_query($conn, $query1);
-    $requirementData = mysqli_fetch_assoc($result1);
+    // Get user details
+    $sql = "SELECT * FROM users WHERE User_ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $user_ID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $userDetails = $result->fetch_assoc();
 
+    // Get the contract status from the contracts table
+    $contractStatus = 'pending'; // Default status
+    $rejectionReason = '';
+
+    // Check if we have a valid plan_ID
+    if (isset($_GET['plan_ID'])) {
+        $plan_ID = $_GET['plan_ID'];
+    } else {
+        echo "Plan ID is not set.";
+        exit();
+    }
+
+    // Debugging: Display User_ID and Plan_ID
+    echo "<script>console.log('Debug: User_ID = $user_ID, Plan_ID = $plan_ID');</script>";
+
+    // Fetch the contract details for the logged-in user or carpenter
+    $contractQuery = "SELECT * FROM contracts WHERE plan_ID = ? AND (User_ID = ? OR Carpenter_ID = ?)";
+    $contractStmt = mysqli_prepare($conn, $contractQuery);
+    mysqli_stmt_bind_param($contractStmt, "iii", $plan_ID, $user_ID, $user_ID);
+    mysqli_stmt_execute($contractStmt);
+    $contractResult = mysqli_stmt_get_result($contractStmt);
+    $contract = mysqli_fetch_assoc($contractResult);
+
+    // Check if the contract exists for the logged-in user
+    if (!$contract) {
+        echo "<script>console.log('Debug: No matching contract found for User_ID = $user_ID, Plan_ID = $plan_ID');</script>";
+        echo "<p>No contract found for this user.</p>";
+        exit();
+    }
+
+    // Get the contract ID for filtering sub-tables
+    $contractID = $contract['contract_ID'];
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
+<title>View Progress</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+<script src="process4\search.js"></script>
+<script src="process4\edititem.js"></script>
+<script src="process5\quantityxcost.js"></script>
+<script src="process5\daysofworkxlaborcost.js"></script>
+<script src="process5\additionalcostpluslaborcost.js"></script>
 <style>
     * {
-      box-sizing: border-box;
-      font-size: 20px;
-    }
+    box-sizing: border-box;
+  }
 
-    /* Style the body */
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 0;
-      padding-top: 180px;
-      font-size: 20px;
-    }
-
-    /* Header*/
-    .header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      padding: 10px;
-      text-align: left;
-      background: #FF8C00;
-      color: #000000;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      text-decoration: none;
-      z-index: 100;
-    }
-
-    /* Increase the font size of the heading */
-    .header h1 {
-      font-size: 20px;
-      border-left: 20px solid transparent; 
-      padding-left: 20px; /* Adjust padding */
-      text-decoration: none;
-    }
-
-    .right {
-      margin-right: 20px;
-    }
-
-    .header a{
-      font-size: 20px;
-      font-weight: bold;
-      text-decoration: none;
-      color: #000000;
-    }
-
-    .topnav {
-      position: fixed;
-      top: 120px; /* Adjust the top position as per your needs */
-      width: 100%;
-      overflow: hidden;
-      background-color: #505050;
-      z-index: 100;
-    }
-
-    /* Style the links inside the navigation bar */
-    .topnav a {
-      position: sticky;
-      float: left;
-      display: block;
-      color: black;
-      text-align: center;
-      padding: 14px 16px;
-      text-decoration: none;
-      font-size: 20px;
-    }
-
-    .topnav a,
-    .topnav a.active {
-      color: black;
-    }
-
-    .topnav a:hover,
-    .topnav a.active:hover {
-      background-color: #FF8C00;
-      color: black;
-    }
+  body {
+    font-family: Arial, Helvetica, sans-serif;
+    margin: 0;
+    padding: 0;
+    font-size: 22px;
+    background-color: #f5f5f5;
+  }
 
 
-    /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-    @media screen and (max-width: 600px) {
-      .topnav a, .topnav input[type=text] {
-        float: none;
-        display: block;
-        text-align: left;
-        width: 100%;
-        margin: 0;
-        padding: 14px;
-      }
-      .topnav input[type=text] {
-        border: 1px solid #ccc;
-      }
-    }
+  button {
+    background-color: #FF8C00;
+    color: #FFFFFF;
+    border: none;
+    padding: 10px 20px;
+    font-size: 22px; /* Set button font size to 22px */
+    cursor: pointer;
+    margin: 20px;
+    border-radius: 4px;
+  }
 
-    #addMaterialsBtn {
-      background-color: #FF8C00;
-      color: #FFFFFF;
-      border: none;
-      padding: 10px 20px;
-      font-size: 20px;
-      cursor: pointer;
-      margin: 20px;
-      border-radius: 4px;
-    }
+  button:hover {
+    background-color: #FFA500;
+  }
 
-    #addLaborBtn {
-      background-color: #FF8C00;
-      color: #FFFFFF;
-      border: none;
-      padding: 10px 20px;
-      font-size: 20px;
-      cursor: pointer;
-      margin: 20px;
-      border-radius: 4px;
-    }
+    .modal,
+  .editModal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    overflow: auto; /* Para maka-scroll ang tibuok modal */
+  }
+  .modal-content,
+  .edit-modal-content {
+    background-color: #f2f2f2;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px;
+    border-radius: 5px;
+    width: 70%;
+    max-height: 80vh; /* Dili molapas sa screen */
+    overflow-y: auto; /* Maka-scroll kung taas ang sulod */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  }
+  
+  .modal-content h2,
+  .edit-modal-content h2 {
+    margin-bottom: 20px;
+    font-size: 20px; /* Set font size of headings in modals to 20px */
+  }
 
-    #addLaborBtn:hover {
-      background-color: #FFA500;
-    }
+  .modal-content form div {
+    margin-bottom: 15px;
+  }
 
-    #addMaterialBtn:hover {
-      background-color: #FFA500;
-    }
+  .modal-content form label,
+  .edit-modal-content form label {
+    font-size: 20px; /* Set font size of labels to 20px */
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
 
-    Materials Styles */Materials {
-      display: none;
-      position: fixed;
-      z-index: 1000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      overflow: auto;
-      background-color: rgba(0, 0, 0, 0.5);
-    }
+  .modal-content form input,
+  .modal-content form textarea,
+  .modal-content form select {
+    width: 100%;
+    padding: 8px;
+    font-size: 20px; /* Set font size of inputs, textarea, and selects to 20px */
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+  }
 
-      .modal {
-          display: none;
-          position: fixed;
-          z-index: 1000; /* Ensure modal appears on top of other elements */
-          left: 0;
-          top: 0;
-          width: 100%;
-          height: 100%;
-          overflow: auto;
-          background-color: rgba(0,0,0,0.4);
-      }
-
-      .modal-content {
-          background-color: #f2f2f2;
-          position: fixed;
-          top: 50%; /* Center modal vertically */
-          left: 50%; /* Center modal horizontally */
-          transform: translate(-50%, -50%); /* Move modal back to center */
-          padding: 20px;
-          border: 1px solid #888;
-          width: 70%;
-          border-radius: 5px;
-          z-index: 1001; /* Ensure modal content appears on top of the modal background */
-      }
-
-      .close {
-          color: #aaa;
-          position: absolute;
-          top: 0;
-          right: 0;
-          font-size: 20px;
-          font-weight: bold;
-          cursor: pointer;
-          z-index: 1002; /* Ensure close button appears on top of modal content */
-      }
-
-      .close:hover,
-      .close:focus {
-          color: black;
-          text-decoration: none;
-          cursor: pointer;
-      }
-
-      /* Rest of your styles remain unchanged */
-      .modal-content h2 {
-          margin-bottom: 20px;
-      }
-
-      .modal-content form div {
-          margin-bottom: 15px;
-      }
-
-      .modal-content form label {
-          display: block;
-          font-size: 20px;
-          font-weight: bold;
-          text-align: left;
-          margin-bottom: 5px;
-      }
-
-      .modal-content form input,
-      .modal-content form textarea,
-      .modal-content form select {
-          width: 100%;
-          padding: 8px;
-          font-size: 20px;
-          color: #000;
-          background-color: #fff;
-          border-radius: 4px;
-          border: 1px solid #ccc;
-      }
-
-      .modal-content form select {
-          width: 100%;
-      }
-
-      .modal-content form button {
-          background-color: #FF8C00;
-          color: #FFFFFF;
-          border: none;
-          padding: 10px 20px;
-          font-size: 20px;
-          cursor: pointer;
-          border-radius: 4px;
-      }
-
-      .modal-content form button:hover {
-          background-color: #FFA500;
-      }
-
-  /* Modal Styles */
-    .editModal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      display: none;
-      z-index: 1001; /* Ensure a higher z-index than the table */
-    }
-
-    .edit-modal-content {
-      background-color: #f2f2f2;
-      padding: 30px;
-      border: 1px solid #888;
-      max-width: 70%; /* Use max-width instead of width */
-      width: auto; /* Adjusted width property */
-      border-radius: 5px;
-      position: absolute; /* Use absolute positioning */
-      top: 50%; /* Set top to 50% */
-      left: 50%; /* Set left to 50% */
-      transform: translate(-50%, -50%); /* Center the modal */
-    }
-
-    /* Main column */
-    .main {   
-      margin: auto;
-      width: 70%; /* Adjusted width for better visibility */
-      padding: 20px;
-      text-align: left;
+  .modal-content form button,
+  .edit-modal-content form button {
+    font-size: 20px; /* Set font size of buttons inside modals to 20px */
+  }
+  /* Project Image */
+  .project-img {
+      width: 700px;
+      height: 400px;
       border: 1px solid #ccc;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-      box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+      padding: 5px;
+  }
+
+
+
+  .main {
+    margin-left: 250px; /* Match sidebar width */
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .main h1 {
+    font-size: 24px;
+    margin-bottom: 25px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #eee;
+    color: #333;
+  }
+
+  .row-container h3 {
+    font-size: 20px; /* Set font size of row-container headings to 20px */
+    margin-bottom: 10px;
+    color: #555;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 8px;
+    font-size: 20px; /* Set font size of text inputs to 20px */
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+    margin-bottom: 10px;
+  }
+
+  img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 4px;
+  }
+
+  .sort {
+    display: inline-block;
+    margin-bottom: 10px;
+  }
+
+  .sort select {
+    padding: 8px;
+    font-size: 20px; /* Set font size of sort select to 20px */
+    color: #000;
+    background-color: #fff;
+    border-radius: 4px;
+  }
+
+  .table-container {
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 20px;
+    margin-bottom: 40px;
+  }
+
+  .styled-table {
+    width: 100%;
+    border-collapse: collapse; /* Ensures borders are combined */
+    font-size: 20px; /* Increase font size for table */
+  }
+
+  .styled-table th, .styled-table td {
+    border: 1px solid #ddd; /* Add border to table cells */
+    padding: 12px; /* Add padding for better spacing */
+    text-align: center; /* Center align text */
+  }
+
+  .styled-table th {
+    background-color: #FF8C00; /* Header background color */
+    color: white; /* Header text color */
+    font-size: 20px; /* Increase font size for header */
+  }
+
+  .table-header {
+    padding: 12px;
+    text-align: center;
+    background-color: #FF8C00;
+    color: black;
+    font-weight: bold;
+    border-bottom: 1px solid #333;
+  }
+
+  .table-cell {
+    padding: 2px;
+    text-align: center;
+    background-color: #f2f2f2;
+    border-bottom: 1px solid #333;
+  }
+
+  .table-cell img {
+    max-width: 100px;
+    max-height: 100px;
+    border-radius: 4px;
+  }
+
+  .footer {
+    padding: 10px;
+    text-align: center;
+    background: #FF8C00;
+    position: relative;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+  }
+
+  @media screen and (max-width: 700px) {
+    .row {
+      flex-direction: column;
     }
-
-    .main h1 {
-      font-size: 20px;
-      margin-bottom: 20px;
-      color: #333;
-      }
-
-      .row-container h3 {
-              font-size: 20px;
-              margin-bottom: 10px;
-              color: #555;
-          }
-
-          label {
-              display: block;
-              font-size: 20px;
-              margin-bottom: 5px;
-              color: #777;
-          }
-
-          input[type='text'] {
-              width: 100%;
-              padding: 8px;
-              font-size: 16px;
-              color: #000;
-              background-color: #fff;
-              border-radius: 4px;
-              border: 1px solid #ccc;
-              margin-bottom: 10px;
-          }
-
-          p {
-              margin-bottom: 10px;
-              font-size: 18px;
-              color: #333;
-          }
-
-          img {
-              max-width: 100%;
-              height: auto;
-              border-radius: 4px;
-          }
-
-
-    /*Sort*/
-    .sort {
-      display: inline-block;
-      margin-bottom: 10px;
-      margin-left: 40px;
-    }
-
-    .sort select {
-      padding: 8px;
-      font-size: 16px;
-      color: #000000;
-      background-color: #ffffff;
-      border-radius: 4px;
-    }
-
-    .sort select:focus {
-      outline: none;
-      box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    /* Table styling */
-    .table-container {
-      border-radius: 8px;
-      overflow: hidden;
-      margin-top: 20px; /* Adjusted margin-top for spacing */
-      margin-bottom: 40px; /* Added margin-bottom for space below the table */
-      padding:50px;
-    }
-
-    .styled-table {
-      width: 100%;
-      border-collapse: collapse;
-      border: 1px solid #333;
-    }
-
-    .table-header {
-      padding: 12px;
-      text-align: center;
-      background-color: #FF8C00; /* Orange color */
-      color: black; /* Text color */
-      font-weight: bold;
-      border-bottom: 1px solid #333;
-    }
-
-    .table-cell {
-      padding: 2px;
-      text-align: center;
-      background-color: #f2f2f2;
-      border-bottom: 1px solid #333;
-    }
-
-    .table-cell img {
-      max-width: 100px;
-      max-height: 100px;
-      border-radius: 4px;
-    }
-
-    .styled-table tr {
-      border-bottom: 1px solid #333; /* Added border for table rows */
-    }
-
-    .styled-table th, .styled-table td {
-      border-right: 1px solid #333; /* Added border for table columns */
-    }
-
-    .button-link {
-          display: inline-block;
-          padding: 10px 20px;
-          font-size: 16px;
-          color: white;
-          background-color: #007bff;
-          text-align: center;
-          text-decoration: none;
-          border-radius: 4px;
-          border: none;
-          cursor: pointer;
-      }
-
-      .button-link:hover {
-          background-color: #0056b3;
-      }
-
-    /* Footer */
-    .footer {
-      padding: 10px;
-      text-align: center;
-      background: #FF8C00;
-      position: relative;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 100%;
-    }
-
-    /* Responsive layout - when the screen is less than 700px wide, make the two columns stack on top of each other instead of next to each other */
-    @media screen and (max-width: 700px) {
-      .row {   
-        flex-direction: column;
-      }
-      body {
-      font-family: Arial, Helvetica, sans-serif;
-      margin: 0;
+    body {
       padding-top: 300px;
     }
-    }
+  }
 
-    /* Responsive layout - when the screen is less than 400px wide, make the navigation links stack on top of each other instead of next to each other */
-    @media screen and (max-width: 400px) {
-      .navbar a {
-        float: none;
-        width: 100%;
-      }
+  @media (max-width: 768px) {
+    .product-card {
+      width: calc(50% - 20px);
     }
+  }
 
-    @media (max-width: 768px) {
-      .product-card {
-        width: calc(50% - 20px);
-      }
+  @media (max-width: 480px) {
+    .product-card {
+      width: 100%;
     }
+  }
 
-    @media (max-width: 480px) {
-      .product-card {
-        width: calc(100% - 20px);
-      }
-    }
+  .sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #FF8C00;
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+
+  .sidenav .profile-section {
+    text-align: center;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+  }
+
+  .sidenav .profile-section img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid white;
+  }
+
+  .sidenav h3 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: black;
+  }
+
+  .sidenav p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: black;
+  }
+
+  .sidenav a {
+    padding: 12px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
+    display: block;
+    transition: 0.3s;
+  }
+
+  .sidenav a:hover {
+    background-color: rgba(0,0,0,0.1);
+  }
+
+  .sidenav a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+
+  /* Add these styles for the grid layout */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  .grid-item {
+    background: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+
+  .grid-item h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #FF8C00;
+    color: #333;
+    white-space: nowrap; /* Prevent text wrapping */
+  }
+
+  /* Client photo styling to match screenshot */
+  .client-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 15px;
+    border: 3px solid #FF8C00;
+  }
+
+  /* Sidebar styling to match screenshot */
+  .sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #FF8C00;
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+  
+  .sidenav .profile-section {
+    text-align: center;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+  }
+  
+  .sidenav .profile-section img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid white;
+  }
+  
+  .sidenav h3 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: black;
+  }
+  
+  .sidenav p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: black;
+  }
+  
+  .sidenav a {
+    padding: 12px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    background-color: rgba(0,0,0,0.1);
+  }
+  
+  .sidenav a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  /* Form input styling */
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 16px;
+  }
+  
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+  }
+
+  /* Updated grid layout to match screenshot */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  
+  .grid-item {
+    background: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  .grid-item h3 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #FF8C00;
+    color: #333;
+  }
+  
+  /* Client photo styling to match screenshot */
+  .client-photo {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    object-fit: cover;
+    display: block;
+    margin: 0 auto 15px;
+    border: 3px solid #FF8C00;
+  }
+  
+  /* Sidebar styling to match screenshot */
+  .sidenav {
+    height: 100%;
+    width: 250px;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #FF8C00;
+    overflow-x: hidden;
+    padding-top: 20px;
+  }
+  
+  .sidenav .profile-section {
+    text-align: center;
+    padding: 20px 10px;
+    margin-bottom: 20px;
+  }
+  
+  .sidenav .profile-section img {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 3px solid white;
+  }
+  
+  .sidenav h3 {
+    font-size: 24px;
+    margin-bottom: 5px;
+    color: black;
+  }
+  
+  .sidenav p {
+    font-size: 18px;
+    margin-bottom: 20px;
+    color: black;
+  }
+  
+  .sidenav a {
+    padding: 12px 15px;
+    text-decoration: none;
+    font-size: 18px;
+    color: black;
+    display: block;
+    transition: 0.3s;
+  }
+  
+  .sidenav a:hover {
+    background-color: rgba(0,0,0,0.1);
+  }
+  
+  .sidenav a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+  }
+  
+  /* Form input styling */
+  label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: bold;
+    color: #555;
+    font-size: 16px;
+  }
+  
+  input[type="text"], textarea {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 15px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+  }
+
+  /* Ensure consistent card heights */
+  .grid-item {
+    background: white;
+    padding: 20px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    height: auto;
+    min-height: 250px; /* Set minimum height for cards */
+  }
+  
+  /* Fix for the main container */
+  .main {
+    padding: 20px;
+    margin-left: 250px;
+    background-color: white;
+  }
+  
+  /* Fix for the grid container */
+  .grid-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Increase font size for other elements */
+  h1, h2, h3 {
+    font-size: 24px; /* Increase font size for headings */
+  }
 </style>
-
-<head>
-<div class="header">
-      <a href="comment.php">
-          <h1>
-              <img src="assets/img/logos/logo.png" alt=""  style="width: 75px; margin-right: 10px;">
-          </h1>
-      </a>
-      <div class="right">
-          <a href="logout.php" style="text-decoration: none; color: black; margin-right: 20px;">Log Out</a>
-      </div>
-  </div>
-
-  <div class="topnav">
-      <a class="active" href="comment.php">Home</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#">Project</a>
-  </div>
 </head>
 <body>
 
-<?php
-    require_once "config.php";
+<!-- Add Sidebar Navigation -->
+<div class="sidenav">
+    <div class="profile-section">
+        <?php
+        // Display profile picture
+        if (isset($userDetails['Photo']) && !empty($userDetails['Photo'])) {
+            echo '<img src="' . $userDetails['Photo'] . '" alt="Profile Picture">';
+        } else {
+            echo '<img src="assets/img/default-avatar.png" alt="Default Profile Picture">';
+        }
+        
+        // Display name and ID
+        echo "<h3>" . $userDetails['First_Name'] . ' ' . $userDetails['Last_Name'] . "</h3>";
+        echo "<p>User ID: " . $user_ID . "</p>";
+        ?>
+    </div>
 
-    if (isset($_GET['requirement_ID'])) {
-        $requirement_ID = $_GET['requirement_ID'];
+    <div class="sidebar-section">
+      <?php
+      // Check if contract_ID is available
+      if (isset($contract['contract_ID'])) {
+          echo "<a href='userpaycarpenter.php?contract_ID={$contract['contract_ID']}'><i class='fas fa-money-bill-wave'></i> Pay Carpenter</a>";
+      }
+      ?>
 
-        $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
+      <a href="usercomment.php"><i class="fas fa-home"></i> Home</a>
+      <a href="userprofile.php"><i class="fas fa-user"></i> Profile</a>
+      <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+  </div>
+</div>
+
+
+<!-- Replace the main content area with this grid layout -->
+<div class="container">
+    <?php
+    // Check if plan_ID is set
+    if (isset($_GET['plan_ID'])) {
+        $plan_ID = $_GET['plan_ID'];
+        
+        // Get plan details directly from the plan table
+        $query = "SELECT p.*, u.First_Name, u.Last_Name, u.Photo as UserPhoto 
+                 FROM plan p 
+                 JOIN users u ON p.User_ID = u.User_ID 
+                 WHERE p.plan_ID = ?";
         $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
+        mysqli_stmt_bind_param($stmt, "i", $plan_ID);
         mysqli_stmt_execute($stmt);
         $result = mysqli_stmt_get_result($stmt);
-
-        if ($row = mysqli_fetch_assoc($result)) {
+        $row = mysqli_fetch_assoc($result);
+        
+        if ($row) {
+            // Client name from the joined users table
+            $clientName = "{$row['First_Name']} {$row['Last_Name']}";
+            
             echo "<div class='main'>";
             echo "<h1>Client's Plan Details</h1>";
-
-            $userId = $row['User_ID'];
-            $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($conn, $userQuery);
-            mysqli_stmt_bind_param($userStmt, "i", $userId);
-            mysqli_stmt_execute($userStmt);
-            $userResult = mysqli_stmt_get_result($userStmt);
-
-            echo "<label for='name'>Client Name: </label>";
-            if ($userRow = mysqli_fetch_assoc($userResult)) {
-                echo "<input type='text' id='name' name='User_ID' value='{$userRow['First_Name']} {$userRow['Last_Name']}' readonly><br>";
-            }
-
-            echo "<div class=\"row-container\">";
-            echo "<h3>Lot area</h3>";
-            echo "<label for='length_lot_area'>Length for lot area</label>";
-            echo "<input type='text' id='length_lot_area' name='length_lot_area' value='{$row['length_lot_area']}' readonly><br>";
-            echo "<label for='width_lot_area'>Width for lot area</label>";
-            echo "<input type='text' id='width_lot_area' name='width_lot_area' value='{$row['width_lot_area']}' readonly><br>";
-            echo "<label for='square_meter_lot'>Square Meter(Sq):</label>";
+            
+            // First row grid container
+            echo "<div class='grid-container'>";
+            
+            // Client Info
+            echo "<div class='grid-item'>";
+            echo "<h3>Client Information</h3>";
+            echo "<img src='" . (isset($row['UserPhoto']) ? $row['UserPhoto'] : 'assets/img/default-avatar.png') . "' class='client-photo'>";
+            echo "<label>Client Name:</label>";
+            echo "<input type='text' value='{$clientName}' readonly>";
             echo "</div>";
             
-            echo "<div class=\"row-container\">";
+            // Lot Area
+            echo "<div class='grid-item'>";
+            echo "<h3>Lot Area</h3>";
+            echo "<label>Length:</label>";
+            echo "<input type='text' value='{$row['length_lot_area']}' readonly>";
+            echo "<label>Width:</label>";
+            echo "<input type='text' value='{$row['width_lot_area']}' readonly>";
+            echo "<label>Square Meter:</label>";
+            echo "<input type='text' value='{$row['square_meter_lot']}' readonly>";
+            echo "</div>";
+            
+            // Floor Area
+            echo "<div class='grid-item'>";
             echo "<h3>Floor Area</h3>";
-            echo "<label for='length_floor_area'>Length for floor area</label>";
-            echo "<input type='text' id='length_floor_area' name='length_floor_area' value='{$row['length_floor_area']}' readonly><br>";
-            echo "<label for='width_floor_area'>Width for floor area</label>";
-            echo "<input type='text' id='width_floor_area' name='width_floor_area' value='{$row['width_floor_area']}' readonly><br>";
-            echo "<label for='square_meter_lot'>Square Meter(Sq):</label>";
-            echo "<input type='text' id='square_meter_floor' name='square_meter_floor' value='{$row['square_meter_floor']}' readonly><br>";
-            echo "</div>";
-
-            echo "<div class=\"row-container\">";
-            echo "<h3>Initial Budget</h3>";
-            echo "<label for='initial_budget'>Initial Budget</label>";
-            echo "<input type='text' id='initial_budget' name='initial_budget' value='{$row['initial_budget']}' readonly><br>";
-            echo "</div>";
-
-            echo "<div class=\"row-container\">";
-            echo "<h3>Estimated Cost</h3>";
-            echo "<label for='estimated_cost'>Estimated Cost</label>";
-            echo "<input type='text' id='estimated_cost' name='estimated_cost' value='{$row['estimated_cost']}' readonly><br>";
-            echo "</div>";
-
-            echo "<div class=\"row-container\">";
-            echo "<h3>Project Dates</h3>";
-            echo "<p>Start Date: <input type='text' value='{$row['start_date']}' readonly></p>";
-            echo "<p>End Date: <input type='text' value='{$row['end_date']}' readonly></p>";        
+            echo "<label>Length:</label>";
+            echo "<input type='text' value='{$row['length_floor_area']}' readonly>";
+            echo "<label>Width:</label>";
+            echo "<input type='text' value='{$row['width_floor_area']}' readonly>";
+            echo "<label>Square Meter:</label>";
+            echo "<input type='text' value='{$row['square_meter_floor']}' readonly>";
             echo "</div>";
             
-            echo "<p>Type: <input type='text' value='{$row['type']}' readonly></p>";
+            echo "</div>"; // Close first row grid-container
+            
+            // Second row grid container
+            echo "<div class='grid-container'>";
+            
+            // Project Budget - Make sure this is included
+            echo "<div class='grid-item'>";
+            echo "<h3>Project Budget</h3>";
+            echo "<label>Initial Budget:</label>";
+            echo "<input type='text' value='PHP " . number_format($row['initial_budget'], 2) . "' readonly>";
+            echo "</div>";
+            
+            // Project Dates
+            echo "<div class='grid-item'>";
+              echo "<h3>Project Dates</h3>";
+              echo "<label>Start Date:</label>";
+              echo "<input type='text' value='" . date("F j, Y", strtotime($row['start_date'])) . "' readonly>";
+              echo "<label>End Date:</label>";
+              echo "<input type='text' value='" . date("F j, Y", strtotime($row['end_date'])) . "' readonly>";
+              echo "</div>";
+              
+              // More Details
+              echo "<div class='grid-item'>";
+              echo "<h3>More Details</h3>";
+              if (isset($row['more_details']) && !empty($row['more_details'])) {
+                  echo "<textarea readonly style='height: 100px;'>{$row['more_details']}</textarea>";
+              } else {
+                  echo "<textarea readonly style='height: 100px;'>No additional details provided.</textarea>";
+              }
+              echo "</div>";
+              
+              echo "</div>"; // Close second row grid-container
+              
+              // Plan Photos (spanning full width)
+              echo "<div class='grid-container'>";
+              echo "<div class='grid-item plan-photo-container' style='grid-column: span 3;'>";
+              echo "<h3>Plan Photos</h3>";
+              
+              // Check if there's a photo in the plan table
+              if (!empty($row['Photo'])) {
+                  echo "<div style='text-align: center;'>";
+                  echo "<img src='" . $row['Photo'] . "' class='plan-photo' alt='Plan Photo' style='max-width: 300px; height: auto;'>";
+                  echo "</div>";
+              } else {
+                  echo "<p style='text-align: center; color: #777;'>No plan photos available.</p>";
+              }
+              echo "</div>";
 
-            echo "<table style='border-collapse: collapse; width: 100%;'>";
-            echo "<thead>";
-                        echo "<tr>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Part</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Materials</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Name</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
-                            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>';
+                echo "<div class='grid-container'>"; // Open grid container
 
-                        echo "</tr>";
-                    echo "</thead>";
-                echo "<tbody>";
-                
-                $query_materials = "SELECT * FROM prematerials";
-                $stmt_materials = mysqli_prepare($conn, $query_materials);
-                mysqli_stmt_execute($stmt_materials);
-                $result_materials = mysqli_stmt_get_result($stmt_materials);
-                
-                while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                    echo "<tr>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['part']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['materials']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['name']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['estimated_cost']) . "</td>";
-                    echo "</tr>";
-                }
-                
-                echo "</tbody>";
-            echo "</table>";
+                // PROGRESS REPORT
+                echo "<div class='grid-item'>";
+                  echo "<h2>Progress</h2>";
+                  $sqlReports = "SELECT * FROM report WHERE contract_ID = ?";
+                  $stmtReports = mysqli_prepare($conn, $sqlReports);
+                  mysqli_stmt_bind_param($stmtReports, "i", $contractID);
+                  mysqli_stmt_execute($stmtReports);
+                  $resultReports = mysqli_stmt_get_result($stmtReports);
+                  
+                  if (mysqli_num_rows($resultReports) > 0) {
+                      echo "<table class='styled-table'>";
+                      echo "<tr><th>Name</th><th>Status</th></tr>";
+                      while ($row = mysqli_fetch_assoc($resultReports)) {
+                          echo "<tr><td>{$row['Name']}</td><td>{$row['Status']}</td></tr>";
+                      }
+                      echo "</table>";
+                  } else {
+                      echo "<p>No Progress yet</p>";
+                  }
+                  echo "</div>"; // Close Progress grid-item
+                  
+                  // TASKS (Pending Tasks)
+                  echo "<div class='grid-item'>";
+                  echo "<h2>Tasks</h2>";
+                  $sqlTasks = "SELECT * FROM task WHERE contract_ID = ? AND task_id NOT IN (SELECT task_id FROM completed_task)";
+                  $stmtTasks = mysqli_prepare($conn, $sqlTasks);
+                  mysqli_stmt_bind_param($stmtTasks, "i", $contractID);
+                  mysqli_stmt_execute($stmtTasks);
+                  $resultTasks = mysqli_stmt_get_result($stmtTasks);
+                  
+                  if (mysqli_num_rows($resultTasks) > 0) {
+                      echo "<table class='styled-table'>";
+                      echo "<tr><th>Task</th><th>Details</th></tr>";
+                      while ($row = mysqli_fetch_assoc($resultTasks)) {
+                          echo "<tr><td>" . htmlspecialchars($row['task']) . "</td><td>" . htmlspecialchars($row['details']) . "</td></tr>";
+                      }
+                      echo "</table>";
+                  } else {
+                      echo "<p>No pending tasks</p>";
+                  }
+                  echo "</div>"; // Close Tasks grid-item
+                  
+                  // Open grid container for Completed Tasks and Attendance
+                  echo "<div class='grid-container'>";
 
-            echo '<table style="border-collapse: collapse; width: 100%;">';
-              echo '<thead>';
-                  echo '<tr>';
-                      echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>';
-                      echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Type</th>';
-                      echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Image</th>';
-                      echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>';
-                      echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>';
-                      echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>';
-                  echo '</tr>';
-              echo '</thead>';
-            echo '<tbody>';
-                
-                //requiredmaterials
-                $query_materials = "SELECT * FROM requiredmaterials";
-                $stmt_materials = mysqli_prepare($conn, $query_materials);
-                mysqli_stmt_execute($stmt_materials);
-                $result_materials = mysqli_stmt_get_result($stmt_materials);
-                
-                while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                    echo '<tr>';
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['material']) . '</td>';
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['type']) . '</td>';
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
-                        echo '<img src="' . htmlspecialchars($material_row['image']) . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
-                        echo '</td>';
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>';
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>';
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>';
-                    echo '</tr>';
-                }
-                
-            echo '</tbody>';
-          echo '</table>';
+                  // COMPLETED TASKS
+                  echo "<div class='grid-item'>";
+                  echo "<h2>Completed Tasks</h2>";
+                  $sqlCompleted = "SELECT * FROM completed_task WHERE contract_ID = ?";
+                  $stmtCompleted = $conn->prepare($sqlCompleted);
+                  $stmtCompleted->bind_param("i", $contractID);
+                  $stmtCompleted->execute();
+                  $resultCompleted = $stmtCompleted->get_result();
+                  
+                  if ($resultCompleted->num_rows > 0) {
+                      echo "<table class='styled-table'>";
+                      echo "<tr><th>Task</th><th>Details</th><th>Status</th></tr>";
+                      while ($row = $resultCompleted->fetch_assoc()) {
+                          echo "<tr><td>" . htmlspecialchars($row['name']) . "</td><td>" . htmlspecialchars($row['details']) . "</td><td>" . ucfirst(htmlspecialchars($row['status'])) . "</td></tr>";
+                      }
+                      echo "</table>";
+                  } else {
+                      echo "<p>No completed tasks</p>";
+                  }
+                  echo "</div>"; // Close Completed Tasks grid-item
+                  
+                  // ATTENDANCE
+                  echo "<div class='grid-item'>"; // Change to span one column
+                  echo "<h2>Attendance</h2>";
+                  $sqlAttendance = "SELECT * FROM attendance WHERE contract_ID = ?";
+                  $stmtAttendance = mysqli_prepare($conn, $sqlAttendance);
+                  mysqli_stmt_bind_param($stmtAttendance, "i", $contractID);
+                  mysqli_stmt_execute($stmtAttendance);
+                  $resultAttendance = mysqli_stmt_get_result($stmtAttendance);
+                  
+                  if (mysqli_num_rows($resultAttendance) > 0) {
+                      echo "<table class='styled-table'>";
+                      echo "<tr><th>Type</th><th>Time In</th><th>Time Out</th></tr>";
+                      while ($row = mysqli_fetch_assoc($resultAttendance)) {
+                          echo "<tr><td>{$row['Type_of_work']}</td><td>{$row['Time_in']}</td><td>{$row['Time_out']}</td></tr>";
+                      }
+                      echo "</table>";
+                  } else {
+                      echo "<p>No attendance records yet.</p>";
+                  }
+                  echo "</div>"; // Close Attendance grid-item
 
-        // Display the resized photo with a link to open the modal
-        $photoPath = $row['Photo'];
-        if (!empty($photoPath) && file_exists($photoPath)) {
-            echo "<p>Photo:</p>";
-            echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 900px; height: 400px;'>";
-            echo "</a>";
-        }
-               
-            echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
+                  // Close the grid container
+                  echo "</div>"; // Close grid-container
 
-            echo "</form>";
-            echo "</div>"; 
+                  // Go Back button - moved to the left
+                  echo "<div style='text-align: left; margin: 20px 0; padding-left: 20px; grid-column: span 3;'>"; // Span three columns for the button
+                    echo "<button onclick=\"window.location.href='userprofile.php'\" 
+                            style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
+                            border-radius: 5px; cursor: pointer; font-size: 16px;'>Go Back</button>";
+                  echo "</div>";
 
+            echo "</div>"; // Close grid-container
+                          // Go Back button - moved to the left
+            echo "</div>"; // Close main div
+            
         } else {
             echo "<div class='main'>";
-            echo "<p>No approved plan found with Approved Plan ID: $requirement_ID</p>";
-            echo "</div>"; 
+            echo "<p>No plan found with Plan ID: $plan_ID</p>";
+            echo "</div>";
         }
-
-        mysqli_stmt_close($stmt);
-        mysqli_close($conn);
     } else {
         echo "<div class='main'>";
-        echo "<p>Approved Plan ID is missing.</p>";
-        echo "</div>"; 
+        echo "<p style='font-size: 18px; color: red;'>Error: No Plan ID provided.</p>";
+        echo "<p style='font-size: 16px; margin-top: 20px;'>Please go back and select a valid plan.</p>";
+        echo "<button onclick='window.history.back()' style='margin-top: 20px; padding: 10px 20px; background-color: #FF8C00; color: white; border: none; border-radius: 5px; cursor: pointer;'>Go Back</button>";
+        echo "</div>";
     }
-?>
-
-<h2 style="text-align:center">Progress and Attendance</h2>
-  <!--TABLE-->
-  <div class="product-container">
-      <h2 style="text-align:center">Progress</h2>
-      <?php
-          include('config.php');
-
-
-          // Check if requirement_ID is provided in the URL parameter
-          if(isset($_GET['requirement_ID'])) {
-              $requirementID = $_GET['requirement_ID'];
-
-              // Prepare the SQL query with a WHERE clause to filter by requirement_ID
-              $sql = "SELECT * FROM report WHERE requirement_ID = $requirementID";
-              
-
-              $result = $conn->query($sql);
-
-              if ($result->num_rows > 0) {
-                  echo '<div class="table-container">';
-                  echo '    <table class="styled-table">';
-                  echo '        <tr>';
-                  echo '            <th class="table-header">Name</th>';
-                  echo '            <th class="table-header">Status</th>';
-                  echo '            <th class="table-header">Materials</th>';
-                  echo '            <th class="table-header">Cost</th>';
-                  echo '        </tr>';
-
-                  while ($row = $result->fetch_assoc()) {
-                      echo '        <tr>';
-                      echo '            <td class="table-cell"><h3>' . $row["Name"] . '</h3></td>';
-                      echo '            <td class="table-cell"><h3>' . $row["Status"] . '</h3></td>';
-                      echo '            <td class="table-cell"><h3>' . $row["Materials"] . '</h3></td>';
-                      echo '            <td class="table-cell"><h3>' . $row["Material_cost"] . '</h3></td>';
-                      echo '        </tr>';
-                  }
-
-                  echo '</table>';
-                  echo '</div>';
-
-              } else {
-                  echo '<p>No Progress yet</p>';
-              }
-          } else {
-              echo '<p>Error: requirement_ID is missing.</p>';
-          }
-      ?>
-  </div>
-
-    <!--Pending Task-->
-
-    <div class="product-container">
-    <h2 style="text-align:center">Pending Tasks</h2>
-    <?php
-        include('config.php');
-
-        // Check if requirement_ID is provided in the URL parameter
-        if(isset($_GET['requirement_ID'])) {
-            $requirementID = $_GET['requirement_ID'];
-
-            // Prepare the SQL query with a WHERE clause to filter by requirement_ID
-            $sql = "SELECT task, details FROM task WHERE requirement_ID = $requirementID";
-
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                echo '<div class="table-container">';
-                echo '    <table class="styled-table">';
-                echo '        <tr>';
-                echo '            <th class="table-header">Task</th>';
-                echo '            <th class="table-header">Details</th>';
-                echo '        </tr>';
-
-                while ($row = $result->fetch_assoc()) {
-                    echo '        <tr>';
-                    echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["task"]) . '</h3></td>';
-                    echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["details"]) . '</h3></td>';          
-                    echo '        </tr>';
-                }
-
-                echo '    </table>';
-                echo '</div>';
-
-            } else {
-                echo '<p>No pending tasks yet.</p>';
-            }
-        } else {
-            echo '<p>Error: requirement_ID is missing.</p>';
-        }
-        
-        $conn->close();
     ?>
 </div>
-
-
-
-<div class="product-container">
-    <h2 style="text-align:center">Completed Task</h2>
-    <?php
-        include('config.php');
-
-        // Kuhaa tanan completed tasks
-        $sql = "SELECT name, details FROM completed_task";
-        $result = $conn->query($sql);
-
-        if ($result->num_rows > 0) {
-            echo '<div class="table-container">';
-            echo '    <table class="styled-table">';
-            echo '        <tr>';
-            echo '            <th class="table-header">Name</th>';
-            echo '            <th class="table-header">Details</th>';
-            echo '        </tr>';
-
-            while ($row = $result->fetch_assoc()) {
-                echo '        <tr>';
-                echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["name"]) . '</h3></td>';
-                echo '            <td class="table-cell"><h3>' . htmlspecialchars($row["details"]) . '</h3></td>';          
-                echo '        </tr>';
-            }
-
-            echo '    </table>';
-            echo '</div>';
-        } else {
-            echo '<p>No completed tasks yet.</p>';
-        }
-
-        $conn->close();
-    ?>
-</div>
-
-  <div class="product-container">
-    <h2 style="text-align:center">Attendance</h2>
-    <?php
-        include('config.php');
-
-
-        // Check if requirement_ID is provided in the URL parameter
-        if(isset($_GET['requirement_ID'])) {
-            $requirementID = $_GET['requirement_ID'];
-
-            // Prepare the SQL query with a WHERE clause to filter by requirement_ID
-            $sql = "SELECT * FROM attendance WHERE requirement_ID = $requirementID";
-
-            $result = $conn->query($sql);
-
-            if ($result->num_rows > 0) {
-                echo '<div class="table-container">';
-                echo '    <table class="styled-table">';
-                echo '        <tr>';
-                echo '            <th class="table-header">Type</th>';
-                echo '            <th class="table-header">Time in</th>';
-                echo '            <th class="table-header">Time out</th>';
-                echo '        </tr>';
-
-                while ($row = $result->fetch_assoc()) {
-                    echo '        <tr>';
-                    echo '            <td class="table-cell"><h3>' . $row["Type_of_work"] . '</h3></td>';
-                    echo '            <td class="table-cell"><h3>' . $row["Time_in"] . '</h3></td>';
-                    echo '            <td class="table-cell"><h3>' . $row["Time_out"] . '</h3></td>';          
-                    echo '        </tr>';
-                }
-
-                echo '    </table>';
-                echo '</div>';
-
-            } else {
-                echo '<p>No attendance yet.</p>';
-            }
-        } else {
-            echo '<p>Error: requirement_ID is missing.</p>';
-        }
-        
-        $conn->close();
-        ?>
-        
-  </div>
-
-
-
-  <a id="addLaborBtn" 
-   href="userpaycarpenter.php?requirement_ID=<?php echo $requirementData['requirement_ID']; ?>&User_ID=<?php echo $_SESSION['User_ID']; ?>" 
-   class="button-link">Pay Carpenter
-</a>
-
-
 </body>
 </html>
+  

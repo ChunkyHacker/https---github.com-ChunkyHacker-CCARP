@@ -3,22 +3,11 @@ session_start();
 include('config.php');
 
 if (!isset($_SESSION['User_ID'])) {
-  header('Location: login.html');
-  exit();
+    header('Location: login.html');
+    exit();
 }
 
-if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
-    $message = htmlspecialchars($_GET['message']); // Sanitize the message to prevent XSS
-    echo "<script>alert('$message');</script>";
-}
-
-// Check if success parameter is passed in the URL
-if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
-    // Sanitize the message to prevent XSS
-    $message = htmlspecialchars($_GET['message']);
-    // Output the alert with the message
-    echo "<script>alert('$message');</script>";
-}
+$User_ID = $_SESSION['User_ID'];
 ?>
 
 <!DOCTYPE html>
@@ -28,350 +17,374 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        html {
-            box-sizing: border-box;
-        }
-
-        *, *:before, *:after {
-            box-sizing: inherit;
-        }
-
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            margin: 0 auto;
-            max-width: auto;
-            padding: 5px;
-            padding-top: 170px;
-            font-size: 20px; /* Updated font size */
+            background-color: #f5f5f5;
+            padding: 0;
+            margin: 0;
+            font-family: Arial, sans-serif;
         }
 
-        .header {
-            text-align: left;
-            background: #FF8C00;
-            color: #000;
+        .sidebar {
+            background-color: #FF8600;
+            height: 100vh;
+            padding: 15px;
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 250px;
+            overflow-y: auto;
+            font-size: 20px;
+        }
+        
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 10px;
+            margin: 10px auto;
+            display: block;
+        }
+        
+        .nav-link {
+            color: #000000;
+            padding: 8px 15px;
+            margin: 2px 0;
+            text-decoration: none;
             display: flex;
             align-items: center;
-            text-decoration: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            z-index: 100;
+            transition: background-color 0.3s;
         }
-
-        .header h1 {
-            font-size: 20px; /* Updated font size */
-            border-left: 20px solid transparent;
-            text-decoration: none;
+        
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+            color: #000000;
+            border-radius: 5px;
         }
-
-        .header a {
-            font-size: 20px; /* Updated font size */
-            font-weight: bold;
-            text-decoration: none;
-            color: #000;
-            margin-right: 45px;
-        }
-
-        .header .right {
-            margin-right: 20px;
-        }
-
-        .main {
-            flex: 70%;
-            background-color: white;
+        
+        .nav-link i {
+            width: 25px;
+            margin-right: 10px;
             text-align: center;
-            margin: auto;
         }
-
-        h1 {
-            font-size: 50px; /* Updated font size */
-            word-break: break-all;
-            padding-left: 50px;
-        }
-
-        .row {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            align-items: left;
-            margin-top: 40px;
-        }
-
-        .column {
-            float: left;
+        
+        .profile-section {
             text-align: center;
-            justify-content: center;
-            margin: 10px;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            color: #000000;
         }
 
-        .content {
-            background-color: white;
+        .main-content {
+            margin-left: 270px;
             padding: 15px;
+            max-width: 800px;
         }
 
-        .card {
-            box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+        .info-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .container {
-            padding: 30px;
+        .project-card {
+            background-color: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
 
-        .button {
-            border: none;
-            outline: 0;
-            display: inline-block;
-            padding: 8px;
-            color: #000;
-            background-color: #FF8C00;
-            text-align: center;
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            padding-top: 100px;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.9);
+        }
+
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 80%;
+            max-width: 700px;
+        }
+
+        .close {
+            position: absolute;
+            right: 35px;
+            top: 15px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
             cursor: pointer;
-            width: 100%;
-            text-decoration: none;
         }
 
-        .button:hover {
-            background-color: #535353;
+        .nav {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
         }
 
-        .footer {
-            padding: 10px;
-            text-align: center;
-            background: #FF8C00;
-            position: relative;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-        }
-
-        @media screen and (max-width: 600px) {
-            .topnav a, .topnav input[type=text] {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                margin: 0;
-                padding: 14px;
-            }
-            .topnav input[type=text] {
-                border: 1px solid #ccc;
-            }
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding-top: 300px;
-                font-size: 50px; /* Updated font size */
-            }
-        }
-
-        @media screen and (max-width: 700px) {
-            .row {   
-                flex-direction: column;
-            }
-        }
-
-        @media screen and (max-width: 400px) {
-            .navbar a {
-                float: none;
-                width: 100%;
-            }
+        .sidebar .nav {
+            margin-bottom: 20px;
         }
     </style>
-
 </head>
 <body>
-    <div class="header">
-        <a href="usercomment.php">
-            <h1>
-                <img src="assets/img/logos/logo.png" alt="" style="width: 75px; margin-right: 10px;">
-            </h1>
-        </a>
-        <div class="right">
-            <a href="usercomment.php">Home</a>
-            <a href="about/index.html">About</a>
-            <a href="#contact">Get Ideas</a>
-            <a href="plan.php">Project</a>
-        </div>
-        <a href="logout.php" style="text-decoration: none; color: black; margin-left: auto; margin-right: 20px;">Log Out</a>
-    </div>
-
-    <?php
-    if (isset($_SESSION['User_ID'])) {
-        $User_ID = $_SESSION['User_ID'];
-
-        $sql = "SELECT * FROM users WHERE User_ID = ?";
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $User_ID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            <?php
+            $sql = "SELECT * FROM users WHERE User_ID = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $User_ID);
+            $stmt->execute();
+            $result = $stmt->get_result();
             $user = $result->fetch_assoc();
-            $photoPath = $user['Photo'];
 
-            if (!empty($photoPath) && file_exists($photoPath)) {
-                echo '<div class="row">
-                        <div class="column">
-                            <div class="card">
-                                <img src="' . $photoPath . '" alt="Profile Picture" style="width: 300px; height: 300px; padding:10px; ">
-                                <div class="container">
-                                    <h2>' . $user['First_Name'] . ' ' . $user['Last_Name'] . '</h2>
-                                    <p class="title">User</p>
-                                    <p>' . $user['Email'] . '</p>
-                                    <p><button class="button"><a href="chat.html" style="text-decoration: none; color: black;">Contact User</a></button></p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>';
+            if (isset($user['Photo']) && !empty($user['Photo'])) {
+                echo '<img src="' . $user['Photo'] . '" class="profile-image" alt="Profile Picture">';
             } else {
-                echo "Image file not found: $photoPath";
+                echo '<img src="assets/img/default-avatar.png" class="profile-image" alt="Default Profile Picture">';
             }
-        } else {
-            echo "No user found with User_ID: $User_ID";
-        }
-    } else {
-        header("Location: login.html");
-        exit();
-    }
-    ?>
-
-    <h1>Your Requests:</h1>
-    <div class="row">
-        <?php
-        $query = "SELECT * FROM plan";
-        $result = mysqli_query($conn, $query);
-
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo '<div class="column" style="background-color: #FF8C00; margin: 10px 0; padding: 15px; border-radius: 10px;">';
-                echo "<div class='content' style='background-color: #FFCB8B; padding: 10px; border-radius: 5px;'>";
-                echo "<ul>";
-
-                $userId = $row['User_ID'];
-                $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-                $userStmt = mysqli_prepare($conn, $userQuery);
-                mysqli_stmt_bind_param($userStmt, "i", $userId);
-                mysqli_stmt_execute($userStmt);
-                $userResult = mysqli_stmt_get_result($userStmt);
-
-                if ($userRow = mysqli_fetch_assoc($userResult)) {
-                    echo "<p>Client Name: {$userRow['First_Name']} {$userRow['Last_Name']}</p>";
-                }
-
-                $photoPath = $row['Photo'];
-                if (!empty($photoPath) && file_exists($photoPath)) {
-                    echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-                    echo "<img src='{$photoPath}' alt='Carpenter Photo' style='width: 150px; height: auto;'>";
-                    echo "</a>";
-                }
-
-                echo "<p><a href='userclientsplan.php?plan_id={$row['plan_ID']}'>View your plan</a></p>";
-                echo "</li>";
-                echo "</ul>";
-                echo "</div>";
-                echo "</div>";
-            }
-            mysqli_free_result($result);
-        } else {
-            echo "Error fetching data: " . mysqli_error($conn);
-        }
-        ?>
+            ?>
+            <h5><?php echo $user['First_Name'] . ' ' . $user['Last_Name']; ?></h5>
+            <p>User ID: <?php echo $User_ID; ?></p>
+        </div>
+        
+        <div class="nav">
+            <a href="usercomment.php" class="nav-link">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="about/index.html" class="nav-link">
+                <i class="fa fa-info-circle"></i>
+                <span>About</span>
+            </a>
+            <a href="#contact" class="nav-link">
+                <i class="fa fa-lightbulb-o"></i>
+                <span>Get Ideas</span>
+            </a>
+            <a href="plan.php" class="nav-link">
+                <i class="fa fa-clipboard"></i>
+                <span>Project</span>
+            </a>
+            <a href="userprofile.php" class="nav-link">
+                <i class="fa fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="logout.php" class="nav-link">
+                <i class="fa fa-sign-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
     </div>
 
-    <h1>Declined Plan:</h1>
-    <div class="row">
-        <?php
-        $query = "SELECT * FROM declinedplan";
-        $result = mysqli_query($conn, $query);
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- User Information -->
+        <div class="info-card">
+            <h2>User Profile</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <p><strong>Email:</strong> <?php echo $user['Email']; ?></p>
+                    <p><strong>Address:</strong> <?php echo $user['Address']; ?></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Contact:</strong> <?php echo $user['Phone_Number']; ?></p>
+                    <p><strong>Date Of Birth:</strong> <?php echo $user['Date_Of_Birth']; ?></p>
+                </div>
+            </div>
+        </div>
 
-        if ($result) {
-            while ($row = mysqli_fetch_assoc($result)) {
-                echo '<div class="column" style="background-color: #FF8C00; margin: 10px 0; padding: 15px; border-radius: 10px;">';
-                echo "<div class='content' style='background-color: #FFCB8B; padding: 10px; border-radius: 5px;'>";
-                echo "<ul>";
+        <!-- Your Requests Section -->
+        <div class="info-card">
+            <h2>Your Requests</h2>
+            <div class="row">
+                <?php
+                // Modified query to show all plans that are not yet closed
+                $query = "SELECT * FROM plan WHERE User_ID = ? AND status != 'closed'";
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $User_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
 
-                $userId = $row['User_ID'];
-                $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-                $userStmt = mysqli_prepare($conn, $userQuery);
-                mysqli_stmt_bind_param($userStmt, "i", $userId);
-                mysqli_stmt_execute($userStmt);
-                $userResult = mysqli_stmt_get_result($userStmt);
+                if ($result && mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-md-4">';
+                        echo '<div class="project-card">';
+                        
+                        $photoPath = $row['Photo'];
+                        if (!empty($photoPath) && file_exists($photoPath)) {
+                            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 100%; height: auto; margin-bottom: 10px;' onclick='openModal(this.src)'>";
+                        }
 
-                if ($userRow = mysqli_fetch_assoc($userResult)) {
-                    echo "<p>Client Name: {$userRow['First_Name']} {$userRow['Last_Name']}</p>";
+                        echo "<a href='userviewplan.php?plan_ID={$row['plan_ID']}' class='btn btn-primary w-100'>View Plan</a>";
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "<p class='text-center w-100'>No requests found. <a href='usercreateplan.php'>Create a plan</a></p>";
                 }
+                ?>
+            </div>
+        </div>
 
-                $photoPath = $row['Photo'];
-                if (!empty($photoPath) && file_exists($photoPath)) {
-                    echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-                    echo "<img src='{$photoPath}' alt='Carpenter Photo' style='width: 150px; height: auto;'>";
-                    echo "</a>";
+        <!-- Approved Plans Section -->
+        <div class="info-card">
+            <h2>Approved Plans</h2>
+            <div class="row">
+                <?php
+                // Modified query to get only one entry per plan_ID
+                $query = "SELECT p.*, pa.* FROM plan p 
+                          JOIN plan_approval pa ON p.plan_ID = pa.plan_ID 
+                          WHERE p.User_ID = ? 
+                          GROUP BY p.plan_ID"; // Group by plan_ID
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $User_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-md-4">';
+                        echo '<div class="project-card">';
+                        
+                        $photoPath = $row['Photo'];
+                        if (!empty($photoPath) && file_exists($photoPath)) {
+                            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 100%; height: auto; margin-bottom: 10px;' onclick='openModal(this.src)'>";
+                        }
+
+                        echo "<a href='userviewapprovedplan.php?plan_ID={$row['plan_ID']}' class='btn btn-primary w-100'>View Details</a>";
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "<p class='text-center w-100'>No approved plans found.</p>";
                 }
+                ?>
+            </div>
+        </div>
 
-                echo "<p><a href='userviewdeclinedplan.php?declined_plan_ID={$row['declined_plan_ID']}'>View your plan</a></p>";
-                echo "</li>";
-                echo "</ul>";
-                echo "</div>";
-                echo "</div>";
-            }
-            mysqli_free_result($result);
-        } else {
-            echo "Error fetching data: " . mysqli_error($conn);
-        }
-        ?>
+        <!-- Pending Contract Section -->
+        <div class="info-card">
+            <h2>Pending Contract</h2>
+            <div class="row">
+                <?php
+                // Modified query to get only pending contracts along with carpenter details
+                $query = "SELECT p.*, c.First_Name AS carpenter_first, c.Last_Name AS carpenter_last 
+                          FROM plan p 
+                          JOIN contracts co ON p.plan_ID = co.plan_ID 
+                          JOIN carpenters c ON co.Carpenter_ID = c.Carpenter_ID 
+                          WHERE p.User_ID = ? AND co.status = 'pending'"; // Ensure to filter by pending status
+
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $User_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-md-4">';
+                        echo '<div class="project-card">';
+                        
+                        // Display Carpenter Name
+                        echo "<h5 style='margin-bottom: 5px;'>Carpenter: {$row['carpenter_first']} {$row['carpenter_last']}</h5>";
+
+                        // Display Plan Photo
+                        $photoPath = $row['Photo'];
+                        if (!empty($photoPath) && file_exists($photoPath)) {
+                            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 100%; height: auto; margin-bottom: 10px;' onclick='openModal(this.src)'>";
+                        }
+
+                        // Change the link to point to usercomputebudget.php
+                        echo "<a href='usercomputebudget.php?plan_ID={$row['plan_ID']}' class='btn btn-primary w-100'>View Details</a>";
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "<p class='text-center w-100'>No pending contracts found.</p>";
+                }
+                ?>
+            </div>
+        </div>
+
+        <!-- Accepted Contracts Section -->
+        <div class="info-card">
+            <h2>Accepted Contracts</h2>
+            <div class="row">
+                <?php
+                // Query to get only accepted contracts along with carpenter details
+                $query = "SELECT p.*, c.First_Name AS carpenter_first, c.Last_Name AS carpenter_last 
+                          FROM plan p 
+                          JOIN contracts co ON p.plan_ID = co.plan_ID 
+                          JOIN carpenters c ON co.Carpenter_ID = c.Carpenter_ID 
+                          WHERE p.User_ID = ? AND co.status = 'accepted'"; // Filter by accepted status
+
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $User_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-md-4">';
+                        echo '<div class="project-card">';
+                        
+                        // Display Carpenter Name
+                        echo "<h5 style='margin-bottom: 5px;'>Carpenter: {$row['carpenter_first']} {$row['carpenter_last']}</h5>";
+
+                        // Display Plan Photo
+                        $photoPath = $row['Photo'];
+                        if (!empty($photoPath) && file_exists($photoPath)) {
+                            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 100%; height: auto; margin-bottom: 10px;' onclick='openModal(this.src)'>";
+                        }
+
+                        // Link to view details
+                        echo "<a href='usercomputebudget.php?plan_ID={$row['plan_ID']}' class='btn btn-primary w-100'>View Details</a>";
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "<p class='text-center w-100'>No accepted contracts found.</p>";
+                }
+                ?>
+            </div>
+        </div>
+
+        <!-- Ongoing Project Section -->
+         
+
+    </div>
+    
+    <!-- Modal for Image Preview -->
+    <div id="imageModal" class="modal">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <img class="modal-content" id="modalImage">
     </div>
 
-<h1>Ongoing project:</h1>
-<div class="row">
-      <?php
-      require_once "config.php";
-
-      $query = "SELECT * FROM projectrequirements";
-      $result = mysqli_query($conn, $query);
-
-      if ($result) {
-        while ($row = mysqli_fetch_assoc($result))  {
-            echo '<div class="column" style="background-color: #FF8C00; margin: 10px 0; padding: 15px; border-radius: 10px;">';
-            echo "<div class='content' style='background-color: #FFCB8B; padding: 10px; border-radius: 5px;'>";
-            echo "<ul>";
-    
-            // Fetch user details from the 'users' table
-            $userId = $row['User_ID'];
-            $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($conn, $userQuery);
-            mysqli_stmt_bind_param($userStmt, "i", $userId);
-            mysqli_stmt_execute($userStmt);
-            $userResult = mysqli_stmt_get_result($userStmt);
-    
-            if ($userRow = mysqli_fetch_assoc($userResult)) {
-                echo "<p>Client Name: {$userRow['First_Name']} {$userRow['Last_Name']}</p>";
-            }
-      
-            $photoPath = $row['Photo'];
-            if (!empty($photoPath) && file_exists($photoPath)) {
-                echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-                echo "<img src='{$photoPath}' alt='Carpenter Photo' style='width: 150px; height: auto;'>";
-                echo "</a>";
-            }
-
-    
-            echo "<p><a href='userviewaddedrequirements.php?requirement_ID={$row['requirement_ID']}'>View your ongoing plan</a></p>";
-    
-            echo "</li>";
-            echo "</ul>";
-            echo "</div>";
-            echo "</div>";
+    <script>
+        function openModal(imageSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            modal.style.display = "block";
+            modalImg.src = imageSrc;
         }
-          mysqli_free_result($result);
-      } else {
-          echo "Error fetching data: " . mysqli_error($conn);
-      }
 
-      ?>
-</div>
+        function closeModal() {
+            document.getElementById('imageModal').style.display = "none";
+        }
+    </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
+

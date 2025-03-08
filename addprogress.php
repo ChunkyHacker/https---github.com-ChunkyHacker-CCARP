@@ -6,27 +6,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the form data
     $progressname = $_POST["Name"];
     $progresstype = $_POST["Status"];
-    $materials = $_POST["Materials"];
-    $materialcost = $_POST["Material_cost"];
-    $totalcost = $_POST["Total_cost"];
     
-    // Ensure the existence of the requirement_ID field in the form data
-    if (isset($_POST["requirement_ID"])) {
-        $requirementID = $_POST["requirement_ID"];
+    // Ensure the existence of the contract_ID field in the form data
+    if (isset($_POST["contract_ID"])) {
+        $contract_ID = $_POST["contract_ID"];
     } else {
-        // Handle the case where requirement_ID is not provided
-        echo "Error: requirement_ID is missing.";
+        // Handle the case where contract_ID is not provided
+        echo "Error: contract_ID is missing.";
         exit();
     }
 
     // Prepare the SQL query to insert the item into the database
-    $sql = "INSERT INTO report (Name, Status, Materials, Material_cost, Total_cost, requirement_ID) 
-            VALUES ('$progressname', '$progresstype', '$materials', '$materialcost', '$totalcost', '$requirementID')";
+    $sql = "INSERT INTO report (Name, Status, contract_ID) 
+            VALUES ('$progressname', '$progresstype','$contract_ID')";
     
     if ($conn->query($sql) === TRUE) {
         // Item added successfully, redirect back to progress.php with a success message
         $conn->close();
-        header("Location: progress.php?requirement_ID=$requirementID&success=true&message=" . urlencode("Report added successfully!"));
+        header("Location: progress.php?contract_ID=$contract_ID&success=true&message=" . urlencode("Report added successfully!"));
         exit();
     } else {
         // Display the error message

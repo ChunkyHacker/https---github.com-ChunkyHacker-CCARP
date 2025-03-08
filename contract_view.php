@@ -28,10 +28,20 @@
     $rejectionReason = '';
 
     // Check if we have a valid plan_ID
-    if (isset($_GET['plan_ID'])) {
-        $plan_ID = $_GET['plan_ID'];
-    } else {
-        die("Plan ID is not set.");
+    if (isset($plan_ID) && $plan_ID > 0) {
+        $contractQuery = "SELECT status, rejection_reason, labor_cost, duration FROM contracts WHERE plan_ID = ? AND Carpenter_ID = ?";
+        $contractStmt = mysqli_prepare($conn, $contractQuery);
+        mysqli_stmt_bind_param($contractStmt, "ii", $plan_ID, $Carpenter_ID);
+        mysqli_stmt_execute($contractStmt);
+        $contractResult = mysqli_stmt_get_result($contractStmt);
+        
+        if ($contractData = mysqli_fetch_assoc($contractResult)) {
+            $contractStatus = $contractData['status'];
+            $rejectionReason = isset($contractData['rejection_reason']) ? $contractData['rejection_reason'] : '';
+            $laborCost = $contractData['labor_cost'];
+            $duration = $contractData['duration'];
+        }
+        mysqli_stmt_close($contractStmt);
     }
 
     // Set the background color based on status
@@ -41,79 +51,7 @@
     } else if ($contractStatus == 'rejected') {
         $statusColor = '#F44336'; // Red for rejected
     }
-
-    $contractQuery = "
-    SELECT contracts.*, 
-           plan.length_lot_area, plan.width_lot_area, plan.square_meter_lot, 
-           plan.length_floor_area, plan.width_floor_area, plan.square_meter_floor, 
-           plan.type, plan.initial_budget, plan.start_date, plan.end_date, plan.more_details, plan.Photo
-    FROM contracts 
-    JOIN plan ON contracts.plan_ID = plan.plan_ID 
-    WHERE contracts.plan_ID = ?";
-
-    $contractStmt = mysqli_prepare($conn, $contractQuery);
-    mysqli_stmt_bind_param($contractStmt, "i", $plan_ID);
-    mysqli_stmt_execute($contractStmt);
-    $contractResult = mysqli_stmt_get_result($contractStmt);
-    $contract = mysqli_fetch_assoc($contractResult);
-
-
-    // Check if contract is found
-    if (!$contract) {
-        echo "<p>No contract found for this plan.</p>";
-        exit; // Stop further execution
-    }
-
-    // Process contract values safely
-    $client_name = isset($userDetails['First_Name']) ? $userDetails['First_Name'] . " " . $userDetails['Last_Name'] : "Unknown Client";
-    $carpenter_name = isset($carpenter['First_Name']) ? $carpenter['First_Name'] . " " . $carpenter['Last_Name'] : "Unknown Carpenter";
-
-    $lot_length = isset($contract['length_lot_area']) ? $contract['length_lot_area'] : "N/A";
-    $lot_width = isset($contract['width_lot_area']) ? $contract['width_lot_area'] : "N/A";
-    $lot_area = isset($contract['square_meter_lot']) ? $contract['square_meter_lot'] : "N/A";
-
-    $floor_length = isset($contract['length_floor_area']) ? $contract['length_floor_area'] : "N/A";
-    $floor_width = isset($contract['width_floor_area']) ? $contract['width_floor_area'] : "N/A";
-    $floor_area = isset($contract['square_meter_floor']) ? $contract['square_meter_floor'] : "N/A";
-
-    $project_type = isset($contract['type']) ? $contract['type'] : "N/A";
-    $initial_budget = isset($contract['initial_budget']) ? number_format($contract['initial_budget'], 2) : "0.00";
-
-    $start_date = (!empty($contract['start_date']) && strtotime($contract['start_date'])) ? date("F j, Y", strtotime($contract['start_date'])) : "Not specified";
-    $end_date = (!empty($contract['end_date']) && strtotime($contract['end_date'])) ? date("F j, Y", strtotime($contract['end_date'])) : "Not specified";
-    
-    if (isset($contract['start_date'], $contract['end_date']) && strtotime($contract['start_date']) && strtotime($contract['end_date'])) {
-        $startDateTime = new DateTime($contract['start_date']);
-        $endDateTime = new DateTime($contract['end_date']);
-        $interval = $startDateTime->diff($endDateTime);
-        $duration = $interval->days;
-    } else {
-        $duration = "N/A";
-    }
-
-    $more_details = isset ($contract['more_details']) ? $contract ['more_details'] : "N/A";
-    
-
-    // Get Carpenter_ID from the contract
-    $Carpenter_ID = $contract['Carpenter_ID']; // Get Carpenter_ID from the contract
-    $carpenter_name = "Unknown Carpenter";
-
-    if (!empty($Carpenter_ID)) {
-        $carpenterQuery = "SELECT First_Name, Last_Name FROM carpenters WHERE Carpenter_ID = ?";
-        $carpenterStmt = mysqli_prepare($conn, $carpenterQuery);
-        mysqli_stmt_bind_param($carpenterStmt, "i", $Carpenter_ID);
-        mysqli_stmt_execute($carpenterStmt);
-        $carpenterResult = mysqli_stmt_get_result($carpenterStmt);
-
-        // Check if carpenter details were found
-        if ($carpenter = mysqli_fetch_assoc($carpenterResult)) {
-            $carpenter_name = $carpenter['First_Name'] . " " . $carpenter['Last_Name'];
-        } else {
-            echo "No carpenter found for the specified ID.";
-        }
-    }
 ?>
-
 
 <!DOCTYPE html>
 <html lang="en">
@@ -824,11 +762,16 @@
         <a href="#" class="sidebar-link" onclick="openSignedContractModal(); return false;">
             <i class="fas fa-file-contract"></i> View Contract
         </a>
-
-        <a href="usercomment.php"><i class="fas fa-home"></i> Home</a>
-        <a href="userprofile.php"><i class="fas fa-user"></i> Profile</a>
-        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+        <a href="#" class="sidebar-link" onclick="document.getElementById('addMaterialsModal').style.display='block'; return false;">
+            <i class="fas fa-plus-circle"></i> Add Materials
+        </a>
+        <a href="#" class="sidebar-link" onclick="document.getElementById('addLaborModal').style.display='block'; return false;">
+            <i class="fas fa-hammer"></i> Add Labor
+        </a>
     </div>
+    <a href="usercomment.php"><i class="fas fa-home"></i> Home</a>
+    <a href="userprofile.php"><i class="fas fa-user"></i> Profile</a>
+    <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
 
 </div>
 
@@ -943,15 +886,16 @@
             echo "<div class='contract-status-display' style='margin: 20px 0; padding: 15px; border-radius: 5px; text-align: center;'>";
 
             // Get the contract status from the database
-            $contractStatusQuery = "SELECT status, rejection_reason FROM contracts WHERE plan_ID = ?";
+            $contractStatusQuery = "SELECT status, rejection_reason, labor_cost, duration FROM contracts WHERE plan_ID = ? AND Carpenter_ID = ?";
             $contractStatusStmt = mysqli_prepare($conn, $contractStatusQuery);
-            mysqli_stmt_bind_param($contractStatusStmt, "i", $plan_ID);
+            mysqli_stmt_bind_param($contractStatusStmt, "ii", $plan_ID, $Carpenter_ID);
             mysqli_stmt_execute($contractStatusStmt);
             $contractStatusResult = mysqli_stmt_get_result($contractStatusStmt);
 
             // Debug information
             echo "<div style='display: none;'>";
             echo "Plan ID: " . $plan_ID . "<br>";
+            echo "Carpenter ID: " . $Carpenter_ID . "<br>";
             echo "Query: " . $contractStatusQuery . "<br>";
             echo "Rows found: " . mysqli_num_rows($contractStatusResult) . "<br>";
             echo "</div>";
@@ -960,6 +904,8 @@
                 $contractData = mysqli_fetch_assoc($contractStatusResult);
                 $contractStatus = $contractData['status'];
                 $rejectionReason = $contractData['rejection_reason'];
+                $laborCost = $contractData['labor_cost'];
+                $duration = $contractData['duration'];
                 
                 // Set status color
                 $statusColor = '#FFC107'; // Default yellow for pending
@@ -972,6 +918,12 @@
                 // Display status badge
                 echo "<div style='display: inline-block; padding: 10px 20px; background-color: " . $statusColor . "; color: white; font-weight: bold; font-size: 18px; border-radius: 5px; margin-bottom: 10px;'>";
                 echo "Contract Status: " . ucfirst($contractStatus);
+                echo "</div>";
+                
+                // Display labor cost and duration
+                echo "<div style='margin-top: 15px;'>";
+                echo "<p><strong>Labor Cost:</strong> $" . number_format($laborCost, 2) . "</p>";
+                echo "<p><strong>Duration:</strong> " . $duration . " days</p>";
                 echo "</div>";
                 
                 // Display rejection reason if rejected
@@ -1014,17 +966,13 @@
             mysqli_stmt_close($contractStatusStmt);
             echo "</div>"; // Close contract-status-display div
 
-            // Go Back button - moved to the left
+            // Go Back button
             echo "<div style='text-align: left; margin: 20px 0; padding-left: 20px;'>";
-            echo "<button onclick=\"window.location.href='userprofile.php'\" 
+            echo "<button onclick=\"window.location.href='" . htmlspecialchars($_SERVER['HTTP_REFERER']) . "'\" 
                   style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
                   border-radius: 5px; cursor: pointer; font-size: 16px;'>Go Back</button>";
-            echo "<button onclick=\"window.location.href='userviewprogress.php?plan_ID=" . $row['plan_ID'] . "'\" 
-                  style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
-                  border-radius: 5px; cursor: pointer; font-size: 16px;'>View Progress</button>";
-
             echo "</div>";
-            
+                        
             echo "</div>"; // Close main div
             
         } else {
@@ -1045,132 +993,98 @@
 <!-- Contract Modal -->
 <div id="signedContractModal" class="modal">
     <div class="modal-content" style="width: 800px; max-width: 90%;">
-        <span class="close" onclick="closeSignedContractModal()">&times;</span>  
+        <span class="close" onclick="closeSignedContractModal()">&times;</span>
+        
         <div class="contract-container" style="padding: 40px;">
-          <h2 class="contract-title" style="text-align: center; font-size: 28px; font-weight: normal; margin-bottom: 30px; text-transform: uppercase;">
-              CONSTRUCTION AGREEMENT
-          </h2>
+            <h2 class="contract-title" style="text-align: center; font-size: 28px; font-weight: normal; margin-bottom: 30px; text-transform: uppercase;">
+                CONSTRUCTION AGREEMENT
+            </h2>
 
-          <p class="contract-text" style="text-align: justify; line-height: 1.6; margin-bottom: 20px;">
-              This agreement is made between <strong><?php echo $client_name; ?></strong> (Client) 
-              and <strong><?php echo $carpenter_name; ?></strong> (Contractor), 
-              regarding the construction project with the following details:
-          </p>
+            <p class="contract-text" style="text-align: justify; line-height: 1.6; margin-bottom: 20px;">
+                This agreement is made between <strong><?php echo $clientName; ?></strong> (Client) 
+                and <strong>CCARP Construction Company</strong> (Contractor), 
+                regarding the construction project with the following details:
+            </p>
 
-          <div class="project-details">
-              <p><strong>Lot Area:</strong> <?php echo $contract['length_lot_area']; ?>m x <?php echo $contract['width_lot_area']; ?>m (<?php echo $contract['square_meter_lot']; ?> sqm)</p>
-              <p><strong>Floor Area:</strong> <?php echo $contract['length_floor_area']; ?>m x <?php echo $contract['width_floor_area']; ?>m (<?php echo $contract['square_meter_floor']; ?> sqm)</p>
-              <p><strong>Project Type:</strong> <?php echo $contract['type']; ?></p>
-              <p><strong>Initial Budget:</strong> PHP <?php echo number_format($contract['initial_budget'], 2); ?></p>
-              <p><strong>Scope of Work:</strong> Construction of residential/commercial building, including foundation, framework, roofing, plumbing, and electrical installation.</p>
-              <p><strong>Materials to be Used:</strong> High-grade concrete, steel reinforcements, plywood, cement, roofing materials, and other necessary building supplies.</p>
-          </div>
-
-          <div class="project-photo" style="text-align: center; margin: 30px 0;">
-            <?php if (!empty($contract['Photo'])): ?>
-                <img src="<?php echo $contract['Photo']; ?>" alt="Project Photo" 
-                    style="max-width: 400px; height: auto; border: 1px solid #ddd; padding: 5px;">
-            <?php else: ?>
-                <p>No project photo available.</p>
-            <?php endif; ?>
-          </div>
-
-          <h3>2. Responsibilities</h3>
-          <p class="contract-text">
-              <strong>Contractor’s Responsibilities:</strong>
-              <ul>
-                  <li>Provide all labor, tools, and materials necessary for the completion of the project.</li>
-                  <li>Ensure the work is completed in compliance with the approved design and specifications.</li>
-                  <li>Adhere to all safety and building regulations applicable to the construction site.</li>
-                  <li>Maintain a clean and organized construction site.</li>
-              </ul>
-          </p>
-
-          <p class="contract-text">
-              <strong>Client’s Responsibilities:</strong>
-              <ul>
-                  <li>Provide necessary permits and approvals required for the construction.</li>
-                  <li>Ensure timely payments as per the agreed payment schedule.</li>
-                  <li>Facilitate access to the construction site for the contractor and workers.</li>
-              </ul>
-          </p>
-
-          <h3>3. Project Timeline</h3>
-          <div class="dates-section">
-              <p><strong>Start Date:</strong> <?php echo date("F j, Y", strtotime($contract['start_date'])); ?></p>
-              <p><strong>End Date:</strong> <?php echo date("F j, Y", strtotime($contract['end_date'])); ?></p>
-              <p><strong>Duration:</strong> <?php echo $duration; ?> day(s)</p>
-              <p><strong>Work Schedule:</strong> Monday to Saturday, 8:00 AM - 5:00 PM</p>
-          </div>
-
-          <h3>4. Payment Terms</h3>
-          <div class="labor-cost">
-              <p><strong>Labor Cost:</strong> PHP <?php echo number_format($contract['labor_cost']); ?></p>
-              <p><strong>Payment Schedule:</strong>
-                  <ul>
-                      <li>30% Initial Down Payment upon contract signing</li>
-                      <li>40% Midway Payment after 50% of work completion</li>
-                      <li>30% Final Payment upon project completion and approval</li>
-                  </ul>
-              </p>
-          </div>
-
-          <p class="contract-text" style="text-align: justify; line-height: 1.6; margin: 20px 0;">
-              Both parties agree to the conditions stated above. The contractor is responsible for completing the 
-              project within the agreed timeframe and budget.
-          </p>
-
-          <h3>5. Terms and Conditions</h3>
-          <p class="contract-text">
-              <strong>Amendments:</strong> Any modifications to this Agreement must be made in writing and signed by both parties.
-          </p>
-          <p class="contract-text">
-              <strong>Termination Clause:</strong> Either party may terminate this Agreement with a written notice of at least 14 days, provided valid reasons are given.
-          </p>
-          <p class="contract-text">
-              <strong>Dispute Resolution:</strong> Any disputes arising from this Agreement shall be settled through negotiation. If unresolved, legal action may be pursued as per governing laws.
-          </p>
-
-          <h3>6. Signatures</h3>
-          <div class="signature-section" style="margin-top: 50px; display: flex; justify-content: space-between; padding: 0 50px;">
-              <div class="signature-line" style="width: 250px; text-align: center;">
-                  <p>_______________________</p>
-                  <p style="margin-top: 5px;"><?php echo $client_name; ?></p>
-                  <p style="margin-top: 0; font-size: 14px; font-weight: bold; color: #000;">Client Signature over Printed Name</p>
-              </div>
-              <div class="signature-line" style="width: 250px; text-align: center;">
-                  <p>_______________________</p>
-                  <p style="margin-top: 5px;"><?php echo $carpenter_name; ?></p>
-                  <p style="margin-top: 0; font-size: 14px; font-weight: bold; color: #000;">Contractor Signature over Printed Name</p>
-              </div>
-          </div>
-        
-    <div style="margin-top: 30px; text-align: left; padding-left: 50px;">
-        <span id="contractStatus" style="padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 16px; 
-              background-color: <?php echo $statusColor; ?>; color: white;">
-            Status: <?php echo ucfirst($contractStatus); ?>
-        </span>
-        
-        <?php if(!empty($rejectionReason)): ?>
-        <div style="margin-top: 10px; padding: 10px; background-color: #ffeeee; border-left: 3px solid #F44336; border-radius: 3px;">
-            <p><strong>Rejection Reason:</strong> <?php echo $rejectionReason; ?></p>
-        </div>
-        <?php endif; ?>
-    </div>
-</div>
-
-        
-        <div class="contract-acceptance" style="margin: 20px; text-align: center;">
-            <!-- Dropdown for Status Selection -->
-            <div style="margin-top: 20px;" id="statusDropdownContainer">
-                <label for="contractStatusSelect">Select Contract Status:</label>
-                <select id="contractStatusSelect" onchange="handleStatusChange()" <?php echo ($contractStatus != 'pending') ? 'disabled' : ''; ?>>
-                    <option value="pending" <?php echo ($contractStatus == 'pending') ? 'selected' : ''; ?>>Pending</option>
-                    <option value="accepted" <?php echo ($contractStatus == 'accepted') ? 'selected' : ''; ?>>Accepted</option>
-                    <option value="rejected" <?php echo ($contractStatus == 'rejected') ? 'selected' : ''; ?>>Rejected</option>
-                </select>
+            <div class="project-details" style="margin: 20px 0;">
+                <p><strong>Lot Area:</strong> <?php echo $row['length_lot_area']; ?>m x <?php echo $row['width_lot_area']; ?>m (<?php echo $row['square_meter_lot']; ?> sqm)</p>
+                <p><strong>Floor Area:</strong> <?php echo $row['length_floor_area']; ?>m x <?php echo $row['width_floor_area']; ?>m (<?php echo $row['square_meter_floor']; ?> sqm)</p>
+                <p><strong>Project Type:</strong> <?php echo $row['type']; ?></p>
+                <p><strong>Initial Budget:</strong> PHP <?php echo number_format($row['initial_budget'], 2); ?></p>
             </div>
 
+            <div class="project-photo" style="text-align: center; margin: 30px 0;">
+                <?php if (!empty($row['Photo'])): ?>
+                    <img src="<?php echo $row['Photo']; ?>" alt="Project Photo" 
+                         style="max-width: 400px; height: auto; border: 1px solid #ddd; padding: 5px;">
+                <?php endif; ?>
+            </div>
+
+            <div class="dates-section" style="margin: 20px 0;">
+                <p><strong>Start Date:</strong> <?php echo date("F j, Y", strtotime($row['start_date'])); ?></p>
+                <p><strong>End Date:</strong> <?php echo date("F j, Y", strtotime($row['end_date'])); ?></p>
+                <?php
+                    // Calculate duration
+                    $startDateTime = new DateTime($row['start_date']);
+                    $endDateTime = new DateTime($row['end_date']);
+                    $interval = $startDateTime->diff($endDateTime);
+                    $duration = $interval->format('%a');
+                ?>
+                <p><strong>Duration:</strong> <?php echo $duration; ?> day(s)</p>
+            </div>
+
+            <div class="labor-cost" style="margin: 20px 0; padding: 15px; background: #f9f9f9; border-radius: 5px;">
+                <p><strong>Labor Cost:</strong> PHP <?php echo number_format($row['initial_budget'] * 0.3, 2); ?></p>
+            </div>
+
+            <p class="contract-text" style="text-align: justify; line-height: 1.6; margin: 20px 0;">
+                Both parties agree to the conditions stated above. The contractor is responsible for completing the 
+                project within the agreed timeframe and budget.
+            </p>
+
+            <div class="signature-section" style="margin-top: 50px; display: flex; justify-content: space-between; padding: 0 50px;">
+                <div class="signature-line" style="width: 250px; text-align: center;">
+                    <p>_______________________</p>
+                    <p style="margin-top: 5px;"><?php echo $clientName; ?></p>
+                    <p style="margin-top: 0; font-size: 14px; font-weight: bold; color: #000;">Client Signature over Printed Name</p>
+                </div>
+                <div class="signature-line" style="width: 250px; text-align: center;">
+                    <p>_______________________</p>
+                    <p style="margin-top: 5px;">CCARP Representative</p>
+                    <p style="margin-top: 0; font-size: 14px; font-weight: bold; color: #000;">Contractor Signature over Printed Name</p>
+                </div>
+            </div>
+
+            <!-- Status Badge - Using the variables we set above -->
+            <div style="margin-top: 30px; text-align: left; padding-left: 50px;">
+                <span id="contractStatus" style="padding: 5px 15px; border-radius: 5px; font-weight: bold; font-size: 16px; 
+                      background-color: <?php echo $statusColor; ?>; color: white;">
+                    Status: <?php echo ucfirst($contractStatus); ?>
+                </span>
+                
+                <?php if(!empty($rejectionReason)): ?>
+                <div style="margin-top: 10px; padding: 10px; background-color: #ffeeee; border-left: 3px solid #F44336; border-radius: 3px;">
+                    <p><strong>Rejection Reason:</strong> <?php echo $rejectionReason; ?></p>
+                </div>
+                <?php endif; ?>
+            </div>
+        </div>
+        
+        <div class="contract-acceptance" style="margin: 20px; text-align: center;">
+            <?php if($contractStatus == 'pending'): ?>
+            <!-- Dropdown for contract status selection -->
+            <div style="margin-bottom: 20px;">
+                <label for="contractStatusSelect" style="display: block; margin-bottom: 10px; font-weight: bold; font-size: 16px;">
+                    Contract Decision:
+                </label>
+                <select id="contractStatusSelect" onchange="handleStatusChange()" 
+                        style="padding: 10px; width: 300px; font-size: 16px; border: 1px solid #ddd; border-radius: 4px;">
+                    <option value="">-- Select Decision --</option>
+                    <option value="accepted">Accept Contract</option>
+                    <option value="rejected">Reject Contract</option>
+                </select>
+            </div>
+            
             <!-- Acceptance confirmation (hidden by default) -->
             <div id="acceptanceConfirmation" style="display: none; margin-bottom: 20px; padding: 15px; background-color: #e8f5e9; border-radius: 5px; text-align: left;">
                 <div style="display: flex; align-items: center; margin-bottom: 15px;">
@@ -1185,7 +1099,7 @@
                     Confirm Acceptance
                 </button>
             </div>
-
+            
             <!-- Rejection form (hidden by default) -->
             <div id="rejectionForm" style="display: none; margin-bottom: 20px; text-align: left; padding: 15px; background-color: #ffebee; border-radius: 5px;">
                 <h3 style="margin-top: 0; color: #333;">Rejection Reason</h3>
@@ -1196,18 +1110,18 @@
                     Submit Rejection
                 </button>
             </div>
-
-            <!-- Print and Close Buttons -->
-            <div style="margin-top: 20px; text-align: right;">
-                <?php if ($contractStatus == 'accepted'): ?>
-                    <button onclick="printContract()" style="background-color: #4CAF50; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; margin-right: 10px;">
-                        Print Contract
-                    </button>
-                <?php endif; ?>
-                <button onclick="closeSignedContractModal()" style="background-color: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 10px 20px; border-radius: 5px; cursor: pointer;">
-                    Close
-                </button>
-            </div>
+            
+            <button onclick="closeSignedContractModal()" 
+                    style="background-color: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                Cancel
+            </button>
+            <?php else: ?>
+            <!-- If contract is already approved or rejected, just show close button -->
+            <button onclick="closeSignedContractModal()" 
+                    style="background-color: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                Close
+            </button>
+            <?php endif; ?>
         </div>
     </div>
 </div>
@@ -1257,21 +1171,19 @@
     function handleStatusChange() {
         const selectedStatus = document.getElementById('contractStatusSelect').value;
         
-        // Show or hide sections based on selected status
+        // Hide both sections first
+        document.getElementById('acceptanceConfirmation').style.display = 'none';
+        document.getElementById('rejectionForm').style.display = 'none';
+        
+        // Show the appropriate section based on selection
         if (selectedStatus === 'accepted') {
             document.getElementById('acceptanceConfirmation').style.display = 'block';
-            document.getElementById('rejectionForm').style.display = 'none';
+            // Auto-check the terms checkbox
+            document.getElementById('acceptTerms').checked = true;
+            // Enable the confirm button immediately
+            document.getElementById('confirmAcceptBtn').disabled = false;
         } else if (selectedStatus === 'rejected') {
-            document.getElementById('acceptanceConfirmation').style.display = 'none';
             document.getElementById('rejectionForm').style.display = 'block';
-        } else {
-            document.getElementById('acceptanceConfirmation').style.display = 'none';
-            document.getElementById('rejectionForm').style.display = 'none';
-        }
-
-        // Hide the dropdown if a decision has been made
-        if (selectedStatus !== 'pending') {
-            document.getElementById('statusDropdownContainer').style.display = 'none';
         }
     }
     
@@ -1602,30 +1514,6 @@
 
     // Add event listener to recalculate when the additional cost changes
     additionalCostInput.addEventListener("input", calculateOverallCost);
-</script>
-
-<script>
-    function printContract() {
-        const printContent = document.querySelector('.contract-container').innerHTML; // Ensure this selector is correct
-        const newWindow = window.open('', '', 'width=800,height=600');
-        newWindow.document.write('<html><head><title>Print Contract</title>');
-        newWindow.document.write('<style>body { font-family: Arial, sans-serif; }</style>');
-        newWindow.document.write('</head><body>');
-        newWindow.document.write(printContent);
-        newWindow.document.write('</body></html>');
-        newWindow.document.close();
-        newWindow.print();
-    }
-</script>
-
-<script>
-function redirectToProgress(planID) {
-    // Log the planID for debugging
-    console.log("Redirecting to plan ID:", planID);
-    
-    // Redirect to the specified URL with the plan ID
-    window.location.href = `http://localhost/SIA/userviewprogress.php?plan_ID=${planID}`;
-}
 </script>
 </body>
 </html>

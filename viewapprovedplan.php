@@ -1,401 +1,413 @@
 <?php
-    session_start(); 
-    include('config.php');
+session_start();
+include('config.php');
 
-    if (!isset($_SESSION['Carpenter_ID'])) {
+if (!isset($_SESSION['Carpenter_ID'])) {
     header('Location: login.html');
     exit();
-    }
+}
+
+$Carpenter_ID = $_SESSION['Carpenter_ID'];
+
+// Get carpenter details
+$sql = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
+$stmt = $conn->prepare($sql);
+$stmt->bind_param("i", $Carpenter_ID);
+$stmt->execute();
+$result = $stmt->get_result();
+$carpenterDetails = $result->fetch_assoc();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>Approved Plan Details</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
+        /* Sidebar styles */
+        .sidenav {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            z-index: 1;
+            top: 0;
+            left: 0;
+            background-color: #FF8C00;
+            overflow-x: hidden;
+            padding-top: 20px;
+        }
+
+        .sidenav .profile-section {
+            text-align: center;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        .sidenav .profile-section img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+
+        .sidenav a {
+            padding: 8px 15px;
+            text-decoration: none;
+            font-size: 24px;
+            color: #000000;
+            display: block;
+            transition: 0.3s;
+            margin-bottom: 2px;
+        }
+
+        .sidenav a:hover {
+            background-color: #000000;
+            color: #FF8C00;
+        }
+
+        /* Adjust main content area */
+        .container {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-item {
+            background: white;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: none;  /* Remove shadow */
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+            font-weight: bold;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 24px;
+            font-weight: normal;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 22px;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 100px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 22px;
+            resize: none;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border: none;  /* Remove border */
+            box-shadow: none;  /* Remove shadow */
+        }
+
+        /* Client photo style */
+        .client-photo {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        /* Project Budget and Dates sections */
+        .grid-item:nth-child(4),
+        .grid-item:nth-child(5) {
+            margin-top: 20px;
         }
 
         body {
             font-family: Verdana, sans-serif;
             margin: 0;
-            background-color: #FF8C00;
-            font-size: 20px; /* Adjusted font size */
+            background-color: white;
+            font-size: 24px;
         }
 
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+        .sidenav h3 {
+            font-size: 28px;
+            margin-bottom: 2px;
+            line-height: 1.2;
         }
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-        }
-
-        .header h1 {
-            font-size: 20px; /* Adjusted font size */
-            border-left: 20px solid transparent;
-            text-decoration: none;
-        }
-
-        .right {
-            margin-right: 20px;
-        }
-
-        .header a {
-            font-size: 20px; /* Adjusted font size */
-            font-weight: bold;
-            text-decoration: none;
-            color: #000000;
-            margin-right: 15px;
-        }
-
-        @media screen and (max-width: 600px) {
-            .topnav a, .topnav input[type=text] {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                margin: 0;
-                padding: 14px;
-            }
-
-            .topnav input[type=text] {
-                border: 1px solid #ccc;
-            }
-
-            body {
-                font-family: Arial, Helvetica, sans-serif;
-                margin: 0;
-                padding-top: 300px;
-                font-size: 20px; /* Adjusted font size */
-            }
-        }
-
-        /* CSS styles for the modal */
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(255, 140, 0, 0.4);
-        }
-
-        .modal-content {
-            background-color: #FF8C00;
-            margin: 15% auto;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            max-height: 80%;
-            overflow-y: auto;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .modal-content {
-            background-color: #fefefe;
-            padding: 20px;
-            border: 1px solid #888;
-            width: 80%;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        h2 {
-            font-size: 20px; /* Adjusted font size */
-            margin-bottom: 20px;
-            color: #FF8C00;
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-        }
-
-        label {
-            font-size: 20px; /* Adjusted font size */
-            margin-bottom: 5px;
-            color: #000000;
-        }
-
-        input,
-        select,
-        textarea {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 20px; /* Adjusted font size for form elements */
-        }
-
-        .post-btn, .cancel-btn {
+        .sidenav p {
+            font-size: 20px;
             margin-bottom: 10px;
         }
 
-        .cancel-btn {
-            background-color: red;
-            color: #fff;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            margin-right: 10px;
-            text-decoration: none;
-            display: inline-block;
-            text-align: center;
-            width: 100%;
-        }
-
-        .cancel-btn:hover {
-            background-color: #000000;
-        }
-
         button {
-            background-color: #FF8C00;
-            color: #fff;
-            border: none;
-            padding: 10px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 20px; /* Adjusted font size */
-        }
-
-        button:hover {
-            background-color: #000000;
-        }
-
-        @media screen and (max-width: 600px) {
-            .modal-content {
-                width: 100%;
-            }
+            font-size: 22px !important;
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="modal-content">
-    <?php
-    include('config.php');
-
-    if (isset($_GET['approved_plan_ID'])) {
-        $approved_plan_ID = $_GET['approved_plan_ID'];
-
-        $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $approved_plan_ID);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-
-        if ($row = mysqli_fetch_assoc($result)) {
-            echo "<div class='main'>";
-            echo "<h1>Client's Plan Details</h1>";
-
-            $userId = $row['User_ID'];
-            $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($conn, $userQuery);
-            mysqli_stmt_bind_param($userStmt, "i", $userId);
-            mysqli_stmt_execute($userStmt);
-            $userResult = mysqli_stmt_get_result($userStmt);
-
-            echo "<label for='name'>Client Name: </label>";
-            if ($userRow = mysqli_fetch_assoc($userResult)) {
-                echo "<input type='text' id='name' name='User_ID' value='{$userRow['First_Name']} {$userRow['Last_Name']}' readonly><br>";
+    <!-- Sidebar Navigation -->
+    <div class="sidenav">
+        <div class="profile-section">
+            <?php
+            // Display profile picture
+            if (isset($carpenterDetails['Photo']) && !empty($carpenterDetails['Photo'])) {
+                echo '<img src="' . $carpenterDetails['Photo'] . '" alt="Profile Picture">';
+            } else {
+                echo '<img src="assets/img/default-avatar.png" alt="Default Profile Picture">';
             }
+            
+            // Display name and ID
+            echo "<h3>" . $carpenterDetails['First_Name'] . ' ' . $carpenterDetails['Last_Name'] . "</h3>";
+            echo "<p>Carpenter ID: " . $Carpenter_ID . "</p>";
+            ?>
+        </div>
+        <a href="home.php"><i class="fas fa-home"></i> Home</a>
+        <a href="about.php"><i class="fas fa-info-circle"></i> About</a>
+        <a href="getideas.php"><i class="fas fa-lightbulb"></i> Get Ideas</a>
+        <a href="project.php"><i class="fas fa-project-diagram"></i> Project</a>
+        <a href="profile.php"><i class="fas fa-user"></i> Profile</a>
+        <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
+    </div>
 
-            echo "<div class=\"row-container\" style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; text-align: left;'>";
-            echo "<h3>Lot area</h3>";
-            
-            // Length on the left
-            echo "<div style='grid-column: 1; display: flex; flex-direction: column;'>";
-            echo "<label for='length_lot_area'>Length for lot area</label>";
-            echo "<input type='text' id='length_lot_area' name='length_lot_area' value='{$row['length_lot_area']}' readonly>";
-            echo "</div>";
-            
-            // Width in the center
-            echo "<div style='grid-column: 2; display: flex; flex-direction: column;'>";
-            echo "<label for='width_lot_area'>Width for lot area</label>";
-            echo "<input type='text' id='width_lot_area' name='width_lot_area' value='{$row['width_lot_area']}' readonly>";
-            echo "</div>";
-            
-            // Square meter on the right
-            echo "<div style='grid-column: 3; display: flex; flex-direction: column;'>";
-            echo "<label for='square_meter_lot'>Square Meter(Sq):</label>";
-            echo "<input type='text' id='square_meter_lot' name='square_meter_lot' value='{$row['square_meter_lot']}' readonly>";
-            echo "</div>";
-            echo "</div>";
-            
-            echo "<div class=\"row-container\" style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; text-align: left;'>";
-            echo "<h3>Floor Area</h3>";
-            
-            // Length on the left
-            echo "<div style='grid-column: 1; display: flex; flex-direction: column;'>";
-            echo "<label for='length_floor_area'>Length for floor area</label>";
-            echo "<input type='text' id='length_floor_area' name='length_floor_area' value='{$row['length_floor_area']}' readonly>";
-            echo "</div>";
-            
-            // Width in the center
-            echo "<div style='grid-column: 2; display: flex; flex-direction: column;'>";
-            echo "<label for='width_floor_area'>Width for floor area</label>";
-            echo "<input type='text' id='width_floor_area' name='width_floor_area' value='{$row['width_floor_area']}' readonly>";
-            echo "</div>";
-            
-            // Square meter on the right
-            echo "<div style='grid-column: 3; display: flex; flex-direction: column;'>";
-            echo "<label for='square_meter_floor'>Square Meter(Sq):</label>";
-            echo "<input type='text' id='square_meter_floor' name='square_meter_floor' value='{$row['square_meter_floor']}' readonly>";
-            echo "</div>";               
-            echo "</div>";
-            
-            echo "<div class=\"row-container\" style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px; text-align: left;'>";
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<h3>Initial Budget</h3>";
-            // Initial Budget on the left
-            echo "<label for='initial_budget'>Initial Budget</label>";
-            echo "<input type='text' id='initial_budget' name='initial_budget' value='{$row['initial_budget']}' readonly>";
-            echo "</div>";
-            // Estimated Cost on the right
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "</div>";
-            echo "</div>";
-            
-            echo "<div class=\"row-container\">";
-            echo "<h3>Project Dates</h3>";
-            echo "<div style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;'>";
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label>Start Date:</label>";
-            echo "<input type='text' value='{$row['start_date']}' readonly>";
-            echo "</div>";
-            
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label>End Date:</label>";
-            echo "<input type='text' value='{$row['end_date']}' readonly>";
-            echo "</div>";
-            echo "</div>";
-            echo "</div>";                
-                                            
-            echo "<div class=\"row-container\">";
-            echo "<h3>Further Details</h3>";
-        
-            echo "</div>";
-            echo "</div>";
-
-            echo "<table style='border-collapse: collapse; width: 100%;'>";
-            echo "<thead>";
-                        echo "<tr>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Part</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Materials</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Name</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
-                            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>';
-
-                        echo "</tr>";
-                    echo "</thead>";
-                echo "<tbody>";
-                
-                $query_materials = "SELECT * FROM prematerials";
-                $stmt_materials = mysqli_prepare($conn, $query_materials);
-                mysqli_stmt_execute($stmt_materials);
-                $result_materials = mysqli_stmt_get_result($stmt_materials);
-                
-                while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                    echo "<tr>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['part']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['materials']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['name']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['estimated_cost']) . '</td>';
-
-                    echo "</tr>";
+    <!-- Rest of your existing content here -->
+    <div class="container">
+        <div class="modal-content">
+            <?php
+                if (!isset($_GET['plan_ID']) || empty($_GET['plan_ID'])) {
+                    die("<div class='main'><p>Plan ID is missing.</p></div>");
                 }
-                
-                echo "</tbody>";
-            echo "</table>";
-            
 
-            // Display the resized photo with a link to open the modal
-            $photoPath = $row['Photo'];
-            if (!empty($photoPath) && file_exists($photoPath)) {
-                echo "<p>Photo:</p>";
-                echo "<div style='text-align: center;'>";  // Center the content
-                echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-                echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 700px; height: 400px;'>";
-                echo "</a>";
-                echo "</div>";
-            }
+                $plan_ID = intval($_GET['plan_ID']);
 
-            echo "<p>Were the details of the project has suits for your scope of work for the carpenter? <input type='text' value='{$row['q1']}' readonly></p>" ;           
-            echo "<p>Can the carpenter finish the project on time?  <input type='text' value='{$row['q2']}' readonly></p>" ;     
-            echo "<p>Does the carpenter accept the project?  <input type='text' value='{$row['q3']}' readonly></p>" ;                       
-            echo "<p>Comment <input type='text' value='{$row['comment']}' readonly></p>";   
-            echo "<p>Approved by: <input type='text' value='{$row['approved_by']}' readonly></p>";                     
+                // Fetch Plan Details
+                $query = "SELECT * FROM plan WHERE plan_ID = ?";
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $plan_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
 
-            echo "<form action='listrequirements.php?approved_plan_ID={$row['approved_plan_ID']}' method='post'>";
-            echo "<input type='hidden' name='approved_plan_id' value='$approved_plan_ID'>";
-            echo "<input type='submit' value='Register Requirements'>";
+                if ($row = mysqli_fetch_assoc($result)) {
+                    echo "<div class='main'>";
+                    echo "<h1>Client's Plan Details</h1>";
 
-            echo "</form>";
-            echo '<button onclick="window.location.href = \'profile.php\'">Go back</button>';
+                    // Fetch Client Name
+                    $userId = $row['User_ID'];
+                    $userQuery = "SELECT First_Name, Last_Name, Photo FROM users WHERE User_ID = ?";
+                    $userStmt = mysqli_prepare($conn, $userQuery);
+                    mysqli_stmt_bind_param($userStmt, "i", $userId);
+                    mysqli_stmt_execute($userStmt);
+                    $userResult = mysqli_stmt_get_result($userStmt);
+                    $userDetails = mysqli_fetch_assoc($userResult);
+                    $clientName = ($userDetails) ? "{$userDetails['First_Name']} {$userDetails['Last_Name']}" : "Unknown Client";
 
-            echo "</div>"; 
-        } else {
-            echo "<div class='main'>";
-            echo "<p>No approved plan found with Approved Plan ID: $approved_plan_ID</p>";
-            echo "</div>"; 
-        }
+                    // Grid container for plan details
+                    echo "<div class='grid-container'>";
+                    
+                    // Client Info
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Client Information</h3>";
+                    if (!empty($userDetails['Photo'])) {
+                        echo "<img src='" . $userDetails['Photo'] . "' style='width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block;'>";
+                    } else {
+                        echo "<img src='assets/img/default-avatar.png' style='width: 150px; height: 150px; border-radius: 50%; object-fit: cover; margin: 10px auto; display: block;'>";
+                    }
+                    echo "<label>Client Name:</label>";
+                    echo "<input type='text' value='{$clientName}' readonly>";
+                    echo "</div>";
 
-        mysqli_stmt_close($stmt);
-        mysqli_close($conn);
-    } else {
-        echo "<div class='main'>";
-        echo "<p>Approved Plan ID is missing.</p>";
-        echo "</div>"; 
-    }
-    ?>
-</div>
+                    // Lot Area
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Lot Area</h3>";
+                    echo "<label>Length:</label>";
+                    echo "<input type='text' value='{$row['length_lot_area']}' readonly>";
+                    echo "<label>Width:</label>";
+                    echo "<input type='text' value='{$row['width_lot_area']}' readonly>";
+                    echo "<label>Square Meter:</label>";
+                    echo "<input type='text' value='{$row['square_meter_lot']}' readonly>";
+                    echo "</div>";
+
+                    // Floor Area
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Floor Area</h3>";
+                    echo "<label>Length:</label>";
+                    echo "<input type='text' value='{$row['length_floor_area']}' readonly>";
+                    echo "<label>Width:</label>";
+                    echo "<input type='text' value='{$row['width_floor_area']}' readonly>";
+                    echo "<label>Square Meter:</label>";
+                    echo "<input type='text' value='{$row['square_meter_floor']}' readonly>";
+                    echo "</div>";
+
+                    // Project Budget
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Project Budget</h3>";
+                    echo "<label>Initial Budget:</label>";
+                    echo "<input type='text' value='{$row['initial_budget']}' readonly>";
+                    echo "</div>";
+
+                    // Project Dates
+                    echo "<div class='grid-item'>";
+                    echo "<h3>Project Dates</h3>";
+                    echo "<label>Start Date:</label>";
+                    echo "<input type='text' value='{$row['start_date']}' readonly>";
+                    echo "<label>End Date:</label>";
+                    echo "<input type='text' value='{$row['end_date']}' readonly>";
+                    echo "</div>";
+
+                    // More Details
+                    echo "<div class='grid-item'>";
+                    echo "<h3>More Details</h3>";
+                    echo "<textarea readonly>{$row['more_details']}</textarea>";
+                    echo "</div>";
+
+                    // Plan Photos (spanning full width)
+                    echo "<div class='grid-item' style='grid-column: span 3;'>";
+                    echo "<h3>Plan Photos</h3>";
+                    
+                    // Fetch plan photos
+                    $photoQuery = "SELECT Photo FROM plan WHERE plan_ID = ?";
+                    $photoStmt = mysqli_prepare($conn, $photoQuery);
+                    mysqli_stmt_bind_param($photoStmt, "i", $plan_ID);
+                    mysqli_stmt_execute($photoStmt);
+                    $photoResult = mysqli_stmt_get_result($photoStmt);
+                    
+                    echo "<div style='display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;'>";
+                    while ($photo = mysqli_fetch_assoc($photoResult)) {
+                        echo "<img src='{$photo['Photo']}' style='width: 300px; height: 300px; object-fit: cover; border-radius: 8px; margin-bottom: 20px;'>";
+                    }
+                    echo "</div>";
+
+                    // Add this section below the photos display area
+                    echo "<div class='grid-container'>";
+                    echo "<div class='grid-item' style='grid-column: span 3;'>";
+                    echo "<h3>Contract Status</h3>";
+
+                    // Get the contract status from the database
+                    $contractStatusQuery = "SELECT status, rejection_reason FROM contracts WHERE plan_ID = ? AND Carpenter_ID = ?";
+                    $contractStatusStmt = mysqli_prepare($conn, $contractStatusQuery);
+                    mysqli_stmt_bind_param($contractStatusStmt, "ii", $plan_ID, $Carpenter_ID);
+                    mysqli_stmt_execute($contractStatusStmt);
+                    $contractStatusResult = mysqli_stmt_get_result($contractStatusStmt);
+
+                    if (mysqli_num_rows($contractStatusResult) > 0) {
+                        $contractData = mysqli_fetch_assoc($contractStatusResult);
+                        $status = $contractData['status'];
+                        $rejectionReason = $contractData['rejection_reason'];
+                        
+                        // Set status color
+                        $statusColor = '#FFC107'; // Default yellow for pending
+                        if ($status == 'accepted') {
+                            $statusColor = '#4CAF50'; // Green for accepted
+                        } elseif ($status == 'rejected') {
+                            $statusColor = '#F44336'; // Red for rejected
+                        }
+                        
+                        // Display status badge
+                        echo "<div style='text-align: center; margin-bottom: 20px;'>";
+                        echo "<span style='display: inline-block; padding: 10px 20px; background-color: " . $statusColor . "; color: white; font-weight: bold; font-size: 18px; border-radius: 5px;'>";
+                        echo "Contract Status: " . ucfirst($status);
+                        echo "</span>";
+                        echo "</div>";
+                        
+                        // Display rejection reason if rejected
+                        if ($status == 'rejected' && !empty($rejectionReason)) {
+                            echo "<div style='margin: 15px auto; padding: 15px; background-color: #ffebee; border-left: 4px solid #F44336; text-align: left; border-radius: 4px; max-width: 80%;'>";
+                            echo "<h3 style='margin-top: 0; color: #D32F2F; font-size: 20px;'>Rejection Reason:</h3>";
+                            echo "<p style='font-size: 16px;'>" . htmlspecialchars($rejectionReason) . "</p>";
+                            echo "</div>";
+                        }
+                        
+                        // Display acceptance message if accepted
+                        if ($status == 'accepted') {
+                            echo "<div style='margin: 15px auto; padding: 15px; background-color: #e8f5e9; border-left: 4px solid #4CAF50; text-align: left; border-radius: 4px; max-width: 80%;'>";
+                            echo "<h3 style='margin-top: 0; color: #2E7D32; font-size: 20px;'>Contract Accepted</h3>";
+                            echo "<p style='font-size: 16px;'>The contract has been accepted by the client. Work can proceed according to the agreed terms.</p>";
+                            echo "</div>";
+                        }
+                        
+                        // Display pending message if pending
+                        if ($status == 'pending') {
+                            echo "<div style='margin: 15px auto; padding: 15px; background-color: #fff8e1; border-left: 4px solid #FFC107; text-align: left; border-radius: 4px; max-width: 80%;'>";
+                            echo "<h3 style='margin-top: 0; color: #F57F17; font-size: 20px;'>Pending Decision</h3>";
+                            echo "<p style='font-size: 16px;'>This contract is awaiting the client's decision. The client will review the terms and either accept or reject the contract.</p>";
+                            echo "</div>";
+                        }
+                    } else {
+                        // No contract record found for this carpenter
+                        echo "<div style='text-align: center; margin-bottom: 20px;'>";
+                        echo "<span style='display: inline-block; padding: 10px 20px; background-color: #9E9E9E; color: white; font-weight: bold; font-size: 18px; border-radius: 5px;'>";
+                        echo "Contract Status: Not Available";
+                        echo "</span>";
+                        echo "</div>";
+                        
+                        echo "<div style='margin: 15px auto; padding: 15px; background-color: #f5f5f5; border-left: 4px solid #9E9E9E; text-align: left; border-radius: 4px; max-width: 80%;'>";
+                        echo "<p style='font-size: 16px;'>No contract has been created for this project yet.</p>";
+                        echo "</div>";
+                    }
+
+                    mysqli_stmt_close($contractStatusStmt);
+                    echo "</div>";
+                    echo "</div>"; // Close grid-container
+
+                    // Buttons container with both Go back and Generate Contract
+                    echo "<div style='display: flex; justify-content: flex-start; gap: 20px; margin-top: 30px; margin-left: 20px;'>";
+                    
+                    // Go back button
+                    echo "<button onclick=\"window.location.href='profile.php'\" 
+                        style='width: 150px; height: 50px; background-color: #FF8C00; color: white; 
+                        border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
+                        Go back</button>";
+
+                    // Generate Contract button
+                    echo "<button onclick=\"window.location.href='generate_contract.php?plan_ID=" . $plan_ID . "'\" 
+                        style='width: 150px; height: 50px; background-color: #4CAF50; color: white; 
+                        border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
+                        Generate Contract</button>";
+                    
+                    echo "</div>";
+
+                    echo "</div>"; // Close main div
+                } else {
+                    echo "<div class='main'>";
+                    echo "<p>No plan found with Plan ID: $plan_ID</p>";
+                    echo "</div>";
+                }
+
+                mysqli_stmt_close($stmt);
+                mysqli_close($conn);
+            ?>
+        </div>
+    </div>
 </body>
 </html>

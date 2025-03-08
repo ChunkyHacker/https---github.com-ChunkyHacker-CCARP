@@ -27,15 +27,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_FILES['receipt'])) {
         }
 
         if (move_uploaded_file($_FILES["receipt"]["tmp_name"], $targetFilePath)) {
-            // Insert file path into the database
-            $stmt = $conn->prepare("INSERT INTO transaction (receipt_photo) VALUES (?)");
-            $stmt->bind_param("s", $targetFilePath);
+            // Get details and contract_ID from the form
+            $details = isset($_POST['details']) ? $_POST['details'] : '';
+            $contractID = isset($_POST['contract_ID']) ? (int)$_POST['contract_ID'] : null; // Ensure it's an integer
+
+            // Debugging: Check the value of contract_ID
+            echo "Contract ID: " . $contractID; // Output the contract_ID
+
+            // Insert file path, details, and contract_ID into the database
+            $stmt = $conn->prepare("INSERT INTO transaction (receipt_photo, details, contract_ID) VALUES (?, ?, ?)");
+            $stmt->bind_param("ssi", $targetFilePath, $details, $contractID);
             
             if ($stmt->execute()) {
-                header("Location: receipt.php?success=true&receiptPath=" . urlencode($targetFilePath));
+                $transactionID = $stmt->insert_id; // Get the last inserted transaction ID
+                header("Location: receipt.php?success=true&receiptPath=" . urlencode($targetFilePath) . "&transaction_ID=" . $transactionID);
                 exit;
             } else {
-                echo "Error saving to database.";
+                echo "Error saving to database: " . $stmt->error; // Output any error
             }
 
             $stmt->close();

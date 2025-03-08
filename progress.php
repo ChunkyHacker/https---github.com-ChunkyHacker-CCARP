@@ -2,9 +2,54 @@
     session_start(); 
     include('config.php');
 
+    // Check if user is logged in
     if (!isset($_SESSION['Carpenter_ID'])) {
-    header('Location: login.html');
-    exit();
+        header('Location: login.html');
+        exit();
+    }
+
+    // Get carpenter's information
+    $carpenter_query = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
+    $stmt = mysqli_prepare($conn, $carpenter_query);
+    mysqli_stmt_bind_param($stmt, "i", $_SESSION['Carpenter_ID']);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+    
+    if ($carpenter = mysqli_fetch_assoc($result)) {
+        $_SESSION['Photo'] = $carpenter['Photo'];
+        $_SESSION['First_Name'] = $carpenter['First_Name'];
+        $_SESSION['Last_Name'] = $carpenter['Last_Name'];
+    }
+
+    // Get contract details
+    $contract_ID = $_GET['contract_ID'];
+    
+    $query = "SELECT p.*, u.First_Name AS client_first, u.Last_Name AS client_last, u.Photo AS client_photo,
+              c.*, pa.approval_ID, pa.Carpenter_ID,
+              cr.First_Name AS carpenter_first, cr.Last_Name AS carpenter_last
+              FROM contracts c
+              JOIN plan p ON c.Plan_ID = p.Plan_ID
+              JOIN users u ON p.User_ID = u.User_ID
+              JOIN plan_approval pa ON p.Plan_ID = pa.Plan_ID
+              JOIN carpenters cr ON c.Carpenter_ID = cr.Carpenter_ID
+              WHERE c.contract_ID = ?";
+    
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $contract_ID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+        // Fetch Payment_ID for the logged-in carpenter
+    $query_payment = "SELECT Payment_ID FROM payment WHERE Carpenter_ID = ? ORDER BY Payment_ID DESC LIMIT 1";
+    $stmt = mysqli_prepare($conn, $query_payment);
+    mysqli_stmt_bind_param($stmt, "i", $_SESSION['Carpenter_ID']);
+    mysqli_stmt_execute($stmt);
+    $result_payment = mysqli_stmt_get_result($stmt);
+
+    if ($row_payment = mysqli_fetch_assoc($result_payment)) {
+        $payment_ID = $row_payment['Payment_ID']; // Assign Payment_ID
+    } else {
+        $payment_ID = null; // No payment record found
     }
 ?>
 <!DOCTYPE html>
@@ -13,1109 +58,751 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <title>Progress</title>
-</head>
-<style>
-    * {
-        box-sizing: border-box;
-    }
-
-    /* Style the body */
-    body {
-        font-family: Arial, Helvetica, sans-serif;
-        margin: 0;
-        padding-top: 180px;
-    }
-
-    /* Header*/
-    .header {
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        padding: 10px;
-        text-align: left;
-        background: #FF8C00;
-        color: #000000;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        text-decoration: none;
-        z-index: 100;
-    }
-
-    /* Increase the font size of the heading */
-    .header h1 {
-        font-size: 20px;
-        border-left: 20px solid transparent; 
-        padding-left: 20px; /* Adjust padding */
-        text-decoration: none;
-    }
-
-    .right {
-        margin-right: 20px;
-    }
-
-    .header a {
-        font-size: 20px;
-        font-weight: bold;
-        text-decoration: none;
-        color: #000000;
-    }
-
-    .topnav {
-        position: fixed;
-        top: 120px; /* Adjust the top position as per your needs */
-        width: 100%;
-        overflow: hidden;
-        background-color: #505050;
-        z-index: 100;
-    }
-
-    /* Style the links inside the navigation bar */
-    .topnav a {
-        position: sticky;
-        float: left;
-        display: block;
-        color: black;
-        text-align: center;
-        padding: 14px 16px;
-        text-decoration: none;
-        font-size: 20px;
-    }
-
-    .topnav a,
-    .topnav a.active {
-        color: black;
-    }
-
-    .topnav a:hover,
-    .topnav a.active:hover {
-        background-color: #FF8C00;
-        color: black;
-    }
-
-    /* When the screen is less than 600px wide, stack the links and the search field vertically instead of horizontally */
-    @media screen and (max-width: 600px) {
-        .topnav a, .topnav input[type=text] {
-            float: none;
-            display: block;
-            text-align: left;
-            width: 100%;
+    <style>
+        * {
+            box-sizing: border-box;
             margin: 0;
-            padding: 14px;
+            padding: 0;
         }
-        .topnav input[type=text] {
-            border: 1px solid #ccc;
+
+        body {
+            font-family: Verdana, sans-serif;
+            background-color: rgb(255, 255, 255);
+            font-size: 20px;
+            margin: 0;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            height: 100%;
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #FF8C00;
+            padding-top: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow: scroll;
+        }
+
+        .profile-section {
+            text-align: center;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .profile-image {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 10px;
+            border: 2px solid #000000;
+            object-fit: cover;
+        }
+
+        .profile-name {
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+            margin-bottom: 5px;
+        }
+
+        .profile-id {
+            font-size: 16px;
+            color: #000000;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            padding: 15px 25px;
+            text-decoration: none;
+            font-size: 20px;
+            color: #000000;
+            display: block;
+            transition: 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #000000;
+            color: #FF8C00;
+        }
+
+        .sidebar .active {
+            background-color: #000000;
+            color: #FF8C00;
+        }
+
+        /* Main Content Styles */
+        .main {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        .row-container {
+            margin-bottom: 20px;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            background-color: #FF8C00;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+
+        button:hover {
+            background-color: #000000;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+        }
+
+        th, td {
+            border: 1px solid #dddddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        /* Add grid layout styles */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 20px;
+            padding: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .grid-item {
+            background: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        h1 {
+            font-size: 48px;
+            margin-bottom: 30px;
+            font-weight: bold;
+            padding-left: 20px;
+        }
+
+        h3 {
+            font-size: 32px;
+            margin-bottom: 15px;
+            font-weight: bold;
+        }
+
+        /* Update input styles */
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 22px;
+        }
+
+        /* Update client photo style */
+        .client-photo {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin: 0 auto 10px;
+            display: block;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.4);
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            z-index: 1001;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        /* Add this CSS to your existing styles */
+        .styled-table {
+            font-size: 20px; /* Adjusted font size for table */
+        }
+
+        .table-header {
+            font-size: 20px; /* Adjusted font size for table headers */
+        }
+
+        .table-cell h3 {
+            font-size: 20px; /* Adjusted font size for table cell content */
+        }
+
+        .view-purchased {
+            position: relative; /* Ensure it can have a z-index */
+            z-index: 1; /* Lower than the modal */
+        }
+    </style>
+</head>
+<body>
+    <?php
+    // Check if the success parameter is passed in the URL
+    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+        // Sanitize the message to prevent XSS
+        $message = htmlspecialchars($_GET['message']);
+        // Output the alert with the message
+        echo "<script>alert('$message');</script>";
+    }
+
+    //Attendance
+    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action'])) {
+        $action = htmlspecialchars($_GET['action']);
+        
+        // Determine the message based on the action
+        if ($action == 'time_in') {
+            echo "<script>alert('Time In recorded successfully!');</script>";
+        } elseif ($action == 'time_out') {
+            echo "<script>alert('Time Out recorded successfully!');</script>";
         }
     }
 
-    #addMaterialsBtn {
-        background-color: #FF8C00;
-        color: #FFFFFF;
-        border: none;
-        padding: 10px 20px;
-        font-size: 20px;
-        cursor: pointer;
-        margin: 20px;
-        border-radius: 4px;
-    }
-
-    #addLaborBtn {
-        background-color: #FF8C00;
-        color: #FFFFFF;
-        border: none;
-        padding: 10px 20px;
-        font-size: 20px;
-        cursor: pointer;
-        margin: 20px;
-        border-radius: 4px;
-    }
-
-    #addTaskBtn {
-        background-color: #FF8C00;
-        color: #FFFFFF;
-        border: none;
-        padding: 10px 20px;
-        font-size: 20px;
-        cursor: pointer;
-        margin: 20px;
-        border-radius: 4px;
-    }
-
-
-
-    #addLaborBtn:hover {
-        background-color: #FFA500;
-    }
-
-    #addMaterialBtn:hover {
-        background-color: #FFA500;
-    }
-
-    #addTaskBtn:hover {
-        background-color: #FFA500; /* Darker green */
-    }
-
-    /* Modal Styles */
-    .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000; /* Ensure modal appears on top of other elements */
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0,0,0,0.4);
-    }
-
-    .modal-content {
-        background-color: #f2f2f2;
-        position: fixed;
-        top: 50%; /* Center modal vertically */
-        left: 50%; /* Center modal horizontally */
-        transform: translate(-50%, -50%); /* Move modal back to center */
-        padding: 20px;
-        border: 1px solid #888;
-        width: 70%;
-        border-radius: 5px;
-        z-index: 1001; /* Ensure modal content appears on top of the modal background */
-    }
-
-    .close {
-        color: #aaa;
-        position: absolute;
-        top: 0;
-        right: 0;
-        font-size: 28px;
-        font-weight: bold;
-        cursor: pointer;
-        z-index: 1002; /* Ensure close button appears on top of modal content */
-    }
-
-    .close:hover,
-    .close:focus {
-        color: black;
-        text-decoration: none;
-        cursor: pointer;
-    }
-
-    /* Rest of your styles remain unchanged */
-    .modal-content h2 {
-        margin-bottom: 20px;
-        font-size: 20px;
-    }
-
-    .modal-content form div {
-        margin-bottom: 15px;
-    }
-
-    .modal-content form label {
-        display: block;
-        font-size: 20px;
-        font-weight: bold;
-        text-align: left;
-        margin-bottom: 5px;
-    }
-
-    .modal-content form input,
-    .modal-content form textarea,
-    .modal-content form select {
-        width: 100%;
-        padding: 8px;
-        font-size: 20px;
-        color: #000;
-        background-color: #fff;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-    }
-
-    .modal-content form select {
-        width: 100%;
-    }
-
-    .modal-content form button {
-        background-color: #FF8C00;
-        color: #FFFFFF;
-        border: none;
-        padding: 10px 20px;
-        font-size: 20px;
-        cursor: pointer;
-        border-radius: 4px;
-    }
-
-    .modal-content form button:hover {
-        background-color: #FFA500;
-    }
-
-    /* Edit Modal Styles */
-    .editModal {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        display: none;
-        z-index: 1001; /* Ensure a higher z-index than the table */
-    }
-
-    .edit-modal-content {
-        background-color: #f2f2f2;
-        padding: 30px;
-        border: 1px solid #888;
-        max-width: 70%; /* Use max-width instead of width */
-        width: auto; /* Adjusted width property */
-        border-radius: 5px;
-        position: absolute; /* Use absolute positioning */
-        top: 50%; /* Set top to 50% */
-        left: 50%; /* Set left to 50% */
-        transform: translate(-50%, -50%); /* Center the modal */
-    }
-
-    /* Main column */
-    .main {   
-        margin: auto;
-        width: 70%; /* Adjusted width for better visibility */
-        padding: 20px;
-        text-align: left;
-        border: 1px solid #ccc;
-        border-radius: 8px;
-        background-color: #f9f9f9;
-        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    .main h1 {
-        font-size: 20px;
-        margin-bottom: 20px;
-        color: #333;
-    }
-
-    .row-container h3 {
-        font-size: 20px;
-        margin-bottom: 10px;
-        color: #555;
-    }
-
-    label {
-        display: block;
-        font-size: 20px;
-        margin-bottom: 5px;
-        color: #777;
-    }
-
-    input[type='text'] {
-        width: 100%;
-        padding: 8px;
-        font-size: 20px;
-        color: #000;
-        background-color: #fff;
-        border-radius: 4px;
-        border: 1px solid #ccc;
-        margin-bottom: 10px;
-    }
-
-    p {
-        margin-bottom: 10px;
-        font-size: 20px;
-        color: #333;
-    }
-
-    img {
-        max-width: 100%;
-        height: auto;
-        border-radius: 4px;
-    }
-
-    .product-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        text-align: center;
-        width: 100%;
-        margin: 20px auto;
-    }
-
-    .table-container {
-        display: flex;
-        justify-content: center;
-        width: 100%;
-        margin-top: 20px;
-    }
-
-    .styled-table {
-        border-collapse: collapse;
-        width: 80%;
-        max-width: 800px;
-        background-color: #fff;
-        text-align: center;
-        border-radius: 5px;
-        overflow: hidden;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .styled-table th, .styled-table td {
-        border: 1px solid #ddd;
-        padding: 12px;
-    }
-
-    .styled-table th {
-        background-color: #FF8C00;
-        color: white;
-    }
-
-    .styled-table tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-
-    /* Sort */
-    .sort {
-        display: inline-block;
-        margin-bottom: 10px;
-        margin-left: 40px;
-    }
-
-    .sort select {
-        padding: 8px;
-        font-size: 20px;
-        color: #000000;
-        background-color: #ffffff;
-        border-radius: 4px;
-    }
-
-    .sort select:focus {
-        outline: none;
-        box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.2);
-    }
-
-    /* Table styling */
-    .table-container {
-        border-radius: 8px;
-        overflow: hidden;
-        margin-top: 20px; /* Adjusted margin-top for spacing */
-        margin-bottom: 40px; /* Added margin-bottom for space below the table */
-        padding:50px;
-    }
-
-    .styled-table {
-        width: 100%;
-        border-collapse: collapse;
-        border: 1px solid #333;
-    }
-
-    .table-header {
-        padding: 12px;
-        text-align: center;
-        background-color: #FF8C00; /* Orange color */
-        color: black; /* Text color */
-        font-weight: bold;
-        border-bottom: 1px solid #ddd;
-    }
-
-    .styled-table th,
-    .styled-table td {
-        padding: 12px;
-        text-align: center;
-        font-size: 20px;
-        border: 1px solid #ddd;
-    }
-
-    .styled-table td {
-        color: #333;
-    }
-
-    .styled-table tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    .styled-table tr:nth-child(odd) {
-        background-color: #fff;
-    }
-
-    .action-buttons {
-        display: flex;
-        justify-content: space-around;
-    }
-
-    .action-buttons button {
-        background-color: #FF8C00;
-        color: white;
-        border: none;
-        padding: 10px;
-        cursor: pointer;
-        font-size: 20px;
-        border-radius: 4px;
-    }
-
-    .action-buttons button:hover {
-        background-color: #FFA500;
-    }
-</style>
-
-<?php
-// Check if the success parameter is passed in the URL
-if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
-    // Sanitize the message to prevent XSS
-    $message = htmlspecialchars($_GET['message']);
-    // Output the alert with the message
-    echo "<script>alert('$message');</script>";
-}
-
-//Attendance
-if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action'])) {
-    $action = htmlspecialchars($_GET['action']);
-    
-    // Determine the message based on the action
-    if ($action == 'time_in') {
-        echo "<script>alert('Time In recorded successfully!');</script>";
-    } elseif ($action == 'time_out') {
+    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action']) && $_GET['action'] == 'time_out') {
         echo "<script>alert('Time Out recorded successfully!');</script>";
     }
-}
+    ?>
 
-if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action']) && $_GET['action'] == 'time_out') {
-    echo "<script>alert('Time Out recorded successfully!');</script>";
-}
-?>
+    <div class="sidebar">
+        <div class="profile-section">
+            <img src="<?php echo $_SESSION['Photo'] ?? 'default-profile.jpg'; ?>" alt="Profile Picture" class="profile-image">
+            <div class="profile-name"><?php echo $_SESSION['First_Name'] . ' ' . $_SESSION['Last_Name']; ?></div>
+            <div class="profile-id">Carpenter ID: <?php echo $_SESSION['Carpenter_ID']; ?></div>
+        </div>
+        <a href="profile.php">
+            <i class="fas fa-home"></i> Home
+        </a>
+        <a href="#" id="addLaborBtn" onclick="openLaborModal(event)">
+            <i class="fas fa-chart-line"></i> Add attendance
+        </a>
+        <a href="#" id="addTaskBtn" onclick="openTaskModal(event)">
+            <i class="fas fa-tasks"></i> Add task
+        </a>
+        <a href="#" id="addMaterialsBtn" onclick="openMaterialsModal(event)">
+            <i class="fas fa-chart-line"></i> Add progress
+        </a>
+        <a href="#" onclick="viewContract(<?php echo $contract_ID; ?>)">
+            <i class="fas fa-file-contract"></i> View Contract
+        </a>
+        <a href="logout.php">
+            <i class="fas fa-sign-out-alt"></i> Logout
+        </a>
+    </div>
 
-<head>
-<div class="header">
-      <a href="comment.php">
-          <h1>
-              <img src="assets/img/logos/logo.png" alt=""  style="width: 75px; margin-right: 10px;">
-          </h1>
-      </a>
-      <div class="right">
-          <a href="logout.php" style="text-decoration: none; color: black; margin-right: 20px;">Log Out</a>
-      </div>
-  </div>
+    <div id="successAlert" style="display: none; background-color: #28a745; color: white; padding: 10px; text-align: center; font-size: 18px; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
+        Changes saved successfully!
+    </div>
 
-  <div class="topnav">
-      <a class="active" href="comment.php">Home</a>
-      <a href="#about">About</a>
-      <a href="#contact">Contact</a>
-      <a href="#">Project</a>
-  </div>
-</head>
-<div id="successAlert" style="display: none; background-color: #28a745; color: white; padding: 10px; text-align: center; font-size: 18px; position: fixed; top: 0; left: 0; width: 100%; z-index: 1000;">
-    Changes saved successfully!
-</div>
-
-<body>
-
-<?php
-    include('config.php');
-
-    if (isset($_GET['requirement_ID'])) {
-        $requirement_ID = $_GET['requirement_ID'];
-
-        $query = "SELECT * FROM projectrequirements WHERE requirement_ID = ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $requirement_ID);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
-
-        if ($row = mysqli_fetch_assoc($result)) {
-            echo "<div class='main'>";
-            echo "<h1>Client's Plan Details</h1>";
-
-            $userId = $row['User_ID'];
-            $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
-            $userStmt = mysqli_prepare($conn, $userQuery);
-            mysqli_stmt_bind_param($userStmt, "i", $userId);
-            mysqli_stmt_execute($userStmt);
-            $userResult = mysqli_stmt_get_result($userStmt);
-
-            echo "<label for='name'>Client Name: </label>";
-            if ($userRow = mysqli_fetch_assoc($userResult)) {
-                echo "<input type='text' id='name' name='User_ID' value='{$userRow['First_Name']} {$userRow['Last_Name']}' readonly><br>";
-            }
-
-            echo "<div class=\"row-container\">";
-            echo "<h3>Lot area</h3>";
-            echo "<label for='length_lot_area'>Length for lot area</label>";
-            echo "<input type='text' id='length_lot_area' name='length_lot_area' value='{$row['length_lot_area']}' readonly><br>";
-            echo "<label for='width_lot_area'>Width for lot area</label>";
-            echo "<input type='text' id='width_lot_area' name='width_lot_area' value='{$row['width_lot_area']}' readonly><br>";
-            echo "<label for='square_meter_lot'>Square Meter(Sq):</label>";
-            echo "</div>";
+    <!-- Main Content -->
+    <div class="main">
+        <?php if ($row = mysqli_fetch_assoc($result)): ?>
+            <h1>Client's Plan Details</h1>
             
-            echo "<div class=\"row-container\">";
-            echo "<h3>Floor Area</h3>";
-            echo "<label for='length_floor_area'>Length for floor area</label>";
-            echo "<input type='text' id='length_floor_area' name='length_floor_area' value='{$row['length_floor_area']}' readonly><br>";
-            echo "<label for='width_floor_area'>Width for floor area</label>";
-            echo "<input type='text' id='width_floor_area' name='width_floor_area' value='{$row['width_floor_area']}' readonly><br>";
-            echo "<label for='square_meter_lot'>Square Meter(Sq):</label>";
-            echo "<input type='text' id='square_meter_floor' name='square_meter_floor' value='{$row['square_meter_floor']}' readonly><br>";
-            echo "</div>";
+            <div class="grid-container">
+                <!-- Client Info -->
+                <div class="grid-item">
+                    <h3>Client Information</h3>
+                    <?php if (!empty($row['client_photo'])): ?>
+                        <img src="<?php echo $row['client_photo']; ?>" alt="Client Photo" class="client-photo">
+                    <?php endif; ?>
+                    <label>Client Name:</label>
+                    <input type="text" value="<?php echo $row['client_first'] . ' ' . $row['client_last']; ?>" readonly>
+                </div>
 
-            echo "<div class=\"row-container\">";
-            echo "<h3>Initial Budget</h3>";
-            echo "<label for='initial_budget'>Initial Budget</label>";
-            echo "<input type='text' id='initial_budget' name='initial_budget' value='{$row['initial_budget']}' readonly><br>";
-            echo "</div>";
+                <!-- Lot Area -->
+                <div class="grid-item">
+                    <h3>Lot Area</h3>
+                    <label>Length:</label>
+                    <input type="text" value="<?php echo $row['length_lot_area']; ?>" readonly>
+                    <label>Width:</label>
+                    <input type="text" value="<?php echo $row['width_lot_area']; ?>" readonly>
+                    <label>Square Meter:</label>
+                    <input type="text" value="<?php echo $row['square_meter_lot']; ?>" readonly>
+                </div>
 
-            echo "<div class=\"row-container\">";
-            echo "<h3>Project Dates</h3>";
-            echo "<p>Start Date: <input type='text' value='{$row['start_date']}' readonly></p>";
-            echo "<p>End Date: <input type='text' value='{$row['end_date']}' readonly></p>";        
-            echo "</div>";
-            
-            echo "<table style='border-collapse: collapse; width: 100%;'>";
-              echo "<thead>";
-                          echo "<tr>";
-                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Part</th>";
-                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Materials</th>";
-                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Name</th>";
-                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
-                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
-                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
-                              echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Estimated Cost</th>";
+                <!-- Floor Area -->
+                <div class="grid-item">
+                    <h3>Floor Area</h3>
+                    <label>Length:</label>
+                    <input type="text" value="<?php echo $row['length_floor_area']; ?>" readonly>
+                    <label>Width:</label>
+                    <input type="text" value="<?php echo $row['width_floor_area']; ?>" readonly>
+                    <label>Square Meter:</label>
+                    <input type="text" value="<?php echo $row['square_meter_floor']; ?>" readonly>
+                </div>
 
-                          echo "</tr>";
-                      echo "</thead>";
-                  echo "<tbody>";
-                  
-                  $query_materials = "SELECT * FROM prematerials";
-                  $stmt_materials = mysqli_prepare($conn, $query_materials);
-                  mysqli_stmt_execute($stmt_materials);
-                  $result_materials = mysqli_stmt_get_result($stmt_materials);
-                  
-                  while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                      echo "<tr>";
-                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['part']) . "</td>";
-                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['materials']) . "</td>";
-                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['name']) . "</td>";
-                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
-                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
-                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
-                          echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['estimated_cost']) . "</td>";
-                      echo "</tr>";
-                  }
-                  
-                  echo "</tbody>";
-              echo "</table>";
+                <!-- Project Budget -->
+                <div class="grid-item">
+                    <h3>Project Budget</h3>
+                    <label>Initial Budget:</label>
+                    <input type="text" value="<?php echo $row['initial_budget']; ?>" readonly>
+                    <label>Labor Cost:</label>
+                    <input type="text" value="PHP <?php echo $row['labor_cost']; ?>" readonly>
+                </div>
 
-              echo '<table style="border-collapse: collapse; width: 100%;">';
-                echo '<thead>';
-                    echo '<tr>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Materials</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Type</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Image</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Quantity</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Price</th>';
-                        echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Total</th>';
-                    echo '</tr>';
-                echo '</thead>';
-              echo '<tbody>';
-                  
-                  //requiredmaterials
-                  $query_materials = "SELECT * FROM requiredmaterials";
-                  $stmt_materials = mysqli_prepare($conn, $query_materials);
-                  mysqli_stmt_execute($stmt_materials);
-                  $result_materials = mysqli_stmt_get_result($stmt_materials);
-                  
-                  while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                      echo '<tr>';
-                          echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['material']) . '</td>';
-                          echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['type']) . '</td>';
-                          echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">';
-                              echo '<img src="' . htmlspecialchars($material_row['image']) . '" alt="Material Image" style="max-width: 100px; max-height: 100px;">';
-                          echo '</td>';
-                          echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['quantity']) . '</td>';
-                          echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['price']) . '</td>';
-                          echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['total']) . '</td>';
-                      echo '</tr>';
-                  }
-                  
-              echo '</tbody>';
-            echo '</table>';
+                <!-- Project Dates -->
+                <div class="grid-item">
+                    <h3>Project Dates</h3>
+                    <label>Start Date:</label>
+                    <input type="text" value="<?php echo $row['start_date']; ?>" readonly>
+                    <label>End Date:</label>
+                    <input type="text" value="<?php echo $row['end_date']; ?>" readonly>
+                    <label>Duration:</label>
+                    <input type="text" value="<?php echo $row['duration']; ?> days" readonly>
+                </div>
 
-        // Display the resized photo with a link to open the modal
-        $photoPath = $row['Photo'];
-        if (!empty($photoPath) && file_exists($photoPath)) {
-            echo "<p>Photo:</p>";
-            echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 900px; height: 400px;'>";
-            echo "</a>";
-        }
-               
-        echo "<p>Labor Cost: <input type='text' value='{$row['labor_cost']}' readonly></p>";
+                <!-- More Details -->
+                <div class="grid-item">
+                    <h3>More Details</h3>
+                    <textarea readonly style="font-size: 18px; padding: 10px; width: 100%; height: 100px;"><?php echo $row['more_details'] ?? ''; ?></textarea>
+                </div>
 
-        // Check if the file exists and display it
-        $contractPath = $row['contract'];
-        if (file_exists($contractPath)) {
-            // Display the contract file as a link
-            echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
-        
-            // Optionally, embed the file if it's a PDF
-            if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
-                echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
-            }
-        } else {
-            echo "<p>Contract file not found.</p>";
-        }
-        
-            echo "</form>";
-            echo "</div>"; 
+                <!-- Materials Table - Full Width -->
+                <div class="grid-item" style="grid-column: span 3;">
+                    <h3>Materials</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Part</th>
+                                <th>Materials</th>
+                                <th>Quantity</th>
+                                <th>Price</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            $query_materials = "SELECT * FROM prematerials";
+                            $stmt_materials = mysqli_prepare($conn, $query_materials);
+                            mysqli_stmt_execute($stmt_materials);
+                            $result_materials = mysqli_stmt_get_result($stmt_materials);
 
-        } else {
-            echo "<div class='main'>";
-            echo "<p>No approved plan found with Approved Plan ID: $requirement_ID</p>";
-            echo "</div>"; 
-        }
+                            while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                                echo "<tr>";
+                                echo "<td>" . htmlspecialchars($material_row['part']) . "</td>";
+                                echo "<td>" . htmlspecialchars($material_row['materials']) . "</td>";
+                                echo "<td>" . htmlspecialchars($material_row['quantity']) . "</td>";
+                                echo "<td>" . htmlspecialchars($material_row['price']) . "</td>";
+                                echo "<td>" . htmlspecialchars($material_row['total']) . "</td>";
+                                echo "</tr>";
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                    <button class="view-purchased" onclick="openModal(<?php echo isset($transactionID) ? $transactionID : '0'; ?>)">View Purchased</button>
+                </div>
 
-        mysqli_stmt_close($stmt);
-        mysqli_close($conn);
-    } else {
-        echo "<div class='main'>";
-        echo "<p>Approved Plan ID is missing.</p>";
-        echo "</div>"; 
-    }
+                <!-- Project Photos - Full Width -->
+                <?php if (!empty($row['Photo']) && file_exists($row['Photo'])): ?>
+                <div class="grid-item" style="grid-column: span 3;">
+                    <h3>Project Photos</h3>
+                    <div style="display: flex; gap: 20px; flex-wrap: wrap; justify-content: center;">
+                        <img src="<?php echo $row['Photo']; ?>" alt="Project Photo" style="width: 300px; height: 300px; object-fit: cover; border-radius: 8px;">
+                    </div>
+                </div>
+                <?php endif; ?>
+            </div>
 
-?>
-  <div class="product-container">
-        <h2 style="text-align:center">Signed Contract</h2>
-        <?php
-        include('config.php');
+        <?php else: ?>
+            <p>No contract found with Contract ID: <?php echo $contract_ID; ?></p>
+        <?php endif; ?>
+        <div>                
+            <h2 style="text-align:center">Progress and Attendance</h2>
+        </div>
+        <!--Progress, Attendance and Task Section-->
+        <div class="grid-container" style="grid-column: span 3;">
+            <?php
+                include('config.php');
 
-        // Assuming you have a valid $requirementID from the query string or another source
-        if (isset($_GET['requirement_ID'])) {
-            $requirementID = $_GET['requirement_ID'];
+                // Check if contract_ID is provided in the URL parameter
+                if(isset($_GET['contract_ID'])) {
+                    $contractID = $_GET['contract_ID'];
 
-            // Query to fetch the signed contract for the given requirement_ID
-            $sql = "SELECT * FROM signed_contracts WHERE requirement_ID = ?";
-            $stmt = mysqli_prepare($conn, $sql);
-            mysqli_stmt_bind_param($stmt, "i", $requirementID);
-            mysqli_stmt_execute($stmt);
-            $result = mysqli_stmt_get_result($stmt);
+                    // Fetch contract details
+                    $sqlContract = "SELECT * FROM contracts WHERE contract_ID = $contractID";
+                    $resultContract = $conn->query($sqlContract);
 
-            // Check if the contract exists for this requirement ID
-            if ($row = mysqli_fetch_assoc($result)) {
-                $contractPath = $row['signedcontract'];  // Path to the uploaded file
-
-                // Check if the file exists
-                if (file_exists($contractPath)) {
-                    // Display the contract file as a link
-                    echo "<p>Contract File: <a href='" . htmlspecialchars($contractPath) . "' target='_blank'>View Contract</a></p>";
-
-                    // Optionally, embed the file if it's a PDF
-                    if (pathinfo($contractPath, PATHINFO_EXTENSION) === 'pdf') {
-                        echo "<embed src='" . htmlspecialchars($contractPath) . "' type='application/pdf' width='600' height='400'>";
+                    if ($resultContract->num_rows > 0) {
+                        $contract = $resultContract->fetch_assoc();
+                        // Add any other relevant contract details here
+                    } else {
+                        echo '<p>Error: Contract not found.</p>';
                     }
                 } else {
-                    echo "<p>Contract file not found.</p>";
+                    echo '<p>Error: contract_ID is missing.</p>';
                 }
-            } else {
-                echo "<p>No signed contract found for this requirement.</p>";
-            }
+            ?>
 
-            // Close the statement
-            mysqli_stmt_close($stmt);
-        } else {
-            echo "<p>No requirement ID provided.</p>";
-        }
-
-        // Close the database connection
-        mysqli_close($conn);
-        ?>
-  </div>
-<h2 style="text-align:center">Progress and Attendance</h2>
-
-<button id="addMaterialsBtn">Add Progress</button>
-
-<div id="addMaterialsModal" class="modal" style="display: none;">
-    <div class="modal-content">
-        <span class="close">&times;</span>
-        <h2>Add progress</h2>
-        <form id="addMaterialsForm" method="post" action="addprogress.php" enctype="multipart/form-data">
-            <div>
-                <label for="Name">Name</label>
-                <input type="text" id="material_name" name="Name" required>
-            </div>
-            <div>
-                <label for="Status">Status</label>
-                <select id="status" name="Status" required>
-                    <option value="Not yet started">Not yet started</option>
-                    <option value="Working">Working</option>
-                    <option value="Done">Done</option>
-                </select>
-            </div>
-            <div>
-                <label for="Materials">Materials Used</label>
-                <input type="text" id="Materials" name="Materials" required>
-            </div>
-            <div>
-                <label for="Material_cost">Material Cost:</label>
-                <input type="number" id="Material_cost" name="Material_cost" required>
-            </div>
-            <!-- Hidden input field for requirement_ID -->
-            <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
-            <button type="submit">Add Progress</button>
-        </form>
-    </div>
-</div>
-
-
-  <button id="addLaborBtn">Add Attendance</button>
-
-  <div id="addLaborModal" class="modal" style="display: none;">
-      <div class="modal-content">
-          <span class="close">&times;</span>
-          <h2>Attendance</h2>
-          <form id="addLaborForm" method="post" action="addattendance.php" enctype="multipart/form-data">
-
-              <div>
-                  <label for="type_of_work">Type of work:</label>
-                  <select id="type_of_work" name="Type_of_work">
-                      <option value="Inadlaw">Inadlaw</option>
-                      <option value="Pakyawan">Pakyawan</option>
-                  </select>
-              </div>
-              <div>
-                  <label for="Time_in">Time-in:</label>
-                  <input type="Time_in" id="Time_in" name="Time_in" required readonly>
-                  <button onclick="addTimeStamp()">Add Timestamp</button>
-              </div>
-              <div>
-                  <label for="overall_cost">Time-out</label>
-                  <input type="number" id="overall_cost" name="overall_cost" step="0.01" min="0" readonly>
-              </div>
-
-              <!-- Hidden input field for requirement_ID -->
-              <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
-
-              <button type="submit">Add Attendance</button>
-          </form>
-      </div>
-  </div>
-
-    <button id="addTaskBtn">Add Task</button>
-
-    <div id="addTaskModal" class="modal" style="display: none;">
-        <div class="modal-content">
-            <span class="close">&times;</span>
-            <h2>Add Task</h2>
-            <form id="addTaskForm" method="post" action="addtask.php" enctype="multipart/form-data">
-                
-                <div>
-                    <label for="task">Task:</label>
-                    <input type="text" id="task" name="task" required>
+            <div id="addMaterialsModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Add progress</h2>
+                    <form id="addMaterialsForm" method="post" action="addprogress.php" enctype="multipart/form-data">
+                        <div>
+                            <label for="Name">Name</label>
+                            <input type="text" id="material_name" name="Name" required>
+                        </div>
+                        <div>
+                            <label for="Status">Status</label>
+                            <select id="status" name="Status" required>
+                                <option value="Not yet started">Not yet started</option>
+                                <option value="Working">Working</option>
+                                <option value="Done">Done</option>
+                            </select>
+                        </div>
+                        <!-- Hidden input field for contract_ID -->
+                        <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
+                        <button type="submit">Add Progress</button>
+                    </form>
                 </div>
+            </div>
 
-                <div>
-                    <label for="details">Details:</label>
-                    <textarea id="details" name="details" rows="4" required></textarea>
+            <div id="addLaborModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Attendance</h2>
+                    <form id="addLaborForm" method="post" action="addattendance.php" enctype="multipart/form-data">
+                        <div>
+                            <label for="Time_in">Time-in:</label>
+                            <input type="Time_in" id="Time_in" name="Time_in" required readonly>
+                            <button onclick="addTimeStamp()">Add Timestamp</button>
+                        </div>
+                        <div>
+                            <label for="overall_cost">Time-out</label>
+                            <input type="number" id="overall_cost" name="overall_cost" step="0.01" min="0" readonly>
+                        </div>
+
+                        <!-- Hidden input field for contract_ID -->
+                        <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
+
+                        <button type="submit">Add Attendance</button>
+                    </form>
                 </div>
+            </div>
 
-                <!-- Hidden input field for requirement_ID -->
-                <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
+            <div id="addTaskModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <h2>Add Task</h2>
+                    <form id="addTaskForm" method="post" action="addtask.php" enctype="multipart/form-data">
+                        <div>
+                            <label for="task">Task:</label>
+                            <input type="text" id="task" name="task" required>
+                        </div>
+                        <div>
+                            <label for="details">Details:</label>
+                            <textarea id="details" name="details" rows="4" required></textarea>
+                        </div>
+                        <!-- Hidden input field for contract_ID -->
+                        <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
+                        <button type="submit">Add Task</button>
+                    </form>
+                </div>
+            </div>
 
-                <button type="submit">Add Task</button>
-            </form>
-        </div>
-    </div>
+            <!--TABLE-->
+            <div class="product-container">
+                <!--Progress-->
+                <h2 style="text-align:center; font-size: 24px;">Progress</h2>
+                <?php
+                    // Prepare the SQL query with a WHERE clause to filter by contract_ID
+                    $sqlReports = "SELECT * FROM report WHERE contract_ID = $contractID";
+                    $resultReports = $conn->query($sqlReports);
+                    if ($resultReports->num_rows > 0) {
+                        echo '<div class="table-container">';
+                        echo '    <table class="styled-table">';
+                        echo '        <tr>';
+                        echo '            <th class="table-header">Name</th>';
+                        echo '            <th class="table-header">Status</th>';
+                        echo '        </tr>';
 
-  <!--TABLE-->
-  <div class="product-container">
-      <h2 style="text-align:center">Progress</h2>
-      <?php
-          include('config.php');
+                        while ($row = $resultReports->fetch_assoc()) {
+                            echo '        <tr>';
+                            echo '            <td class="table-cell"><h3>' . $row["Name"] . '</h3></td>';
+                            echo '            <td class="table-cell"><h3>' . $row["Status"] . '</h3></td>';
+                            echo '        </tr>';
+                        }
 
+                        echo '</table>';
+                        echo '</div>';
+                    } else {
+                        echo '<p>No Progress yet</p>';
+                    }
+                ?>
+            </div>
 
-          // Check if requirement_ID is provided in the URL parameter
-          if(isset($_GET['requirement_ID'])) {
-              $requirementID = $_GET['requirement_ID'];
+            <div class="product-container">
+                <!--Tasks-->
+                <h2 style="text-align:center; font-size: 24px;">Tasks</h2>
+                <?php
+                include('config.php');
 
-              // Prepare the SQL query with a WHERE clause to filter by requirement_ID
-              $sql = "SELECT * FROM report WHERE requirement_ID = $requirementID";
+                if (isset($_GET['contract_ID'])) {
+                    $contractID = $_GET['contract_ID'];
 
-              $result = $conn->query($sql);
+                    // Fetch pending tasks
+                    $sql = "SELECT * FROM task WHERE contract_ID = $contractID AND task_id NOT IN (SELECT task_id FROM completed_task)";
+                    $result = $conn->query($sql);
 
-              if ($result->num_rows > 0) {
-                  echo '<div class="table-container">';
-                  echo '    <table class="styled-table">';
-                  echo '        <tr>';
-                  echo '            <th class="table-header">Name</th>';
-                  echo '            <th class="table-header">Status</th>';
-                  echo '            <th class="table-header">Materials</th>';
-                  echo '            <th class="table-header">Cost</th>';
-                  echo '        </tr>';
+                    echo '<h3>Pending Tasks</h3>';
+                    echo '<div class="table-container">';
+                    echo '<table class="styled-table">';
+                    echo '<tr>';
+                    echo '<th>Status</th>';
+                    echo '<th>Task</th>';
+                    echo '<th>Details</th>';
+                    echo '</tr>';
 
-                  while ($row = $result->fetch_assoc()) {
-                      echo '        <tr>';
-                      echo '            <td class="table-cell"><h3>' . $row["Name"] . '</h3></td>';
-                      echo '            <td class="table-cell"><h3>' . $row["Status"] . '</h3></td>';
-                      echo '            <td class="table-cell"><h3>' . $row["Materials"] . '</h3></td>';
-                      echo '            <td class="table-cell"><h3>' . $row["Material_cost"] . '</h3></td>';
-                      echo '        </tr>';
-                  }
+                    if ($result->num_rows > 0) {
+                        while ($row = $result->fetch_assoc()) {
+                            echo '<tr>';
+                            echo '<td class="table-cell">
+                                    <select name="status" class="task-status" data-task-id="' . $row["task_id"] . '" data-task-name="' . $row["task"] . '" data-task-details="' . $row["details"] . '" 
+                                        style="padding: 8px; font-size: 16px; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; cursor: pointer;">
+                                        <option value="" disabled selected>Choose</option>
+                                        <option value="Not yet started">Not yet started</option>
+                                        <option value="Working">Working</option>
+                                        <option value="Done">Done</option>
+                                    </select>
+                                    </td>';
+                        
+                            echo '<td class="table-cell"><h3>' . $row["task"] . '</h3></td>';
+                            echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
+                            echo '</tr>';
+                        }
+                    } else {
+                        echo '<tr><td colspan="3">No pending tasks</td></tr>';
+                    }
 
-                  echo '</table>';
-                  echo '</div>';
+                    echo '</table>';
+                    echo '</div>';
 
-              } else {
-                  echo '<p>No Progress yet</p>';
-              }
-          } else {
-              echo '<p>Error: requirement_ID is missing.</p>';
-          }
-      ?>
-  </div>
+                    echo '<button id="saveChangesBtn" style="display:none; margin-top:10px; background-color:#FF8C00; color:#FFFFFF; border:none; padding:10px 20px; font-size:20px; cursor:pointer; margin:20px; border-radius:4px;">
+                        Save Changes
+                    </button>';
 
-  <div class="product-container">
-    <h2 style="text-align:center">Tasks</h2>
-    <?php
-    include('config.php');
+                    // Fetch completed tasks
+                    // Completed Task
+                    $sqlCompleted = "SELECT * FROM completed_task";
+                    $resultCompleted = $conn->query($sqlCompleted);
+                    
+                    echo '<h3>Completed Tasks</h3>';
+                    echo '<div class="table-container">';
+                    echo '<table class="styled-table">';
+                    echo '<tr>';
+                    echo '<th>Task</th>';
+                    echo '<th>Details</th>';
+                    echo '<th>Status</th>';
+                    echo '</tr>';
 
-    if (isset($_GET['requirement_ID'])) {
-        $requirementID = $_GET['requirement_ID'];
+                    if ($resultCompleted->num_rows > 0) {
+                        while ($row = $resultCompleted->fetch_assoc()) {
+                            echo '<tr>';
+                            echo '<td class="table-cell"><h3>' . $row["name"] . '</h3></td>';
+                            echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
+                            echo '<td class="table-cell"><h3>' . ucfirst($row["status"]) . '</h3></td>';
+                            echo '</tr>';
+                        }
+                    } else {
+                        echo '<tr><td colspan="3">No completed tasks</td></tr>';
+                    }
 
-        // Fetch pending tasks
-        $sql = "SELECT * FROM task WHERE requirement_ID = $requirementID AND task_id NOT IN (SELECT task_id FROM completed_task)";
-        $result = $conn->query($sql);
-
-        echo '<h3>Pending Tasks</h3>';
-        echo '<div class="table-container">';
-        echo '<table class="styled-table">';
-        echo '<tr>';
-        echo '<th>Status</th>';
-        echo '<th>Task</th>';
-        echo '<th>Details</th>';
-        echo '</tr>';
-
-        if ($result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                echo '<tr>';
-                echo '<td class="table-cell">
-                        <select name="status" class="task-status" data-task-id="' . $row["task_id"] . '" data-task-name="' . $row["task"] . '" data-task-details="' . $row["details"] . '" 
-                            style="padding: 8px; font-size: 16px; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; cursor: pointer;">
-                            <option value="" disabled selected>Choose</option>
-                            <option value="Not yet started">Not yet started</option>
-                            <option value="Working">Working</option>
-                            <option value="Done">Done</option>
-                        </select>
-                        </td>';
-            
-                echo '<td class="table-cell"><h3>' . $row["task"] . '</h3></td>';
-                echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
-                echo '</tr>';
-            }
-        } else {
-            echo '<tr><td colspan="3">No pending tasks</td></tr>';
-        }
-
-        echo '</table>';
-        echo '</div>';
-
-        echo '<button id="saveChangesBtn" style="display:none; margin-top:10px; background-color:#FF8C00; color:#FFFFFF; border:none; padding:10px 20px; font-size:20px; cursor:pointer; margin:20px; border-radius:4px;">Save Changes</button>';
-
-        // Fetch completed tasks
-        $sqlCompleted = "SELECT * FROM completed_task";
-        $resultCompleted = $conn->query($sqlCompleted);
-        
-        echo '<h3>Completed Tasks</h3>';
-        echo '<div class="table-container">';
-        echo '<table class="styled-table">';
-        echo '<tr>';
-        echo '<th>Task</th>';
-        echo '<th>Details</th>';
-        echo '<th>Status</th>';
-        echo '</tr>';
-
-        if ($resultCompleted->num_rows > 0) {
-            while ($row = $resultCompleted->fetch_assoc()) {
-                echo '<tr>';
-                echo '<td class="table-cell"><h3>' . $row["name"] . '</h3></td>';
-                echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
-                echo '<td class="table-cell"><h3>' . ucfirst($row["status"]) . '</h3></td>';
-                echo '</tr>';
-            }
-        } else {
-            echo '<tr><td colspan="3">No completed tasks</td></tr>';
-        }
-
-        echo '</table>';
-        echo '</div>';
-    } else {
-        echo '<p>Error: requirement_ID is missing.</p>';
-    }
-    ?>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        let updatedTasks = [];
-
-        document.querySelectorAll(".task-status").forEach(function (dropdown) {
-            dropdown.addEventListener("change", function () {
-                let taskID = this.getAttribute("data-task-id");
-                let taskName = this.getAttribute("data-task-name");
-                let taskDetails = this.getAttribute("data-task-details");
-                let status = this.value;
-
-                let taskIndex = updatedTasks.findIndex(task => task.task_id === taskID);
-                if (taskIndex !== -1) {
-                    updatedTasks[taskIndex].status = status;
+                    echo '</table>';
+                    echo '</div>';
                 } else {
-                    updatedTasks.push({
-                        task_id: taskID,
-                        task_name: taskName,
-                        task_details: taskDetails,
-                        status: status
-                    });
+                    echo '<p>Error: contract_ID is missing.</p>';
                 }
+                ?>
+            </div>
 
-                if (updatedTasks.length > 0) {
-                    document.getElementById("saveChangesBtn").style.display = "block";
-                }
-            });
-        });
+            <div class="product-container">
+                <!--Attendance-->
+                <h2 style="text-align:center; font-size: 24px;">Attendance</h2>
+                <?php
+                    include('config.php');
 
-        document.getElementById("saveChangesBtn").addEventListener("click", function () {
-            if (updatedTasks.length === 0) {
-                alert("No tasks selected!");
-                return;
-            }
+                    // Check if contract_ID is provided in the URL parameter
+                    if(isset($_GET['contract_ID'])) {
+                        $contractID = $_GET['contract_ID'];
 
-            fetch("move_task.php", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
-                body: JSON.stringify(updatedTasks)
-            })
-            .then(response => response.text())
-            .then(data => {
-                alert(data);
-                location.reload();
-            })
-            .catch(error => console.error("Error:", error));
-        });
-    });
-</script>
+                        // Prepare the SQL query with a WHERE clause to filter by contract_ID
+                        $sql = "SELECT * FROM attendance WHERE contract_ID = $contractID";
 
-  <div class="product-container">
-    <h2 style="text-align:center">Attendance</h2>
-    <?php
-        include('config.php');
+                        $result = $conn->query($sql);
 
-        // Check if requirement_ID is provided in the URL parameter
-        if(isset($_GET['requirement_ID'])) {
-            $requirementID = $_GET['requirement_ID'];
+                        if ($result->num_rows > 0) {
+                            echo '<div class="table-container">';
+                            echo '    <table class="styled-table">';
+                            echo '        <tr>';
+                            echo '            <th class="table-header">Type</th>';
+                            echo '            <th class="table-header">Time in</th>';
+                            echo '            <th class="table-header">Time out</th>';
+                            echo '            <th class="table-header">Action</th>';
+                            echo '        </tr>';
 
-            // Prepare the SQL query with a WHERE clause to filter by requirement_ID
-            $sql = "SELECT * FROM attendance WHERE requirement_ID = $requirementID";
+                            while ($row = $result->fetch_assoc()) {
+                                echo '        <tr>';
+                                echo '            <td class="table-cell"><h3>' . $row["Type_of_work"] . '</h3></td>';
+                                echo '            <td class="table-cell"><h3>' . $row["Time_in"] . '</h3></td>';
+                                echo '            <td class="table-cell"><h3>' . $row["Time_out"] . '</h3></td>';
+                                echo '            <td class="table-cell">';
+                                echo '              <button type="button" onclick="openAttendanceModal()">Add Time out</button>';
+                                echo '            </td>';           
+                                echo '        </tr>';
+                            }
 
-            $result = $conn->query($sql);
+                            echo '    </table>';
+                            echo '</div>';
+                        } else {
+                            echo '<p>No attendance yet.</p>';
+                        }
+                    } else {
+                        echo '<p>Error: contract_ID is missing.</p>';
+                    }
 
-            if ($result->num_rows > 0) {
-                echo '<div class="table-container">';
-                echo '    <table class="styled-table">';
-                echo '        <tr>';
-                echo '            <th class="table-header">Type</th>';
-                echo '            <th class="table-header">Time in</th>';
-                echo '            <th class="table-header">Time out</th>';
-                echo '            <th class="table-header">Action</th>';
-                echo '        </tr>';
+                    $conn->close();
+                ?>
+                <!-- Hidden modal form -->
+                <div id="timeOutModal" class="modal">
+                    <div class="modal-content">
+                        <span class="close" onclick="closeModal()">&times;</span>
+                        <h2>Add Time out</h2>
+                        <form id="timeOutForm" action="update_time_out.php" method="post">
+                            <div>
+                                <label for="timeOutField">Time out:</label>
+                                <input type="text" id="timeOutField" name="Time_out" readonly>
+                            </div>
+                            <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
+                            <button type="button" onclick="addTimestamp()">Add Timestamp</button>
+                            <button type="submit">Save</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
 
-                while ($row = $result->fetch_assoc()) {
-                    echo '        <tr>';
-                    echo '            <td class="table-cell"><h3>' . $row["Type_of_work"] . '</h3></td>';
-                    echo '            <td class="table-cell"><h3>' . $row["Time_in"] . '</h3></td>';
-                    echo '            <td class="table-cell"><h3>' . $row["Time_out"] . '</h3></td>';
-                    echo '            <td class="table-cell">';
-                    echo '              <button type="button" onclick="openModal()">Add Time out</button>';
-                    echo '            </td>';           
-                    echo '        </tr>';
-                }
+        </div>
+        <!-- Buttons -->
+        <div style="display: flex; justify-content: flex-start; gap: 20px; margin-top: 30px; margin-left: 20px;">
+            <?php if (!empty($payment_ID)): ?>
+                <button onclick="window.location.href='carpenterpayment.php?Payment_ID=<?php echo urlencode($payment_ID); ?>'"
+                        style="width: 150px; height: 50px; background-color: #FF8C00; color: white; 
+                        border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                        View Payment
+                </button>
+            <?php else: ?>
+                <button disabled
+                        style="width: 150px; height: 50px; background-color: grey; color: white; 
+                        border: none; border-radius: 5px; cursor: not-allowed; font-size: 16px;">
+                        No Payment Available
+                </button>
+            <?php endif; ?>
+        </div>
+    </div>
 
-                echo '    </table>';
-                echo '</div>';
-
-            } else {
-                echo '<p>No attendance yet.</p>';
-            }
-        } else {
-            echo '<p>Error: requirement_ID is missing.</p>';
+    <!-- JavaScript -->
+    <script>
+        // Function to open the modal
+        function openAttendanceModal() {
+            document.getElementById('timeOutModal').style.display = 'block';
         }
 
-        $conn->close();
-    ?>
-                <!-- Hidden modal form -->
-        <div id="timeOutModal" class="modal">
-          <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h2>Add Time out</h2>
-            <form id="timeOutForm" action="update_time_out.php" method="post">
-              <div>
-                <label for="timeOutField">Time out:</label>
-                <input type="text" id="timeOutField" name="Time_out" readonly>
-              </div>
-                <input type="hidden" name="requirement_ID" value="<?php echo isset($_GET['requirement_ID']) ? $_GET['requirement_ID'] : ''; ?>">
-              <button type="button" onclick="addTimestamp()">Add Timestamp</button>
-              <button type="submit">Save</button>
-            </form>
-          </div>
-        </div>
-  </div>
-</body>
-<script>
-    // Function to open the modal
-    function openModal() {
-    document.getElementById('timeOutModal').style.display = 'block';
-    }
+        // Function to close the modal
+        function closeModal() {
+            document.getElementById('timeOutModal').style.display = 'none';
+        }
 
-    // Function to close the modal
-    function closeModal() {
-    document.getElementById('timeOutModal').style.display = 'none';
-    }
-
-    // Function to add timestamp to the time out field
-    function addTimestamp() {
-    var currentDate = new Date();
-    var formattedDateTime = currentDate.toLocaleString(); // Format timestamp as desired
-    document.getElementById('timeOutField').value = formattedDateTime;
-    }
-</script>
-<script>
-    function addTimeStamp() {
-        // Get the current date and time
-        var currentDate = new Date();
-        
-        // Format the date and time as desired
-        var formattedDateTime = currentDate.toLocaleString(); // You can adjust the format based on your preference
-        
-        // Get the input element
-        var additionalCostInput = document.getElementById("Time_in");
-        
-        // Set the input value to the formatted timestamp
-        additionalCostInput.value = formattedDateTime;
-    }
-</script>
-<script>
+        // Function to add timestamp to the time out field
+        function addTimestamp() {
+            var currentDate = new Date();
+            var formattedDateTime = currentDate.toLocaleString(); // Format timestamp as desired
+            document.getElementById('timeOutField').value = formattedDateTime;
+        }
+    </script>
+    
+    <script>
+        function addTimeStamp() {
+            // Get the current date and time
+            var currentDate = new Date();
+            
+            // Format the date and time as desired
+            var formattedDateTime = currentDate.toLocaleString(); // You can adjust the format based on your preference
+            
+            // Get the input element
+            var additionalCostInput = document.getElementById("Time_in");
+            
+            // Set the input value to the formatted timestamp
+            additionalCostInput.value = formattedDateTime;
+        }
+    </script>
+    
+    <script>
     // labormaterialmodal.js
     var materialsModal = document.getElementById('addMaterialsModal');
     var laborModal = document.getElementById('addLaborModal');
     var taskModal = document.getElementById('addTaskModal');
 
-    var materialsBtn = document.getElementById('addMaterialsBtn');
-    var laborBtn = document.getElementById('addLaborBtn');
-    var taskBtn = document.getElementById('addTaskBtn');
-
     var closeBtns = document.getElementsByClassName('close');
 
-    materialsBtn.onclick = function() {
+    function openMaterialsModal(event) {
+        event.preventDefault(); // Prevent the default anchor behavior
         materialsModal.style.display = 'block';
     }
 
-    laborBtn.onclick = function() {
+    function openLaborModal(event) {
+        event.preventDefault(); // Prevent the default anchor behavior
         laborModal.style.display = 'block';
     }
 
-    taskBtn.onclick = function() {
+    function openTaskModal(event) {
+        event.preventDefault(); // Prevent the default anchor behavior
         taskModal.style.display = 'block';
     }
 
@@ -1184,24 +871,122 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action
     }
 </script>
 <script>
-        // Get references to the input fields
-        const totalLaborCostInput = document.getElementById("total_of_laborcost");
-        const additionalCostInput = document.getElementById("additional_cost");
-        const overallCostInput = document.getElementById("overall_cost");
+    // Example of showing the button when changes are made
+    function showSaveButton() {
+        document.getElementById('saveChangesBtn').style.display = 'block';
+    }
+</script>
+<script>
+function redirectToMoveTask() {
+    // You can pass any necessary data here, for example, the contract ID
+    var contractID = <?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : 'null'; ?>;
+    
+    // Redirect to move_task.php with the contract ID as a query parameter
+    if (contractID) {
+        window.location.href = 'move_task.php?contract_ID=' + contractID;
+    } else {
+        alert('Error: Contract ID is missing.');
+    }
+}
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        let updatedTasks = [];
 
-        // Calculate the overall cost once on page load
-        function calculateOverallCost() {
-            const totalLaborCost = parseFloat(totalLaborCostInput.value) || 0;
-            const additionalCost = parseFloat(additionalCostInput.value) || 0;
+        document.querySelectorAll(".task-status").forEach(function (dropdown) {
+            dropdown.addEventListener("change", function () {
+                let taskID = this.getAttribute("data-task-id");
+                let taskName = this.getAttribute("data-task-name");
+                let taskDetails = this.getAttribute("data-task-details");
+                let status = this.value;
 
-            // Calculate the overall cost
-            const overallCost = totalLaborCost + additionalCost;
+                let taskIndex = updatedTasks.findIndex(task => task.task_id === taskID);
+                if (taskIndex !== -1) {
+                    updatedTasks[taskIndex].status = status;
+                } else {
+                    updatedTasks.push({
+                        task_id: taskID,
+                        task_name: taskName,
+                        task_details: taskDetails,
+                        status: status
+                    });
+                }
 
-            // Update the overall cost input field
-            overallCostInput.value = overallCost.toFixed(2); // Displaying up to 2 decimal places
-        }
+                if (updatedTasks.length > 0) {
+                    document.getElementById("saveChangesBtn").style.display = "block";
+                }
+            });
+        });
 
-        // Initial calculation on page load
-        calculateOverallCost();
+        document.getElementById("saveChangesBtn").addEventListener("click", function () {
+            if (updatedTasks.length === 0) {
+                alert("No tasks selected!");
+                return;
+            }
+
+            fetch("move_task.php", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(updatedTasks)
+            })
+            .then(response => response.text())
+            .then(data => {
+                alert(data);
+                location.reload(); // Reload the page to reflect changes
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
+</script>
+
+<!-- Modal Structure -->
+<div id="transactionModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <h2>Transaction Details</h2>
+        <div id="modal-body">
+            <!-- Transaction details will be populated here -->
+        </div>
+    </div>
+</div>
+
+<script>
+function openModal(transactionID) {
+    console.log("Opening modal for transaction ID:", transactionID); // Debugging line
+    // Fetch transaction details using AJAX
+    fetch(`get_transaction_details.php?transaction_ID=${transactionID}`)
+        .then(response => response.json())
+        .then(data => {
+            // Populate modal with transaction details
+            const modalBody = document.getElementById('modal-body');
+            if (data.error) {
+                modalBody.innerHTML = `<p>${data.error}</p>`;
+            } else {
+                modalBody.innerHTML = `
+                    <p><strong>Transaction ID:</strong> ${data.transaction_ID}</p>
+                    <p><strong>Contract ID:</strong> ${data.contract_ID}</p>
+                    <p><strong>Receipt Photo:</strong></p>
+                    <img src="data:image/jpeg;base64,${data.receipt_photo}" alt="Receipt Photo" style="max-width: 100%; height: auto;">
+                    <p><strong>Status:</strong> Paid</p>
+                `;
+            }
+            document.getElementById('transactionModal').style.display = "block";
+        })
+        .catch(error => console.error('Error fetching transaction details:', error));
+}
+
+function closeModal() {
+    document.getElementById('transactionModal').style.display = "none";
+}
+
+// Close modal when clicking outside of it
+window.onclick = function(event) {
+    const modal = document.getElementById('transactionModal');
+    if (event.target == modal) {
+        closeModal();
+    }
+}
 </script>
 </html>

@@ -229,229 +229,166 @@
 <div class="container">
     <div class="modal-content">
     <?php
-    // listrequirements.php
-    include('config.php');
+// listrequirements.php
+include('config.php');
 
-    if (isset($_GET['approved_plan_ID'])) {
-        $approved_plan_ID = $_GET['approved_plan_ID'];
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST['plan_ID'])) { // Using POST method
+    $plan_ID = $_POST['plan_ID'];
 
-        // Fetch and display client's plan based on the approved_plan_ID
-        $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
-        $stmt = mysqli_prepare($conn, $query);
-        mysqli_stmt_bind_param($stmt, "i", $approved_plan_ID);
-        mysqli_stmt_execute($stmt);
-        $result = mysqli_stmt_get_result($stmt);
+    // Fetch and display client's plan based on the plan_ID from plan_approval
+    $query = "SELECT * FROM plan_approval WHERE plan_ID = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $plan_ID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-        if ($row = mysqli_fetch_assoc($result)) {
-            echo "<div class='main'>";
-            echo "<h1>List Requirements</h1>";
-            // Fetch user details from the 'users' table
-            $userId = $row['User_ID'];
+    if ($row = mysqli_fetch_assoc($result)) {
+        echo "<div class='main'>";
+        echo "<h1>List Requirements</h1>";
+
+        $plan_ID = $row['plan_ID']; // Get the plan_ID from plan_approval
+
+        // Now fetch the User_ID from the plan table
+        $planQuery = "SELECT User_ID FROM plan WHERE plan_ID = ?";
+        $planStmt = mysqli_prepare($conn, $planQuery);
+        mysqli_stmt_bind_param($planStmt, "i", $plan_ID);
+        mysqli_stmt_execute($planStmt);
+        $planResult = mysqli_stmt_get_result($planStmt);
+        
+        if ($planRow = mysqli_fetch_assoc($planResult)) {
+            $userId = $planRow['User_ID']; // Get User_ID from plan table
+        } else {
+            $userId = 0; // Default value if no user found
+        }
+        
+        // Now fetch the user details
+        if ($userId > 0) {
             $userQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
             $userStmt = mysqli_prepare($conn, $userQuery);
             mysqli_stmt_bind_param($userStmt, "i", $userId);
             mysqli_stmt_execute($userStmt);
             $userResult = mysqli_stmt_get_result($userStmt);
-    
+        
             echo "<label for='name'>Client Name: </label>";
             if ($userRow = mysqli_fetch_assoc($userResult)) {
                 echo "<input type='text' id='name' name='User_ID' value='{$userRow['First_Name']} {$userRow['Last_Name']}' readonly><br>";
-            }
-            $ec=$row['estimated_cost'];
-
-            echo "<div class=\"row-container\" style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; text-align: left;'>";
-            echo "<h3>Lot area</h3>";
-            
-            // Length on the left
-            echo "<div style='grid-column: 1; display: flex; flex-direction: column;'>";
-            echo "<label for='length_lot_area'>Length for lot area</label>";
-            echo "<input type='text' id='length_lot_area' name='length_lot_area' value='{$row['length_lot_area']}' readonly>";
-            echo "</div>";
-            
-            // Width in the center
-            echo "<div style='grid-column: 2; display: flex; flex-direction: column;'>";
-            echo "<label for='width_lot_area'>Width for lot area</label>";
-            echo "<input type='text' id='width_lot_area' name='width_lot_area' value='{$row['width_lot_area']}' readonly>";
-            echo "</div>";
-            
-            // Square meter on the right
-            echo "<div style='grid-column: 3; display: flex; flex-direction: column;'>";
-            echo "<label for='square_meter_lot'>Square Meter(Sq):</label>";
-            echo "<input type='text' id='square_meter_lot' name='square_meter_lot' value='{$row['square_meter_lot']}' readonly>";
-            echo "</div>";
-            echo "</div>";
-            
-            echo "<div class=\"row-container\" style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; text-align: left;'>";
-            echo "<h3>Floor Area</h3>";
-            
-            // Length on the left
-            echo "<div style='grid-column: 1; display: flex; flex-direction: column;'>";
-            echo "<label for='length_floor_area'>Length for floor area</label>";
-            echo "<input type='text' id='length_floor_area' name='length_floor_area' value='{$row['length_floor_area']}' readonly>";
-            echo "</div>";
-            
-            // Width in the center
-            echo "<div style='grid-column: 2; display: flex; flex-direction: column;'>";
-            echo "<label for='width_floor_area'>Width for floor area</label>";
-            echo "<input type='text' id='width_floor_area' name='width_floor_area' value='{$row['width_floor_area']}' readonly>";
-            echo "</div>";
-            
-            // Square meter on the right
-            echo "<div style='grid-column: 3; display: flex; flex-direction: column;'>";
-            echo "<label for='square_meter_floor'>Square Meter(Sq):</label>";
-            echo "<input type='text' id='square_meter_floor' name='square_meter_floor' value='{$row['square_meter_floor']}' readonly>";
-            echo "</div>";               
-            echo "</div>";
-            
-            echo "<div class=\"row-container\" style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px; text-align: left;'>";
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<h3>Initial Budget</h3>";
-            // Initial Budget on the left
-            echo "<label for='initial_budget'>Initial Budget</label>";
-            echo "<input type='text' id='initial_budget' name='initial_budget' value='{$row['initial_budget']}' readonly>";
-            echo "</div>";
-            echo "</div>";
-            
-            echo "<div class=\"row-container\">";
-            echo "<h3>Project Dates</h3>";
-            echo "<div style='display: grid; grid-template-columns: repeat(2, 1fr); grid-gap: 10px;'>";
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label>Start Date:</label>";
-            echo "<input type='text' value='{$row['start_date']}' readonly>";
-            echo "</div>";
-            
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label>End Date:</label>";
-            echo "<input type='text' value='{$row['end_date']}' readonly>";
-            echo "</div>";
-            echo "</div>";
-            echo "</div>";                
-                                            
-            echo "<div class=\"row-container\">";
-            echo "<h3>Further Details</h3>";
-            
-            echo "<div style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px;'>";
-            
-            echo "<table style='border-collapse: collapse; width: 100%;'>";
-            echo "<thead>";
-                        echo "<tr>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Part</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Materials</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Name</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
-                            echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
-                            echo '<th style="border: 1px solid #dddddd; text-align: left; padding: 8px;">Estimated Cost</th>';
-
-                        echo "</tr>";
-                    echo "</thead>";
-
-                echo "<tbody>";
-                
-                $query_materials = "SELECT * FROM prematerials";
-                $stmt_materials = mysqli_prepare($conn, $query_materials);
-                mysqli_stmt_execute($stmt_materials);
-                $result_materials = mysqli_stmt_get_result($stmt_materials);
-                
-                while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                    echo "<tr>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['part']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['materials']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['name']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
-                        echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
-                        echo '<td style="border: 1px solid #dddddd; text-align: left; padding: 8px;">' . htmlspecialchars($material_row['estimated_cost']) . '</td>';
-
-                    echo "</tr>";
-                }
-                
-                echo "</tbody>";
-                echo "</table>";
-                echo "</div>";
-                
-                
-                echo "</div>";
-    
-            
-
-            // Display the resized photo with a link to open the modal
-            $photoPath = $row['Photo'];
-            if (!empty($photoPath) && file_exists($photoPath)) {
-                echo "<p>Photo:</p>";
-                echo "<div style='text-align: center;'>";  // Center the content
-                echo "<a href='#' onclick='openModal(\"{$photoPath}\")'>";
-                echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 700px; height: 400px;'>";
-                echo "</a>";
-                echo "</div>";
-            }
-
-            echo "<div style='display: flex; flex-direction: column;'>";
-            echo "<label for='type'>Approved By: </label>";
-            echo "<input type='text' id='type' name='approved_by:' value='{$row['approved_by']}' readonly>";
-            echo "</div>";
-
-            echo '<form action="addrequirements.php" method="post" enctype="multipart/form-data">';
-                echo "<input type='hidden' name='approved_plan_id' value='$approved_plan_ID'>";
-                $query = "SELECT * FROM approvedplan WHERE approved_plan_ID = ?";
-                $stmt = mysqli_prepare($conn, $query);
-                mysqli_stmt_bind_param($stmt, "i", $approved_plan_ID);
-                mysqli_stmt_execute($stmt);
-                $result = mysqli_stmt_get_result($stmt);
-                
-                if ($row = mysqli_fetch_assoc($result)) {
-                    // Check if 'estimated_cost' is present in the fetched row
-                    if (isset($row['estimated_cost'])) {
-                        echo "<label id='estimated_cost_label' for='estimated_cost'>Estimated Cost</label>";
-                        echo "<input type='hidden' id='estimated_cost' name='estimated_cost' value='" . $ec . "'>";
-                    } else {
-                        echo "Estimated Cost not found in the fetched row.";
-                    }
-                } else {
-                    echo "No data found for the specified approved_plan_ID.";
-                }
-                echo "<input type='submit' value='Generate Contract'>";
-                echo "<input type='button' value='Go back' onclick='window.location.href = \"profile.php\";'>";
-            echo "</form>";
-            echo "</div>"; // Close main div
             } else {
-            echo "<div class='main'>";
-            echo "<h1>No approved plan found</h1>";
-            echo "<p>Sorry, there is no approved plan with Approved Plan ID: $approved_plan_ID</p>";
-            echo "</div>"; // Close main div
+                echo "<input type='text' id='name' value='No user found' readonly><br>";
+            }
+        } else {
+            echo "<input type='text' id='name' value='No user assigned' readonly><br>";
         }
 
-        // Close the statement
-        mysqli_stmt_close($stmt);
-        // Close the database conn$conn
-        mysqli_close($conn);
+        echo "<div class=\"row-container\" style='display: grid; grid-template-columns: repeat(3, 1fr); grid-gap: 10px; text-align: left;'>";
+        echo "<h3>Lot area</h3>";
+
+        $plan_ID = $row['plan_ID']; // Kuhaon ang plan_ID gikan sa plan_approval
+
+        // Fetch data from plan table
+        $planQuery = "SELECT * FROM plan WHERE plan_ID = ?";
+        $planStmt = mysqli_prepare($conn, $planQuery);
+        mysqli_stmt_bind_param($planStmt, "i", $plan_ID);
+        mysqli_stmt_execute($planStmt);
+        $planResult = mysqli_stmt_get_result($planStmt);
+        
+        if ($planRow = mysqli_fetch_assoc($planResult)) {
+            $length_lot_area = $planRow['length_lot_area'];
+            $width_lot_area = $planRow['width_lot_area'];
+            $square_meter_lot = $planRow['square_meter_lot'];
+        } else {
+            $length_lot_area = $width_lot_area = $square_meter_lot = "N/A"; // Default kung walay data
+        }
+        
+        echo "<div class='row-container' style='display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; text-align: left; align-items: center;'>"; 
+
+        echo "<h3 style='grid-column: span 3;'>Lot area</h3>"; // Ensure title spans 3 columns
+        
+        // Length on the left
+        echo "<div>";
+        echo "<label for='length_lot_area'>Length for lot area</label>";
+        echo "<input type='text' id='length_lot_area' name='length_lot_area' value='{$length_lot_area}' readonly>";
+        echo "</div>";
+        
+        // Width in the center
+        echo "<div>";
+        echo "<label for='width_lot_area'>Width for lot area</label>";
+        echo "<input type='text' id='width_lot_area' name='width_lot_area' value='{$width_lot_area}' readonly>";
+        echo "</div>";
+        
+        // Square meter on the right
+        echo "<div>";
+        echo "<label for='square_meter_lot'>Square Meter (Sq):</label>";
+        echo "<input type='text' id='square_meter_lot' name='square_meter_lot' value='{$square_meter_lot}' readonly>";
+        echo "</div>";
+        
+        echo "</div>"; // Close row-container
+                
+        echo "<div class=\"row-container\">";
+        echo "<h3>Further Details</h3>";
+
+        echo "<table style='border-collapse: collapse; width: 100%;'>";
+        echo "<thead>";
+        echo "<tr>";
+        echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Part</th>";
+        echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Materials</th>";
+        echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Name</th>";
+        echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Quantity</th>";
+        echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Price</th>";
+        echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Total</th>";
+        echo "<th style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>Estimated Cost</th>";
+        echo "</tr>";
+        echo "</thead>";
+
+        echo "<tbody>";
+        $query_materials = "SELECT * FROM prematerials";
+        $stmt_materials = mysqli_prepare($conn, $query_materials);
+        mysqli_stmt_execute($stmt_materials);
+        $result_materials = mysqli_stmt_get_result($stmt_materials);
+
+        while ($material_row = mysqli_fetch_assoc($result_materials)) {
+            echo "<tr>";
+            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['part']) . "</td>";
+            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['materials']) . "</td>";
+            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['name']) . "</td>";
+            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['quantity']) . "</td>";
+            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['price']) . "</td>";
+            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['total']) . "</td>";
+            echo "<td style='border: 1px solid #dddddd; text-align: left; padding: 8px;'>" . htmlspecialchars($material_row['estimated_cost']) . "</td>";
+            echo "</tr>";
+        }
+
+        echo "</tbody>";
+        echo "</table>";
+
+        // Form to add requirements
+        echo '<form action="addrequirements.php" method="post" enctype="multipart/form-data">';
+        echo "<input type='hidden' name='plan_ID' value='$plan_ID'>";
+
+
+        echo "<input type='submit' value='Generate Contract'>";
+        echo "<input type='button' value='Go back' onclick='window.location.href = \"profile.php\";'>";
+        echo "</form>";
+
+        echo "</div>"; // Close main div
     } else {
-        // Handle the case when approved_plan_ID is not provided in the URL
         echo "<div class='main'>";
-        echo "<h1>Approved Plan ID is missing</h1>";
-        echo "<p>Please provide the Approved Plan ID in the URL</p>";
+        echo "<h1>No plan approval found</h1>";
+        echo "<p>Sorry, there is no approved plan with Plan ID: $plan_ID</p>";
         echo "</div>"; // Close main div
     }
-    ?>
+
+    // Close the statement
+    mysqli_stmt_close($stmt);
+    // Close the database connection
+    mysqli_close($conn);
+} else {
+    // Handle the case when plan_ID is not provided in the POST request
+    echo "<div class='main'>";
+    echo "<h1>Plan ID is missing</h1>";
+    echo "<p>Please submit the form properly.</p>";
+    echo "</div>"; // Close main div
+}
+?>
 </div>
 </body>
-<script>
-    document.addEventListener("DOMContentLoaded", function() {
-        updateTotalCost();
-    });
-
-    function updateTotalCost() {
-        var estimatedCost = parseFloat(document.getElementById("estimated_cost").value) || 0;
-        var laborCost = parseFloat(document.getElementById("labor_cost").value) || 0;
-        var remainingCost = parseFloat(document.getElementById("remaining_cost").value) || 0;
-
-        var totalCost = estimatedCost + remainingCost + laborCost;
-
-        document.getElementById("total_cost").value = totalCost.toFixed(2);
-    }
-
-    document.getElementById("labor_cost").addEventListener("input", updateTotalCost);
-    document.getElementById("remaining_cost").addEventListener("input", updateTotalCost);
-    document.getElementById("estimated_cost").addEventListener("input", updateTotalCost);
-</script>
 </html>

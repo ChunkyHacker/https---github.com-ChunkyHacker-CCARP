@@ -12,19 +12,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $status = $task["status"]; // Gikuha ang status gikan sa frontend
 
             if ($status === "Done") {
-                // Get requirement_ID from task table
-                $queryRequirement = "SELECT requirement_ID FROM task WHERE task_id = ?";
+                // Get contract_ID from task table
+                $queryRequirement = "SELECT contract_ID FROM task WHERE task_id = ?";
                 $stmtRequirement = $conn->prepare($queryRequirement);
                 $stmtRequirement->bind_param("i", $task_id);
                 $stmtRequirement->execute();
                 $resultRequirement = $stmtRequirement->get_result();
                 $rowRequirement = $resultRequirement->fetch_assoc();
-                $requirement_ID = $rowRequirement['requirement_ID'];
+                $contract_ID = $rowRequirement['contract_ID'];
 
-                // Insert the task into completed_task table with requirement_ID
-                $sql = "INSERT INTO completed_task (name, details, task_id, requirement_ID, status) VALUES (?, ?, ?, ?, 'Completed')";
+                // Insert the task into completed_task table with contract_ID
+                $sql = "INSERT INTO completed_task (name, details, task_id, contract_ID, status) VALUES (?, ?, ?, ?, 'Completed')";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssii", $task_name, $task_details, $task_id, $requirement_ID);
+                $stmt->bind_param("ssii", $task_name, $task_details, $task_id, $contract_ID);
                 
                 if ($stmt->execute()) {
                     // Temporarily disable foreign key checks

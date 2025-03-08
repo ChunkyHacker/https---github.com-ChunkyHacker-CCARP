@@ -8,6 +8,11 @@
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     </head>
     <body>
+
+        <a href="testing\prematerials (6).csv" download="prematerials.csv">
+            <button>Download Sample CSV</button>
+        </a>
+
         <div class="container mt-5">
             <h2 class="mb-4">Inventory Management</h2>
             <button class="btn btn-primary mb-3" data-bs-toggle="modal" data-bs-target="#addItemModal">Add Item</button>

@@ -1,7 +1,42 @@
+<?php
+session_start();
+include('config.php'); // Ensure this file contains your database connection
+
+// Check if the user is logged in
+if (!isset($_SESSION['Carpenter_ID'])) {
+    header('Location: login.html');
+    exit();
+}
+
+// Fetch carpenter information from the database
+$carpenterId = $_SESSION['Carpenter_ID'];
+$query = "SELECT First_Name, Last_Name, Phone_Number, Email, specialization, Photo FROM carpenters WHERE Carpenter_ID = ?";
+$stmt = $conn->prepare($query);
+$stmt->bind_param("i", $carpenterId);
+$stmt->execute();
+$result = $stmt->get_result();
+$carpenter = $result->fetch_assoc();
+$stmt->close();
+
+if (!empty($_GET['receiptPath']) && !empty($_GET['transaction_ID'])) {
+    $transactionID = $_GET['transaction_ID'];
+
+    // Query to get transaction details
+    $sql = "SELECT * FROM transaction WHERE transaction_ID = ?";
+    $stmt = mysqli_prepare($conn, $sql);
+    mysqli_stmt_bind_param($stmt, "i", $transactionID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    // Fetch the transaction details
+    $transactionDetails = mysqli_fetch_assoc($result);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title> Receipt</title>
+    <title>Receipt</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
@@ -13,7 +48,55 @@
             font-family: Arial, Helvetica, sans-serif;
             font-size: 17px;
             margin: 0;
-            padding-top: 170px;
+            display: flex;
+        }
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 250px;
+            background-color: #FF8C00;
+            padding: 20px;
+            color: black;
+            height: 100vh;
+        }
+        .sidebar img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 20px;
+        }
+        .sidebar h2, .sidebar p, .sidebar a {
+            align-self: flex-start;
+            margin: 5px 0;
+        }
+        .sidebar h2 {
+            margin: 0;
+            font-size: 22px;
+            font-weight: bold;
+            color: black;
+        }
+        .sidebar p {
+            font-size: 16px;
+            color: black;
+        }
+        .sidebar a {
+            color: black;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
+            font-size: 16px;
+        }
+        .sidebar a:hover {
+            background-color: #d9534f;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #f2f2f2;
         }
         .container {
             font-size: 20px;
@@ -53,52 +136,6 @@
         .back-btn:hover {
             background-color: #c9302c;
         }
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px 20px;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 100;
-        }
-        .header .nav-container {
-            display: flex;
-            align-items: center;
-        }
-        .header img {
-            width: 75px;
-            margin-right: 20px;
-        }
-        .topnav {
-            display: flex;
-            align-items: center;
-        }
-        .topnav a {
-            color: black;
-            padding: 14px 20px;
-            text-decoration: none;
-            display: inline-block;
-            font-weight: bold;
-        }
-        .topnav a:hover {
-            background-color: #ddd;
-            color: black;
-        }
-        .footer {
-            padding: 10px;
-            text-align: center;
-            background: #FF8C00;
-            position: relative;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 100%;
-        }
         #receipt-preview, .uploaded-receipt {
             margin-top: 20px;
             max-width: 80%;
@@ -113,64 +150,46 @@
 </head>
 <body>
 
-    <?php if (isset($_GET['success']) && $_GET['success'] == 'true'): ?>
-        <script>
-            window.onload = function() {
-                alert("✔ Transaction successful!");
-            };
-        </script>
-    <?php endif; ?>
-
-    <div class="header">
-        <div class="nav-container">
-            <a href="comment.php">
-                <img src="assets/img/logos/logo.png" alt="">
-            </a>
-            <div class="topnav">
-                <a class="active" href="index.html">Home</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
-            </div>
-        </div>
-        <div class="right">
-            <a href="logout.php" style="text-decoration: none; color: black; margin-right: 20px; font-weight: bold;">Log Out</a>
-        </div>
+    <div class="sidebar">
+        <img src="<?php echo $_SESSION['Photo'] ?? 'default-profile.jpg'; ?>" alt="Profile Picture" class="profile-image">
+        <h2><?php echo htmlspecialchars($carpenter['First_Name'] . ' ' . $carpenter['Last_Name']); ?></h2>
+        <p>Carpenter ID: <?php echo htmlspecialchars($carpenterId); ?></p>
+        <a href="index.html">Home</a>
+        <a href="requirements.php">Requirements</a>
+        <a href="progress.php">Progress</a>
+        <a href="contract.php">View Contract</a>
+        <a href="logout.php">Logout</a>
     </div>
 
-    <div class="container">
-        <h2>Upload Receipt</h2>
-        
-        <img id="receipt-preview" src="#" alt="Receipt Preview" style="display: none;">
+    <div class="main-content">
+        <div class="container">
+            <h2>Upload Receipt</h2>
+            
+            <img id="receipt-preview" src="#" alt="Receipt Preview" style="display: none;">
 
-        <?php if (!empty($_GET['receiptPath'])): ?>
-            <img class="uploaded-receipt" src="<?php echo $_GET['receiptPath']; ?>" alt="Uploaded Receipt">
-            <br>
-            <button class="back-btn" onclick="history.back()">Go Back</button>
-        <?php endif; ?>
-    </div>
-
-    <div class="footer"> 
-        <h2>CCarp all rights reserved @2023</h2>
-        <a href="#">Home</a> |
-        <a href="#">About</a> |
-        <a href="#">Contact</a> |
-        <a href="#">Report</a>
+            <?php if (!empty($_GET['receiptPath'])): ?>
+                <img class="uploaded-receipt" src="<?php echo $_GET['receiptPath']; ?>" alt="Uploaded Receipt">
+                <br>
+                <!-- Display receipt details -->
+                <div class="receipt-details">
+                    <h3>Receipt Details</h3>
+                    <?php if ($transactionDetails): ?>
+                        <p><strong>Details:</strong> <?php echo htmlspecialchars($transactionDetails['details']); ?></p>
+                    <?php else: ?>
+                        <p>No transaction details found.</p>
+                    <?php endif; ?>
+                </div>
+                <button class="back-btn" onclick="history.back()">Go Back</button>
+            <?php endif; ?>
+        </div>
     </div>
 
     <script>
-        document.getElementById('receipt-upload').addEventListener('change', function(event) {
-            const file = event.target.files[0];
-            const preview = document.getElementById('receipt-preview');
-            
-            if (file) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    preview.src = e.target.result;
-                    preview.style.display = 'block';
-                }
-                reader.readAsDataURL(file);
-            }
-        });
+        <?php if (isset($_GET['success']) && $_GET['success'] == 'true'): ?>
+            window.onload = function() {
+                alert("✔ Transaction successful!");
+            };
+        <?php endif; ?>
     </script>
 </body>
 </html>

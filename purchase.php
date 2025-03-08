@@ -3,9 +3,22 @@
     include('config.php');
 
     if (!isset($_SESSION['Carpenter_ID'])) {
-    header('Location: login.html');
-    exit();
+        header('Location: login.html');
+        exit();
     }
+
+    // Fetch carpenter information from the database
+    $carpenterId = $_SESSION['Carpenter_ID'];
+    $query = "SELECT Photo, First_Name, Last_Name, Carpenter_ID FROM carpenters WHERE Carpenter_ID = ?";
+    $stmt = $conn->prepare($query);
+    $stmt->bind_param("i", $carpenterId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $carpenter = $result->fetch_assoc();
+    $stmt->close();
+
+    // Fetch contract_ID from the database (assuming you have a way to get it)
+    $contract_ID = $_GET['contract_ID'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -21,92 +34,87 @@
 
         body {
             font-family: Arial, Helvetica, sans-serif;
-            font-size: 17px;
             margin: 0;
-            padding-top: 170px;
+            display: flex;
+            background-color: #f2f2f2; /* Light background for the body */
         }
 
-        .container {
-            font-size: 20px;
-            background-color: #f2f2f2;
-            margin: 20px 50px;
-            padding: 20px 30px 20px;
-            border: 1px solid lightgrey;
-            border-radius: 3px;
-            text-align: center;
-        }
-
-        .btn {
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            align-items: center; /* Center the image */
+            width: 250px;
             background-color: #FF8C00;
-            color: white;
-            padding: 12px;
-            margin: 10px 0;
-            border: none;
-            width: 100%;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 17px;
+            padding: 20px;
+            color: black; /* Change text color to black */
+            height: 100vh;
         }
 
-        .btn:hover {
-            background-color: #000000;
+        .sidebar img {
+            width: 100px; /* Fixed width */
+            height: 100px; /* Fixed height */
+            border-radius: 50%; /* Circular shape */
+            object-fit: cover; /* Ensures the image covers the area without distortion */
+            margin-bottom: 20px; /* Space below the image */
         }
 
-        .back-btn {
-            background-color: #d9534f;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            font-size: 16px;
-            display: inline-block;
-            margin-top: 15px;
-        }
-        .back-btn:hover {
-            background-color: #c9302c;
+        .sidebar h2, .sidebar p, .sidebar a {
+            align-self: flex-start; /* Align text to the left */
+            margin: 5px 0; /* Space between items */
         }
 
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            padding: 10px 20px;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            z-index: 100;
-        }
-
-        .header .nav-container {
-            display: flex;
-            align-items: center;
-        }
-
-        .header img {
-            width: 75px;
-            margin-right: 20px;
-        }
-
-        .topnav {
-            display: flex;
-            align-items: center;
-        }
-
-        .topnav a {
+        .sidebar h2 {
+            margin: 0;
+            font-size: 20px;
             color: black;
-            padding: 14px 20px;
+        }
+
+        .sidebar p {
+            color: black;
+        }
+
+        .sidebar a {
+            color: black;
             text-decoration: none;
-            display: inline-block;
-            font-weight: bold;
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 3px;
         }
 
-        .topnav a:hover {
-            background-color: #ddd;
-            color: black;
+        .sidebar a:hover {
+            background-color: #d9534f;
+        }
+
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            background-color: #ffffff; /* White background for the main content */
+            border-radius: 8px; /* Rounded corners */
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            margin: 20px; /* Margin around the main content */
+        }
+
+        .main-content h2 {
+            margin-bottom: 10px; /* Space below the heading */
+        }
+
+        .btn, .back-btn {
+            background-color: #FF8C00; /* Button color */
+            color: white;
+            padding: 8px; /* Padding */
+            margin: 10px auto; /* Center the buttons */
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 15px; /* Font size */
+            transition: background-color 0.3s; /* Smooth transition */
+            max-width: 200px; /* Set a maximum width */
+            width: 100%; /* Full width up to max-width */
+        }
+
+        .btn:hover, .back-btn:hover {
+            background-color: #d9534f; /* Change color on hover */
         }
 
         .footer {
@@ -121,19 +129,17 @@
         }
 
         .uploaded-receipt, #receipt-preview {
-          max-width: 80vw; /* Limit width to 80% of screen */
-          max-height: 60vh; /* Limit height to 60% of screen */
-          width: auto;
-          height: auto;
-          display: block;
-          margin: 10px auto; /* Centers the image horizontally */
-          object-fit: contain; /* Ensures proper scaling */
-          border: 1px solid #ddd;
-          padding: 10px;
-          border-radius: 8px;
-      }
-
-
+            max-width: 80vw;
+            max-height: 60vh;
+            width: auto;
+            height: auto;
+            display: block;
+            margin: 10px auto;
+            object-fit: contain;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+        }
 
         #receipt-preview {
             margin-top: 20px;
@@ -141,56 +147,94 @@
             height: auto;
             display: none;
         }
+
+        .message {
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            display: none; /* Hidden by default */
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .loading {
+            display: none;
+            font-size: 16px;
+            color: #FF8C00;
+        }
+
+        /* Card style for the upload form */
+        .upload-card {
+            background-color: #ffffff; /* White background for the card */
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+            margin-top: 20px; /* Space above the card */
+        }
+
+        input[type="file"] {
+            margin: 10px 0; /* Space around the file input */
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            width: 100%; /* Full width */
+            background-color: #ffffff; /* White background */
+            cursor: pointer; /* Pointer cursor on hover */
+        }
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="nav-container">
-            <a href="comment.php">
-                <img src="assets/img/logos/logo.png" alt="">
-            </a>
-            <div class="topnav">
-                <a class="active" href="index.html">Home</a>
-                <a href="#about">About</a>
-                <a href="#contact">Contact</a>
-            </div>
-        </div>
-        <div class="right">
-            <a href="logout.php" style="text-decoration: none; color: black; margin-right: 20px; font-weight: bold;">Log Out</a>
-        </div>
+    <div class="sidebar">
+        <img src="<?php echo $_SESSION['Photo'] ?? 'default-profile.jpg'; ?>" alt="Profile Picture" class="profile-image">
+        <h2><?php echo htmlspecialchars($carpenter['First_Name'] . ' ' . $carpenter['Last_Name']); ?></h2>
+        <p>Carpenter ID: <?php echo htmlspecialchars($carpenter['Carpenter_ID']); ?></p>
+        <a href="index.html">Home</a>
+        <a href="requirements.php">Requirements</a>
+        <a href="progress.php">Progress</a>
+        <a href="contract.php">View Contract</a>
+        <a href="logout.php">Logout</a>
     </div>
 
-    <div class="container">
+    <div class="main-content">
         <h2>Upload Receipt</h2>
-        <form action="transaction.php" method="POST" enctype="multipart/form-data">
-            <input type="file" name="receipt" id="receipt-upload" accept="image/*" required>
-            <button type="submit" class="btn">Upload</button>
-        </form>
+        <p>Please upload your receipt in image format (JPEG, PNG).</p>
         
-        <img id="receipt-preview" src="#" alt="Receipt Preview">
+        <div class="message success" id="success-message">Receipt uploaded successfully!</div>
+        <div class="message error" id="error-message">Error uploading receipt. Please try again.</div>
         
-        <!-- PHP to display uploaded receipt -->
-        <?php
-        $receiptPath = ""; // Initialize empty receipt path
-        if (isset($_GET['receipt'])) {
-            $receiptPath = htmlspecialchars($_GET['receipt']); // Get receipt path from URL
-        }
-        ?>
+        <div class="upload-card">
+            <form action="transaction.php" method="POST" enctype="multipart/form-data" id="upload-form">
+                <input type="file" name="receipt" id="receipt-upload" accept="image/*" required>
+                <input type="text" name="details" id="receipt-details" required>
+                <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
+                <br>
+                <button type="submit" class="btn">Upload</button>
+                <div class="loading" id="loading-message">Uploading...</div>
+            </form>
+            
+            <img id="receipt-preview" src="#" alt="Receipt Preview">
+            
+            <?php
+            $receiptPath = ""; // Initialize empty receipt path
+            if (isset($_GET['receipt'])) {
+                $receiptPath = htmlspecialchars($_GET['receipt']); // Get receipt path from URL
+            }
+            ?>
 
-        <?php if (!empty($receiptPath)): ?>
-            <img src="<?php echo $receiptPath; ?>" alt="Uploaded Receipt" class="uploaded-receipt">
-        <?php endif; ?>
-    </div>
-    <div>
-    <button class="back-btn" onclick="history.back()">Go Back</button>
-    </div>
-
-    <div class="footer"> 
-        <h2>CCarp all rights reserved @2023</h2>
-        <a href="#">Home</a> |
-        <a href="#">About</a> |
-        <a href="#">Contact</a> |
-        <a href="#">Report</a>
+            <?php if (!empty($receiptPath)): ?>
+                <img src="<?php echo $receiptPath; ?>" alt="Uploaded Receipt" class="uploaded-receipt">
+            <?php endif; ?>
+            
+            <button class="back-btn" onclick="history.back()">Go Back</button>
+        </div>
     </div>
 </body>
 <script>
@@ -203,13 +247,13 @@
             reader.onload = function(e) {
                 preview.src = e.target.result;
                 preview.style.display = 'block';
-                preview.style.maxWidth = '80vw'; // Resize width
-                preview.style.maxHeight = '60vh'; // Resize height
-                preview.style.objectFit = 'contain'; // Ensure it scales properly
-                preview.style.margin = '10px auto'; // Center the image
             }
             reader.readAsDataURL(file);
         }
     });
-    </script>
+
+    document.getElementById('upload-form').addEventListener('submit', function() {
+        document.getElementById('loading-message').style.display = 'block';
+    });
+</script>
 </html>

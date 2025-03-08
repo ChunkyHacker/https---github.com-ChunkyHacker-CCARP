@@ -1,5 +1,12 @@
 <?php
-    include('config.php');
+include('config.php');
+session_start(); // Siguraduhon nga nagsugod ang session
+
+if (!isset($_SESSION['Carpenter_ID'])) {
+    die("Error: No Carpenter ID found in session. Please log in.");
+}
+
+$Carpenter_ID = $_SESSION['Carpenter_ID'];
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -7,6 +14,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Comments</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
     * {
         box-sizing: border-box;
@@ -14,9 +22,9 @@
 
     body {
         font-family: Arial, sans-serif;
-        background-color: #f0f2f5;
+        background-color: #f5f5f5;
         margin: 0;
-        padding: 20px;
+        padding: 0;
         padding-top: 200px; /* Adjust this value to ensure content is pushed below the fixed header */
         font-size: 20px; /* Set base font size to 20px */
     }
@@ -84,12 +92,9 @@
         background-color: #fff;
         border-radius: 10px;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        margin-top: 0; /* Remove margin-top */
-        margin-bottom: 10px; /* Reduced bottom margin for less space */
+        margin-bottom: 10px; /* Reduced from original */
         padding: 15px;
         max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
     }
 
     .post-header {
@@ -201,7 +206,81 @@
         position: relative;
         width: 100%;
     }
-</style>
+
+    /* Update spacing to match profile.php */
+    .sidebar {
+        background-color: #FF8600;
+        height: 100vh;
+        padding: 15px;
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 250px;
+        overflow-y: auto;
+    }
+    
+    .profile-image {
+        width: 150px;
+        height: 150px;
+        border-radius: 10px;
+        margin: 10px auto;
+        display: block;
+    }
+    
+    .nav-link {
+        color: #000000;
+        padding: 8px 15px;
+        margin: 2px 0;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        transition: background-color 0.3s;
+    }
+    
+    .nav-link:hover {
+        background-color: rgba(255,255,255,0.1);
+        color: #000000;
+        border-radius: 5px;
+    }
+    
+    .nav-link i {
+        width: 25px;
+        margin-right: 10px;
+        text-align: center;
+    }
+    
+    .profile-section {
+        text-align: center;
+        padding-bottom: 10px;
+        margin-bottom: 10px;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+        color: #000000;
+    }
+
+    .nav {
+        display: flex;
+        flex-direction: column;
+        gap: 2px;
+    }
+
+    /* Update main content positioning */
+    .main-content {
+        margin-left: 270px;
+        padding: 15px;
+        max-width: 800px;
+    }
+
+    /* Remove header and topnav */
+    .header, .topnav {
+        display: none;
+    }
+
+    /* Keep original button styles */
+    .like-btn, .view-plan-btn, .comment-btn {
+        background-color: #FF8C00;
+        color: #000;
+    }
+    </style>
 
 </head>
 <body>
@@ -216,13 +295,64 @@
             <a href="about/index.html">About</a>
             <a href="#contact">Get Ideas</a>
         </div>
-        <a href="userprofile.php" style="text-decoration: none; color: black; margin-left: 20px;">Profile</a>
+        <a href="profile.php" style="text-decoration: none; color: black; margin-left: 20px;">Profile</a>
         <a href="logout.php" style="text-decoration: none; color: black; margin-left: auto; margin-right: 20px;">Log Out</a>
     </div>
 
     <div class="topnav"></div>
 
-    <?php
+    <!-- Add new sidebar -->
+    <div class="sidebar">
+        <div class="profile-section">
+            <?php
+            $sql = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
+            $stmt = $conn->prepare($sql);
+            $stmt->bind_param("i", $Carpenter_ID);
+            $stmt->execute();
+            $result = $stmt->get_result();
+            $user = $result->fetch_assoc();
+
+            if (isset($user['Photo']) && !empty($user['Photo'])) {
+                echo '<img src="' . $user['Photo'] . '" class="profile-image" alt="Profile Picture">';
+            } else {
+                echo '<img src="assets/img/default-avatar.png" class="profile-image" alt="Default Profile Picture">';
+            }
+            ?>
+            <h5><?php echo $user['First_Name'] . ' ' . $user['Last_Name']; ?></h5>
+            <p>Carpenter ID: <?php echo $Carpenter_ID; ?></p>
+        </div>
+        
+        <div class="nav">
+            <a href="comment.php" class="nav-link">
+                <i class="fa fa-home"></i>
+                <span>Home</span>
+            </a>
+            <a href="about/index.html" class="nav-link">
+                <i class="fa fa-info-circle"></i>
+                <span>About</span>
+            </a>
+            <a href="#contact" class="nav-link">
+                <i class="fa fa-lightbulb-o"></i>
+                <span>Get Ideas</span>
+            </a>
+            <a href="plan.php" class="nav-link">
+                <i class="fa fa-clipboard"></i>
+                <span>Project</span>
+            </a>
+            <a href="profile.php" class="nav-link">
+                <i class="fa fa-user"></i>
+                <span>Profile</span>
+            </a>
+            <a href="logout.php" class="nav-link">
+                <i class="fa fa-sign-out"></i>
+                <span>Logout</span>
+            </a>
+        </div>
+    </div>
+
+    <!-- Wrap existing content in main-content div -->
+    <div class="main-content">
+        <?php
         $query = "SELECT * FROM plan";
         $result = mysqli_query($conn, $query);
 
@@ -286,7 +416,7 @@
 
                     echo "<div class='post-footer'>";
                     echo "<button class='like-btn'>Like</button>";
-                    echo "<a href='clientsplan.php?plan_id={$row['plan_ID']}' class='view-plan-btn'>View client plan</a>";
+                    echo "<a href='clientsplan.php?plan_ID={$row['plan_ID']}' class='view-plan-btn'>View client plan</a>";
                     echo "</div>";
 
                     echo "<div class='comments-section'>";
@@ -306,8 +436,8 @@
         }
 
         mysqli_close($conn);
-    ?>
-
+        ?>
+    </div>
 
 </body>
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>

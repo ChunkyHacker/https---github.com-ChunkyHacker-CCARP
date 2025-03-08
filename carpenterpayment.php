@@ -1,61 +1,56 @@
 <?php
+    session_start(); 
     include('config.php');
-    session_start();
 
-    if (!isset($_SESSION['User_ID'])) {
-        echo "<script>alert('You need to log in first.'); window.location.href='login.php';</script>";
+    if (!isset($_SESSION['Carpenter_ID'])) {
+        header('Location: login.html');
         exit();
     }
 
-    $user_ID = $_SESSION['User_ID']; // Get logged-in user ID
+    // Get Carpenter ID from session
+    $Carpenter_ID = $_SESSION['Carpenter_ID'];
 
-    // Get user details
-    $sql = "SELECT * FROM users WHERE User_ID = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $user_ID);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    $userDetails = $result->fetch_assoc();
+    // Fetch carpenter details from the database
+    $query = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $Carpenter_ID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
 
-
-    // Check if the success parameter is passed in the URL
-    if (isset($_GET['success']) && $_GET['success'] == 'true') {
-        echo "<script>alert('Payroll data added successfully!');</script>";
-    }
-    
-
-    // Check if Payment_ID is set in the URL
-    if (isset($_GET["Payment_ID"])) {
-        $Payment_ID = $_GET["Payment_ID"];
-
-        // Secure the query with a prepared statement
-        $sql = "SELECT p.*, 
-                u1.First_Name AS Carpenter_First, u1.Last_Name AS Carpenter_Last, 
-                u2.First_Name AS Sender_First, u2.Last_Name AS Sender_Last 
-                FROM payment p
-                JOIN users u1 ON p.Carpenter_ID = u1.User_ID
-                JOIN users u2 ON p.User_ID = u2.User_ID
-                WHERE p.Payment_ID = ?";
-                    
-        $stmt = $conn->prepare($sql);
-        $stmt->bind_param("i", $Payment_ID);
-        $stmt->execute();
-        $result = $stmt->get_result();
-
-        if ($result->num_rows > 0) {
-            $row = $result->fetch_assoc();
-        } else {
-            echo "<p>No results found for Payment ID: $Payment_ID</p>";
-            exit();
-        }
-
-        // Close statement
-        $stmt->close();
+    if ($result->num_rows > 0) {
+        $carpenter = mysqli_fetch_assoc($result); // Fetch carpenter details
     } else {
-        echo "<p>Error: Payment_ID parameter is missing in the URL.</p>";
-        exit();
+        $carpenter = null; // Prevent error if no carpenter found
+    }
+
+    // Check if Payment_ID is set
+    if (!isset($_GET['Payment_ID'])) {
+        die("<p style='color:red;'>Error: Payment_ID parameter is missing in the URL.</p>");
+    }
+
+    $Payment_ID = $_GET['Payment_ID'];
+
+    // Get payment details using Payment_ID
+    $query = "SELECT p.*, 
+              c.First_Name AS Carpenter_First, c.Last_Name AS Carpenter_Last, 
+              u.First_Name AS Sender_First, u.Last_Name AS Sender_Last 
+              FROM payment p
+              JOIN carpenters c ON p.Carpenter_ID = c.Carpenter_ID
+              JOIN users u ON p.User_ID = u.User_ID
+              WHERE p.Payment_ID = ?";
+    
+    $stmt = mysqli_prepare($conn, $query);
+    mysqli_stmt_bind_param($stmt, "i", $Payment_ID);
+    mysqli_stmt_execute($stmt);
+    $result = mysqli_stmt_get_result($stmt);
+
+    if ($result->num_rows > 0) {
+        $row = mysqli_fetch_assoc($result);
+    } else {
+        die("<p style='color:red;'>Error: No payment record found for Payment_ID: $Payment_ID</p>");
     }
 ?>
+
 
 <!DOCTYPE html>
 <html lang="en">
@@ -189,15 +184,15 @@
     <div class="profile-section">
         <?php
         // Display profile picture
-        if (isset($userDetails['Photo']) && !empty($userDetails['Photo'])) {
-            echo '<img src="' . $userDetails['Photo'] . '" alt="Profile Picture">';
+        if (isset($carpenter['Photo']) && !empty($carpenter['Photo'])) {
+            echo '<img src="' . htmlspecialchars($carpenter['Photo']) . '" alt="Profile Picture">';
         } else {
             echo '<img src="assets/img/default-avatar.png" alt="Default Profile Picture">';
         }
         
         // Display name and ID
-        echo "<h3>" . $userDetails['First_Name'] . ' ' . $userDetails['Last_Name'] . "</h3>";
-        echo "<p>User ID: " . $user_ID . "</p>";
+        echo "<h3>" . (isset($carpenter['First_Name']) ? htmlspecialchars($carpenter['First_Name'] . " " . $carpenter['Last_Name']) : 'N/A') . "</h3>";
+        echo "<p>Carpenter ID: " . htmlspecialchars($Carpenter_ID) . "</p>";
         ?>
     </div>
     <div class="sidebar-section">
@@ -206,61 +201,58 @@
         <a href="logout.php"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 </div>
+
+
 <body>
     <div class="container">
-        <form action="copyexpenses.php?Payment_ID=<?php echo $_GET['Payment_ID']; ?>" method="POST">
-            <div class="container">
-                <h2>Payroll Receipt</h2>
-                <form action="copyexpenses.php?Payment_ID=<?php echo $Payment_ID; ?>" method="POST">
-                    <div class="payroll-details">
-                        <table>
-                            <tr>
-                                <th>Carpenter Name</th>
-                                <td><?php echo htmlspecialchars($row["Carpenter_First"] . " " . $row["Carpenter_Last"]); ?></td>
-                            </tr>
-                            <tr>
-                                <th>Labor Cost</th>
-                                <td><?php echo htmlspecialchars($row["Labor_Cost"]); ?></td>
-                            </tr>
-                            <tr>
-                                <th>Duration</th>
-                                <td><?php echo htmlspecialchars($row["Duration"]); ?> days</td>
-                            </tr>
-                            <tr>
-                                <th>Payment Method</th>
-                                <td><?php echo htmlspecialchars($row["Payment_Method"]); ?></td>
-                            </tr>
-                            <tr>
-                                <th>Payment Date</th>
-                                <td><?php echo htmlspecialchars($row["Payment_Date"]); ?></td>
-                            </tr>
-                            <tr>
-                                <th>Status</th>
-                                <td><b style="color: green;">Paid</b></td>
-                            </tr>
-                            <tr>
-                                <th>Sender</th>
-                                <td><?php echo htmlspecialchars($row["Sender_First"] . " " . $row["Sender_Last"]); ?></td>
-                            </tr>
-                        </table>
+        <h2>Payroll Receipt</h2>
+        <div class="payroll-details">
+            <table>
+                <tr>
+                    <th>Carpenter Name</th>
+                    <td><?php echo htmlspecialchars($row["Carpenter_First"] . " " . $row["Carpenter_Last"]); ?></td>
+                </tr>
+                <tr>
+                    <th>Labor Cost</th>
+                    <td><?php echo htmlspecialchars($row["Labor_Cost"]); ?></td>
+                </tr>
+                <tr>
+                    <th>Duration</th>
+                    <td><?php echo htmlspecialchars($row["Duration"]); ?> days</td>
+                </tr>
+                <tr>
+                    <th>Payment Method</th>
+                    <td><?php echo htmlspecialchars($row["Payment_Method"]); ?></td>
+                </tr>
+                <tr>
+                    <th>Payment Date</th>
+                    <td><?php echo htmlspecialchars($row["Payment_Date"]); ?></td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <td><b style="color: green;">Paid</b></td>
+                </tr>
+                <tr>
+                    <th>Sender</th>
+                    <td><?php echo htmlspecialchars($row["Sender_First"] . " " . $row["Sender_Last"]); ?></td>
+                </tr>
+            </table>
+        </div>
 
-                        <div class="download-btn">
-                            <!-- Submit button to transfer data to expenses -->
-                            <button type="submit" name="copy_to_expenses">Copy to expenses</button>
-                        </div>
-                    </div>
-                </form>
+        <div class="download-btn">
+            <!-- Submit button to transfer data to expenses -->
+            <form action="copyexpenses.php?Payment_ID=<?php echo $Payment_ID; ?>" method="POST">
+                <button type="submit" name="copy_to_expenses">Copy to expenses</button>
+            </form>
+        </div>
 
-                <div class="download-btn">
-                    <button onclick="downloadReceipt()">Download Receipt</button>
-                    <button onclick="window.print()">Print Receipt</button>
-                </div>
-                
-                <div>
-                    <a href="userprofile.php">Go back</a>
-                </div>
-            </div>
-        </form>
+        <div class="download-btn">
+            <button onclick="window.print()">Print Receipt</button>
+        </div>
+        
+        <div>
+            <a href="profile.php">Go back</a>
+        </div>
     </div>
 
     <script>

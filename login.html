@@ -8,194 +8,111 @@
     <style>
         * {
             box-sizing: border-box;
+            margin: 0;
+            padding: 0;
         }
-    
+
         body {
             font-family: Arial, Helvetica, sans-serif;
-            margin: 0;
-            padding-top: 160px;
-        }
-    
-        .header {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            text-align: left;
-            background: #FF8C00;
-            color: #000000;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            text-decoration: none;
-            z-index: 100;
-        }
-    
-        .header h1 {
-            font-size: 20px;
-            border-left: 20px solid transparent;
-            padding-left: 20px;
-            text-decoration: none;
-        }
-    
-        .header a {
-            font-size: 20px;
-            font-weight: bold;
-            text-decoration: none;
-            color: #000000;
-        }
-    
-        .topnav {
-            position: fixed;
-            top: 120px;
-            width: 100%;
-            overflow: hidden;
-            background-color: #505050;
-            z-index: 100;
-        }
-    
-        .topnav a {
-            float: left;
-            display: block;
-            color: black;
-            text-align: center;
-            padding: 14px 16px;
-            text-decoration: none;
-            font-size: 20px;
-        }
-    
-        .topnav a:hover,
-        .topnav a.active:hover {
-            background-color: #FF8C00;
-            color: black;
-        }
-    
-        @media screen and (max-width: 600px) {
-            .topnav a {
-                float: none;
-                display: block;
-                text-align: left;
-                width: 100%;
-                margin: 0;
-                padding: 14px;
-            }
-        }
-    
-        .main {
-            flex: 70%;
-            background-color: white;
-            padding: 20px;
-            text-align: center;
-        }
-    
-        input[type=text],
-        input[type=password] {
-            width: 100%;
-            padding: 12px 20px;
-            margin: 8px 0;
-            display: inline-block;
-            border: 1px solid #ccc;
-            font-size: 20px;
-        }
-    
-        button {
-            background-color: #04AA6D;
-            color: white;
-            padding: 14px 20px;
-            margin: 8px 0;
-            border: none;
-            cursor: pointer;
-            width: 100%;
-            font-size: 20px;
-        }
-    
-        button:hover {
-            opacity: 0.8;
-        }
-    
-        .cancelbtn {
-            width: auto;
-            padding: 10px 18px;
-            background-color: #f44336;
-            font-size: 20px;
-        }
-    
-        .imgcontainer {
-            text-align: center;
-            margin: 24px 0 12px 0;
-        }
-    
-        img.avatar {
-            width: 40%;
-            border-radius: 50%;
-        }
-    
-        .container {
-            padding: 16px;
-        }
-    
-        span.psw {
-            float: right;
-            padding-top: 16px;
-            font-size: 20px;
-        }
-    
-        @media screen and (max-width: 300px) {
-            span.psw {
-                display: block;
-                float: none;
-            }
-            .cancelbtn {
-                width: 100%;
-            }
-        }
-    
-        .form {
+            background-color: #f5f5f5;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
+            min-height: 100vh;
+        }
+
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+            width: 100%;
+            max-width: 400px;
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            width: 150px;
+            height: 150px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            background-color: #FF8C00;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+
+        .login-btn:hover {
+            background-color: #e67e00;
+        }
+
+        .signup-link {
+            text-align: center;
+        }
+
+        .signup-link a {
+            color: #FF8C00;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .signup-link a:hover {
+            text-decoration: underline;
         }
     </style>
-    
 </head>
 <body>
-
-<div class="header">
-    <a href="index.html">
-        <h1>
-            <img src="assets/img/logos/logo.png" alt="Logo" style="width: 75px; margin-right: 10px;">
-        </h1>
-    </a>
-</div>
-
-<div class="form">
-    <form action="login.php" method="POST">
-        <div class="imgcontainer">
-            <h2>Log In</h2>
-            <img src="assets/img/logos/logo.png" alt="Avatar" class="avatar">
+    <div class="login-container">
+        <div class="logo-container">
+            <img src="assets/img/logos/logo.png" alt="CCARP Logo" class="logo">
         </div>
+        
+        <form action="login.php" method="POST">
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" id="username" name="username" required>
+            </div>
 
-        <div class="container">
-            <label for="username"><b>Username</b></label>
-            <input type="text" id="username" name="username" required>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" name="password" required>
+            </div>
 
-            <label for="password"><b>Password</b></label>
-            <input type="password" id="password" name="password" required>
+            <button type="submit" class="login-btn">Login</button>
 
-            <button type="submit">Login</button>
-            <br><p style="text-align: center;">or</p>
-            <span class="psw"><a href="accountselect.html">Sign Up</a></span>
-            <label>
-                <input type="checkbox" checked="checked" name="remember"> Remember me
-            </label>
-        </div>
-
-        <div class="container" style="background-color:#f1f1f1">
-            <button type="button" class="cancelbtn"><a href="index.html">Cancel</a></button>
-            <span class="psw">Forgot <a href="#">password?</a></span>
-        </div>
-    </form>
-</div>
+            <div class="signup-link">
+                Don't have an account? <a href="accountselect.html">Sign Up</a>
+            </div>
+        </form>
+    </div>
 </body>
 </html>
