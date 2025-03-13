@@ -1052,9 +1052,7 @@
           </h2>
 
           <p class="contract-text" style="text-align: justify; line-height: 1.6; margin-bottom: 20px;">
-              This agreement is made between <strong><?php echo $client_name; ?></strong> (Client) 
-              and <strong><?php echo $carpenter_name; ?></strong> (Contractor), 
-              regarding the construction project with the following details:
+          This Construction Agreement (the "Agreement") is made and entered into by and between <strong><?php echo $client_name; ?></strong> (hereinafter referred to as the "Client") and <strong><?php echo $carpenter_name; ?></strong> (hereinafter referred to as the "Contractor"). This Agreement sets forth the terms and conditions governing the construction project as detailed below:
           </p>
 
           <div class="project-details">
@@ -1106,6 +1104,7 @@
           <h3>4. Payment Terms</h3>
           <div class="labor-cost">
               <p><strong>Labor Cost:</strong> PHP <?php echo number_format($contract['labor_cost']); ?></p>
+              <p><strong>Type of Work:</strong> <?php echo $contract['type_of_work']; ?></p>
               <p><strong>Payment Schedule:</strong>
                   <ul>
                       <li>30% Initial Down Payment upon contract signing</li>

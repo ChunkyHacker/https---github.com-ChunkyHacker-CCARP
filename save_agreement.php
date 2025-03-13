@@ -12,22 +12,24 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $Carpenter_ID = !empty($_POST['Carpenter_ID']) ? $_POST['Carpenter_ID'] : die("Error: Missing Carpenter_ID.");
     $labor_cost = isset($_POST['labor_cost']) ? $_POST['labor_cost'] : '0.00';
     $duration = isset($_POST['duration']) ? $_POST['duration'] : 0;
+    $type_of_work = isset($_POST['type_of_work']) ? $_POST['type_of_work'] : 'select type of work';
 
     // Convert labor cost to float after removing 'PHP '
     $labor_cost = (float) str_replace('PHP ', '', $labor_cost);
 
-    // **Insert contract WITHOUT User_ID**
-    $sql = "INSERT INTO contracts (Plan_ID, approval_ID, Carpenter_ID, labor_cost, duration, transaction_ID) 
-            VALUES (?, ?, ?, ?, ?, NULL)";
+    // Updated INSERT query to include type_of_work
+    $sql = "INSERT INTO contracts (Plan_ID, approval_ID, Carpenter_ID, labor_cost, duration, transaction_ID, type_of_work) 
+            VALUES (?, ?, ?, ?, ?, NULL, ?)";
 
     $stmt = mysqli_prepare($conn, $sql);
     
-    mysqli_stmt_bind_param($stmt, "iiiid", 
+    mysqli_stmt_bind_param($stmt, "iiiids", 
         $Plan_ID, 
         $approval_ID, 
         $Carpenter_ID, 
         $labor_cost,
-        $duration
+        $duration,
+        $type_of_work
     );
 
     if (mysqli_stmt_execute($stmt)) {

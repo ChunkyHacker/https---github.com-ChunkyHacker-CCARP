@@ -6,6 +6,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $carpenter_id = $_POST["Carpenter_ID"];
     $user_id = $_POST["User_ID"];
     $labor_cost = $_POST["Labor_Cost"];
+    $Type_of_work = $_POST["type_of_work"];
     $duration = $_POST["Duration"];
     $payment_method = $_POST["Payment_Method"];
     $payment_date = date("Y-m-d");
@@ -24,12 +25,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // ✅ Insert new payment if no previous record
-    $sql = "INSERT INTO payment (Contract_ID, Carpenter_ID, User_ID, Labor_Cost, Duration, Payment_Method, Payment_Date) 
-            VALUES (?, ?, ?, ?, ?, ?, ?)";
+    $sql = "INSERT INTO payment (Contract_ID, Carpenter_ID, User_ID, Labor_Cost, Duration, type_of_work, Payment_Method, Payment_Date) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 
     if ($stmt = $conn->prepare($sql)) {
-        $stmt->bind_param("iiidiss", $contract_id, $carpenter_id, $user_id, $labor_cost, $duration, $payment_method, $payment_date);
-
+        $stmt->bind_param("iiidisss", $contract_id, $carpenter_id, $user_id, $labor_cost, $duration, $Type_of_work, $payment_method, $payment_date);
         if ($stmt->execute()) {
             $payment_id = $conn->insert_id;
             header("Location: payrollreceipt.php?Payment_ID=$payment_id&success=true");

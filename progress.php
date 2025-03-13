@@ -301,12 +301,12 @@
         // Determine the message based on the action
         if ($action == 'time_in') {
             echo "<script>alert('Time In recorded successfully!');</script>";
-        } elseif ($action == 'time_out') {
+        } elseif ($action == 'Time_out') {
             echo "<script>alert('Time Out recorded successfully!');</script>";
         }
     }
 
-    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action']) && $_GET['action'] == 'time_out') {
+    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action']) && $_GET['action'] == 'Time_out') {
         echo "<script>alert('Time Out recorded successfully!');</script>";
     }
     ?>
@@ -510,20 +510,36 @@
                     <span class="close">&times;</span>
                     <h2>Attendance</h2>
                     <form id="addLaborForm" method="post" action="addattendance.php" enctype="multipart/form-data">
+                        <?php
+                        // Fetch type_of_work from contracts table
+                        $contract_ID = isset($_GET['contract_ID']) ? $_GET['contract_ID'] : '';
+                        $type_query = "SELECT type_of_work FROM contracts WHERE contract_ID = ?";
+                        $stmt = $conn->prepare($type_query);
+                        $stmt->bind_param("i", $contract_ID);
+                        $stmt->execute();
+                        $type_result = $stmt->get_result();
+                        $type_of_work = ($type_result->num_rows > 0) ? $type_result->fetch_assoc()['type_of_work'] : '';
+                        ?>
                         <div>
-                            <label for="Time_in">Time-in:</label>
-                            <input type="Time_in" id="Time_in" name="Time_in" required readonly>
-                            <button onclick="addTimeStamp()">Add Timestamp</button>
+                            <label for="type_of_work">Type of Work:</label>
+                            <input type="text" id="type_of_work" name="type_of_work" value="<?php echo htmlspecialchars($type_of_work); ?>" readonly style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
                         </div>
-                        <div>
-                            <label for="overall_cost">Time-out</label>
-                            <input type="number" id="overall_cost" name="overall_cost" step="0.01" min="0" readonly>
+                        <div style="display: flex; align-items: center; gap: 10px;">
+                            <div style="flex: 1;">
+                                <label for="Time_in">Time-in:</label>
+                                <input required type="text" id="Time_in" name="Time_in" readonly style="width: 100%; padding: 8px; margin: 5px 0; border: 1px solid #ddd; border-radius: 4px; font-size: 16px;">
+                            </div>
                         </div>
+
 
                         <!-- Hidden input field for contract_ID -->
                         <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
-
-                        <button type="submit">Add Attendance</button>
+                        <!-- Modified buttons container -->
+                        <div style="display: flex; gap: 10px; margin-top: 15px; justify-content: flex-start;">
+                            <button type="button" onclick="addTimeStamp(event)" style="flex: 0 0 120px; padding: 8px;">Add Timestamp</button>
+                            <button type="submit" id="addAttendanceBtn" disabled style="flex: 0 0 120px; padding: 8px; opacity: 0.5;">Add Attendance</button>
+                            <button type="button" onclick="closeLaborModal()" style="flex: 0 0 120px; padding: 8px; background-color: #dc3545;">Cancel</button>
+                        </div>
                     </form>
                 </div>
             </div>
@@ -673,16 +689,23 @@
                     if(isset($_GET['contract_ID'])) {
                         $contractID = $_GET['contract_ID'];
 
-                        // Prepare the SQL query with a WHERE clause to filter by contract_ID
-                        $sql = "SELECT * FROM attendance WHERE contract_ID = $contractID";
+                        // Modified SQL query to include type_of_work from contracts table
+                        $sql = "SELECT a.*, c.type_of_work, a.attendance_ID 
+                                FROM attendance a 
+                                LEFT JOIN contracts c ON a.contract_ID = c.contract_ID 
+                                WHERE a.contract_ID = ?";
 
-                        $result = $conn->query($sql);
+                        $stmt = $conn->prepare($sql);
+                        $stmt->bind_param("i", $contractID);
+                        $stmt->execute();
+                        $result = $stmt->get_result();
+
 
                         if ($result->num_rows > 0) {
                             echo '<div class="table-container">';
                             echo '    <table class="styled-table">';
                             echo '        <tr>';
-                            echo '            <th class="table-header">Type</th>';
+                            echo '            <th class="table-header">Type of Work</th>';
                             echo '            <th class="table-header">Time in</th>';
                             echo '            <th class="table-header">Time out</th>';
                             echo '            <th class="table-header">Action</th>';
@@ -690,11 +713,11 @@
 
                             while ($row = $result->fetch_assoc()) {
                                 echo '        <tr>';
-                                echo '            <td class="table-cell"><h3>' . $row["Type_of_work"] . '</h3></td>';
+                                echo '            <td class="table-cell"><h3>' . $row["type_of_work"] . '</h3></td>';
                                 echo '            <td class="table-cell"><h3>' . $row["Time_in"] . '</h3></td>';
                                 echo '            <td class="table-cell"><h3>' . $row["Time_out"] . '</h3></td>';
                                 echo '            <td class="table-cell">';
-                                echo '              <button type="button" onclick="openAttendanceModal()">Add Time out</button>';
+                                echo '              <button type="button" onclick="openTimeOutModal(' . $row["attendance_ID"] . ', ' . $contractID . ')">Add Time out</button>';
                                 echo '            </td>';           
                                 echo '        </tr>';
                             }
@@ -710,25 +733,9 @@
 
                     $conn->close();
                 ?>
-                <!-- Hidden modal form -->
-                <div id="timeOutModal" class="modal">
-                    <div class="modal-content">
-                        <span class="close" onclick="closeModal()">&times;</span>
-                        <h2>Add Time out</h2>
-                        <form id="timeOutForm" action="update_time_out.php" method="post">
-                            <div>
-                                <label for="timeOutField">Time out:</label>
-                                <input type="text" id="timeOutField" name="Time_out" readonly>
-                            </div>
-                            <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
-                            <button type="button" onclick="addTimestamp()">Add Timestamp</button>
-                            <button type="submit">Save</button>
-                        </form>
-                    </div>
-                </div>
-            </div>
+                <!-- Rest of the modal code remains the same -->
 
-        </div>
+            </div>
         <!-- Buttons -->
         <div style="display: flex; justify-content: flex-start; gap: 20px; margin-top: 30px; margin-left: 20px;">
             <?php if (!empty($payment_ID)): ?>
@@ -745,6 +752,22 @@
                 </button>
             <?php endif; ?>
         </div>
+        <!-- Add Time Out Modal -->
+        <div id="timeOutModal" class="modal" style="display: none;">
+                <div class="modal-content">
+                    <span class="close" onclick="closeTimeOutModal()">&times;</span>
+                    <h2>Add Time Out</h2>
+                    <form id="timeOutForm" method="post" action="update_time_out.php">
+                        <div>
+                            <label for="timeOutField">Time-out:</label>
+                            <input type="text" id="timeOutField" name="Time_out" readonly required>
+                            <button type="button" onclick="addTimeOutStamp()">Add Timestamp</button>
+                        </div>
+                        <input type="hidden" name="attendance_id" id="attendanceIdField">
+                        <button type="submit" id="saveTimeOutBtn" disabled style="opacity: 0.5;">Save Time Out</button>
+                    </form>
+                </div>
+        </div>
     </div>
 
     <!-- JavaScript -->
@@ -759,27 +782,80 @@
             document.getElementById('timeOutModal').style.display = 'none';
         }
 
-        // Function to add timestamp to the time out field
-        function addTimestamp() {
+        function closeTimeOutModal() {
+            document.getElementById('timeOutModal').style.display = 'none';
+        }
+
+        function openTimeOutModal(attendanceId, contractId) {
+            var modal = document.getElementById('timeOutModal');
+            modal.style.display = 'block';
+            
+            // Update the hidden field values
+            document.getElementById('attendanceIdField').value = attendanceId;
+            
+            // Add contract_ID field if needed
+            var form = document.getElementById('timeOutForm');
+            if (!form.querySelector('input[name="contract_ID"]')) {
+                var contractInput = document.createElement('input');
+                contractInput.type = 'hidden';
+                contractInput.name = 'contract_ID';
+                contractInput.value = contractId;
+                form.appendChild(contractInput);
+            }
+        }
+
+        function closeTimeOutModal() {
+            document.getElementById('timeOutModal').style.display = 'none';
+        }
+
+        function addTimeOutStamp() {
             var currentDate = new Date();
-            var formattedDateTime = currentDate.toLocaleString(); // Format timestamp as desired
+            var formattedDateTime = currentDate.toLocaleString();
             document.getElementById('timeOutField').value = formattedDateTime;
+            
+            // Enable the Save Time Out button after timestamp is added
+            var saveButton = document.getElementById('saveTimeOutBtn');
+            saveButton.disabled = false;
+            saveButton.style.opacity = "1";
+        }
+
+        function openTimeOutModal(attendanceId, contractId) {
+            var modal = document.getElementById('timeOutModal');
+            modal.style.display = 'block';
+            
+            // Update the hidden field values
+            document.getElementById('attendanceIdField').value = attendanceId;
+            
+            // Add contract_ID field if needed
+            var form = document.getElementById('timeOutForm');
+            if (!form.querySelector('input[name="contract_ID"]')) {
+                var contractInput = document.createElement('input');
+                contractInput.type = 'hidden';
+                contractInput.name = 'contract_ID';
+                contractInput.value = contractId;
+                form.appendChild(contractInput);
+            }
+
+            // Reset and disable the save button when opening modal
+            var saveButton = document.getElementById('saveTimeOutBtn');
+            saveButton.disabled = true;
+            saveButton.style.opacity = "0.5";
+            document.getElementById('timeOutField').value = '';
         }
     </script>
     
     <script>
-        function addTimeStamp() {
-            // Get the current date and time
+        function addTimeStamp(event) {
+            event.preventDefault();
             var currentDate = new Date();
+            var formattedDateTime = currentDate.toLocaleString();
+            var timeInInput = document.getElementById("Time_in");
+            var addAttendanceBtn = document.getElementById("addAttendanceBtn");
             
-            // Format the date and time as desired
-            var formattedDateTime = currentDate.toLocaleString(); // You can adjust the format based on your preference
-            
-            // Get the input element
-            var additionalCostInput = document.getElementById("Time_in");
-            
-            // Set the input value to the formatted timestamp
-            additionalCostInput.value = formattedDateTime;
+            timeInInput.value = formattedDateTime;
+            // Enable the Add Attendance button after timestamp is added
+            addAttendanceBtn.disabled = false;
+            addAttendanceBtn.style.opacity = "1";
         }
     </script>
     
@@ -804,6 +880,10 @@
     function openTaskModal(event) {
         event.preventDefault(); // Prevent the default anchor behavior
         taskModal.style.display = 'block';
+    }
+
+    function closeLaborModal() {
+        document.getElementById('addLaborModal').style.display = 'none';
     }
 
     for (var i = 0; i < closeBtns.length; i++) {

@@ -221,6 +221,10 @@
                     <td><?php echo htmlspecialchars($row["Duration"]); ?> days</td>
                 </tr>
                 <tr>
+                    <th>Type of Work</th>
+                    <td><?php echo htmlspecialchars($row["type_of_work"]); ?></td>
+                </tr>
+                <tr>
                     <th>Payment Method</th>
                     <td><?php echo htmlspecialchars($row["Payment_Method"]); ?></td>
                 </tr>

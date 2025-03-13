@@ -5,6 +5,7 @@ include('config.php');
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Get the form data
     $timein = $_POST["Time_in"];
+    $type_of_work = $_POST["type_of_work"]; // Get type_of_work from the form
     
     // Set Time_out to an empty string if it's not provided in the form data
     $timeout = isset($_POST["Time_out"]) ? $_POST["Time_out"] : '';
@@ -22,11 +23,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $action = empty($timeout) ? 'time_in' : 'time_out';
 
     // Prepare the SQL query to insert the item into the database
-    $sql = "INSERT INTO attendance (Time_in, Time_out, contract_ID) 
-            VALUES (?, ?, ?)";
+    $sql = "INSERT INTO attendance (Time_in, Time_out, contract_ID, type_of_work) 
+            VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
     // Bind parameters
-    $stmt->bind_param("ssi", $timein, $timeout, $requirementID);
+    $stmt->bind_param("ssis", $timein, $timeout, $requirementID, $type_of_work);
 
     if ($stmt->execute()) {
         // Item added successfully, redirect back to progress.php with a success message

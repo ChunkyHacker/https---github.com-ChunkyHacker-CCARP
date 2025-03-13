@@ -296,7 +296,7 @@
             echo "<p>Carpenter ID: " . $Carpenter_ID . "</p>";
             ?>
         </div>
-        <a href="home.php"><i class="fas fa-home"></i> Home</a>
+        <a href="comment.php"><i class="fas fa-home"></i> Home</a>
         <a href="about.php"><i class="fas fa-info-circle"></i> About</a>
         <a href="getideas.php"><i class="fas fa-lightbulb"></i> Get Ideas</a>
         <a href="project.php"><i class="fas fa-project-diagram"></i> Project</a>
@@ -374,6 +374,7 @@
     <h3>4. Payment Terms</h3>
     <div class="labor-cost">
         <p><strong>Labor Cost:</strong> <span id="savedLaborCostDisplay">PHP 0.00</span></p>
+        <p><strong>Type of Work: <span id="savedTypeOfWorkDisplay"></span></strong></p>
         <p><strong>Payment Schedule:</strong>
             <ul>
                 <li>30% Initial Down Payment upon contract signing</li>
@@ -416,6 +417,7 @@
     <form method="POST" action="save_agreement.php">
         <input type="hidden" name="plan_ID" value="<?php echo $plan_ID; ?>">
         <input type="hidden" name="labor_cost" id="labor_cost_input" value="0.00">
+        <input type="hidden" name="type_of_work" id="type_of_work_input" value="">
         <input type="hidden" name="duration" value="<?php echo $duration; ?>">
         <input type="hidden" name="approval_ID" value="<?php echo $approval_ID; ?>">
         <input type="hidden" name="Carpenter_ID" value="<?php echo $Carpenter_ID; ?>">
@@ -433,7 +435,6 @@
     background-color: rgba(0,0,0,0.5); 
     z-index: 1000;
     /* Center modal content */
-    display: flex;
     align-items: center;
     justify-content: center;">
     
@@ -449,6 +450,20 @@
         
         <h2 style="font-size: 28px; margin-bottom: 25px; font-weight: normal;">Set Labor Cost</h2>
         
+        <!-- Type of Work dropdown -->
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; margin-bottom: 10px; font-size: 18px;">Type of Work:</label>
+            <select id="typeOfWork" style="width: 100%; 
+                   padding: 8px; 
+                   border: 1px solid #000;
+                   border-radius: 0;
+                   font-size: 18px;">
+                <option value="">Select type of work</option>
+                <option value="Per day">Per day</option>
+                <option value="On The Job">On The Job</option>
+            </select>
+        </div>
+        
         <!-- Duration field -->
         <div style="margin-bottom: 20px;">
             <label style="display: block; margin-bottom: 10px; font-size: 18px;">Duration:</label>
@@ -463,7 +478,7 @@
         
         <!-- Price per day input -->
         <div style="margin-bottom: 20px;">
-            <label style="display: block; margin-bottom: 10px; font-size: 18px;">Price per day (PHP):</label>
+            <label style="display: block; margin-bottom: 10px; font-size: 18px;">Price per Day (PHP):</label>
             <input type="number" id="priceInput" 
                    style="width: 100%; 
                           padding: 8px; 
@@ -474,7 +489,7 @@
 
         <!-- Calculated Labor Cost -->
         <div style="margin-bottom: 30px;">
-            <label style="display: block; margin-bottom: 10px; font-size: 18px;">Calculated Labor Cost:</label>
+            <label style="display: block; margin-bottom: 10px; font-size: 18px;">Labor Cost:</label>
             <input type="text" id="laborCost" readonly 
                    style="width: 100%; 
                           padding: 8px;
@@ -516,6 +531,11 @@
 
     function openContractModal() {
         document.getElementById('contractModal').style.display = 'flex';
+        // Clear previous values
+        document.getElementById('priceInput').value = '';
+        document.getElementById('laborCost').value = '';
+        // Set default type of work to empty (requiring selection)
+        document.getElementById('typeOfWork').value = '';
     }
 
     function closeContractModal() {
@@ -526,28 +546,58 @@
         // Get the price and duration values
         var pricePerDay = parseFloat(document.getElementById('priceInput').value);
         var duration = <?php echo $duration; ?>; // PHP value for duration in days
+        var typeOfWork = document.getElementById('typeOfWork').value;
+        
+        // Check if type of work is selected
+        if (!typeOfWork) {
+            document.getElementById('laborCost').value = '';
+            return;
+        }
         
         // Check if price per day is provided
         if (!isNaN(pricePerDay) && pricePerDay > 0) {
-            // Calculate the labor cost
+            // Calculate the labor cost - always multiply by duration regardless of type
             var laborCost = pricePerDay * duration;
-            // Display the calculated labor cost
-            document.getElementById('laborCost').value = 'PHP ' + laborCost.toFixed(2);
+            
+            // Display the calculated labor cost with proper formatting
+            document.getElementById('laborCost').value = 'PHP ' + laborCost.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         } else {
-            // If price is not valid, show an error
-            alert("Please enter a valid price per day.");
+            // Clear the labor cost field if price is invalid
+            document.getElementById('laborCost').value = '';
         }
     }
 
     function saveLaborCost() {
         // Get the labor cost from the input field
-        var laborCostValue = document.getElementById('laborCost').value;
+        var laborCostText = document.getElementById('laborCost').value;
+        var typeOfWork = document.getElementById('typeOfWork').value;
         
-        // Save the calculated labor cost (this is just pre-save for display purposes)
-        document.getElementById('savedLaborCostDisplay').textContent = laborCostValue;
+        // Check if a type of work has been selected
+        if (!typeOfWork) {
+            alert("Please select a type of work.");
+            return;
+        }
+        
+        // Check if a labor cost has been calculated
+        if (!laborCostText) {
+            alert("Please enter a valid price.");
+            return;
+        }
+        
+        // Extract the numeric value from the formatted text (remove 'PHP ' and commas)
+        var laborCostValue = parseFloat(laborCostText.replace('PHP ', '').replace(/,/g, ''));
+        
+        // Save the calculated labor cost for display
+        document.getElementById('savedLaborCostDisplay').textContent = laborCostText;
+        
+        // Save the type of work for display
+        document.getElementById('savedTypeOfWorkDisplay').textContent = typeOfWork;
         
         // Save the labor cost in the hidden input field for backend use
-        document.getElementById('labor_cost_input').value = parseFloat(laborCostValue.replace('PHP ', ''));
+        document.getElementById('labor_cost_input').value = laborCostValue;
+        
+        // Save the type of work in the hidden input field
+        document.getElementById('type_of_work_input').value = typeOfWork;
         
         // Close the modal after saving the labor cost
         closeContractModal();
@@ -555,6 +605,9 @@
 
     // Automatically call the labor cost calculation whenever the price input changes
     document.getElementById('priceInput').addEventListener('input', calculateLaborCost);
+    
+    // Also recalculate when type of work changes
+    document.getElementById('typeOfWork').addEventListener('change', calculateLaborCost);
 </script>
 
 <!-- Add Font Awesome for icons -->

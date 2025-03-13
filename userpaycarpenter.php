@@ -29,7 +29,7 @@
     echo "<script>console.log('Debug: User_ID = $user_ID, Contract_ID = $contract_ID');</script>";
 
     // Fetch contract details including Duration & Carpenter_ID
-    $contractQuery = "SELECT labor_cost, duration, Carpenter_ID FROM contracts WHERE Contract_ID = ? AND (User_ID = ? OR Carpenter_ID = ?)";
+    $contractQuery = "SELECT labor_cost, type_of_work, duration, Carpenter_ID FROM contracts WHERE Contract_ID = ? AND (User_ID = ? OR Carpenter_ID = ?)";
     $contractStmt = mysqli_prepare($conn, $contractQuery);
     mysqli_stmt_bind_param($contractStmt, "iii", $contract_ID, $user_ID, $user_ID);
     mysqli_stmt_execute($contractStmt);
@@ -43,8 +43,9 @@
         exit();
     }
 
-    // Get labor cost & duration
+    // Get labor cost, Type of Work & duration
     $labor_cost = $contract['labor_cost'];
+    $Type_of_work = $contract['type_of_work'];
     $duration = $contract['duration'];
     $carpenter_ID = $contract['Carpenter_ID'];
 
@@ -323,6 +324,9 @@
 
             <label for="overall_cost"><b>Labor Cost</b></label>
             <input type="text" name="Labor_Cost" value="<?php echo $labor_cost; ?>" readonly>
+
+            <label for="type_of_work"><b>Type of Work</b></label>
+            <input type="text" name="type_of_work" value="<?php echo $Type_of_work; ?>" readonly>
 
             <label for="Payment_Method"><b>Payment Method</b></label><br>
             <select id="Payment_Method" name="Payment_Method" required>
