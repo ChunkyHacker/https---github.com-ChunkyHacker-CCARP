@@ -1,21 +1,21 @@
 <?php
-session_start();
-include('config.php');
+    session_start();
+    include('config.php');
 
-if (!isset($_SESSION['Carpenter_ID'])) {
-    header('Location: login.html');
-    exit();
-}
+    if (!isset($_SESSION['Carpenter_ID'])) {
+        header('Location: login.html');
+        exit();
+    }
 
-$Carpenter_ID = $_SESSION['Carpenter_ID'];
+    $Carpenter_ID = $_SESSION['Carpenter_ID'];
 
-// Get carpenter details
-$sql = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
-$stmt = $conn->prepare($sql);
-$stmt->bind_param("i", $Carpenter_ID);
-$stmt->execute();
-$result = $stmt->get_result();
-$carpenterDetails = $result->fetch_assoc();
+    // Get carpenter details
+    $sql = "SELECT * FROM carpenters WHERE Carpenter_ID = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $Carpenter_ID);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $carpenterDetails = $result->fetch_assoc();
 ?>
 
 
@@ -38,7 +38,7 @@ $carpenterDetails = $result->fetch_assoc();
         body {
         font-family: Verdana, sans-serif;
         margin: 0;
-        background-color:rgb(255, 255, 255);
+        background-color:rgb(0, 0, 0);
         font-size: 20px; /* Set base font size to 20px */
         }
 
@@ -177,47 +177,197 @@ $carpenterDetails = $result->fetch_assoc();
 
         .post-btn,
         .cancel-btn {
-        margin-bottom: 10px;
+            margin-bottom: 10px;
         }
 
         .cancel-btn {
-        background-color: red;
-        color: #fff;
-        padding: 10px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-        margin-right: 10px;
-        text-decoration: none;
-        display: inline-block;
-        text-align: center;
-        width: 100%;
-        font-size: 20px; /* Set cancel button font size to 20px */
+            background-color: red;
+            color: #fff;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            margin-right: 10px;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            width: 100%;
+            font-size: 20px; /* Set cancel button font size to 20px */
         }
 
         .cancel-btn:hover {
-        background-color: #000000;
+            background-color: #000000;
         }
 
         button {
-        background-color: #FF8C00;
-        color: #fff;
-        border: none;
-        padding: 10px;
-        margin-bottom: 10px;
-        border-radius: 5px;
-        cursor: pointer;
-        font-size: 20px; /* Set button font size to 20px */
+            background-color: #FF8C00;
+            color: #fff;
+            border: none;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 20px; /* Set button font size to 20px */
         }
 
         button:hover {
-        background-color: #000000;
+            background-color: #000000;
+        }
+
+        /* Evaluation Form Styles */
+        /* Update the evaluation section styles */
+        .evaluation-section {
+            margin-bottom: 30px;
+            padding: 25px;
+            border-radius: 10px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .evaluation-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .evaluation-section h3 {
+            color:rgb(0, 0, 0);
+            border-bottom: 2px solid #FF8C00;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+
+        .eval-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 15px;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .eval-table th, .eval-table td {
+            padding: 15px;
+            border: 1px solid #eee;
+            color: #000000;  /* Add this line for black text */
+        }
+
+        .eval-table th {
+            background-color: #000000;
+            color:rgb(0, 0, 0);
+            font-weight: bold;
+            padding: 15px;
+            font-size: 20px;
+        }
+
+        .eval-table td {
+            background-color: #f9f9f9;
+            color: #000000;
+            padding: 15px;
+            font-size: 20px;
+        }
+
+        .eval-table tr:nth-child(even) td {
+            background-color: #f0f0f0;
+        }
+
+        .eval-table tr:hover td {
+            background-color: #e0e0e0;
+        }
+
+        .eval-table input[type='number'] {
+            width: 120px;
+            height: 45px;
+            padding: 10px;
+            border: 2px solid #FF8C00;
+            border-radius: 8px;
+            font-size: 22px;
+            text-align: center;
+            background-color: #fff;
+            color: #000000;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            display: block;
+            margin: 0 auto;
+        }
+
+        .eval-table input[type='number']:focus {
+            border-color: #FF8C00;
+            box-shadow: 0 0 8px rgba(255,140,0,0.4);
+            outline: none;
+        }
+
+        .eval-table td:last-child {
+            text-align: center;
+            min-width: 150px;
+        }
+
+        .total-score {
+            background: linear-gradient(to right, #FF8C00, #FFA500);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            margin-top: 20px;
+        }
+
+        .total-score label {
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .total-score input {
+            background: rgba(255, 255, 255, 0.9);
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            font-size: 24px;
+            font-weight: bold;
+            width: 100px;
+            text-align: center;
+            color: #000000;
+        }
+
+        .total-score span {
+            color: #000000;
+            font-weight: bold;
+        }
+        
+        .eval-table th {
+            background-color: #f8f8f8;
+        }
+        
+        .eval-table input[type='number'] {
+            width: 80px;
+            padding: 5px;
+        }
+        
+        .decision-group {
+            margin: 15px 0;
+        }
+        
+        .decision-group label {
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .submit-btn {
+            background-color: #FF8C00;
+            padding: 12px 24px;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        
+        .back-btn {
+            background-color: #666;
+            padding: 12px 24px;
+            font-size: 18px;
         }
 
         /* New styling for the radio button groups */
         .radio-group {
             display: flex;
-            gap: 20px; /* Space between Yes and No */
+            gap: 20px;
             align-items: center;
         }
 
@@ -227,7 +377,85 @@ $carpenterDetails = $result->fetch_assoc();
             gap: 5px; /* Space between radio button and text */
             cursor: pointer;
         }
-  </style>
+
+        /* Yes/No Button Styles */
+        .yes-no-btn {
+            padding: 8px 16px;
+            border: 2px solid #ddd;
+            border-radius: 4px;
+            background: white;
+            color: #000;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s;
+            margin: 0 2px;
+        }
+
+        .yes-no-btn.active {
+            background: #FF8C00;
+            color: white;
+            border-color: #FF8C00;
+        }
+
+        .yes-no-btn:hover:not(.active) {
+            border-color: #FF8C00;
+        }
+
+        .total-score {
+            font-size: 24px;
+            font-weight: bold;
+            padding: 15px;
+            background: #f8f8f8;
+            border-radius: 5px;
+            margin-top: 20px;
+            text-align: right;
+        }
+        
+        .eval-table th {
+            background-color: #f8f8f8;
+        }
+        
+        .eval-table input[type='number'] {
+            width: 80px;
+            padding: 5px;
+        }
+        
+        .decision-group {
+            margin: 15px 0;
+        }
+        
+        .decision-group label {
+            display: block;
+            margin: 10px 0;
+        }
+        
+        .submit-btn {
+            background-color: #FF8C00;
+            padding: 12px 24px;
+            font-size: 18px;
+            margin-right: 10px;
+        }
+        
+        .back-btn {
+            background-color: #666;
+            padding: 12px 24px;
+            font-size: 18px;
+        }
+
+        /* New styling for the radio button groups */
+        .radio-group {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .radio-group label {
+            display: flex;
+            align-items: center;
+            gap: 5px; /* Space between radio button and text */
+            cursor: pointer;
+        }
+    </style>
 
 </head>
 <body>
@@ -396,57 +624,134 @@ $carpenterDetails = $result->fetch_assoc();
                     }
                     echo "</div>";
                     
-                    echo"<h2>Evaluation Form</h2>";
+                    echo"<h2>Project Evaluation Form</h2>";
                     echo"<form method='post' action='approveplan.php'>";
-                    echo"<!-- Fix: Ensure correct plan_ID input field -->";
-                    echo "<input type='hidden' name='plan_ID' value='{$plan_ID}'>";
-
-                    echo "<label>Were the details of the project suitable for your scope of work?</label>";
-                    echo "<div class='radio-group'>";
-                    echo "<label><input type='radio' name='q1' value='Yes' required> Yes</label>";
-                    echo "<label><input type='radio' name='q1' value='No' required> No</label>";
-                    echo "</div>";
-
-                    echo "<label>Are you able to finish the project even if there is an overlapping budget?</label>";
-                    echo "<div class='radio-group'>";
-                    echo "<label><input type='radio' name='q2' value='Yes' required> Yes</label>";
-                    echo "<label><input type='radio' name='q2' value='No' required> No</label>";
-                    echo "</div>";
-
-                    echo "<label>Are you willing to accept an additional task with additional payment?</label>";
-                    echo "<div class='radio-group'>";
-                    echo "<label><input type='radio' name='q3' value='Yes' required> Yes</label>";
-                    echo "<label><input type='radio' name='q3' value='No' required> No</label>";
-                    echo "</div>";
-
-                    echo "<label>Can you finish the project on time?</label>";
-                    echo "<div class='radio-group'>";
-                    echo "<label><input type='radio' name='q4' value='Yes' required> Yes</label>";
-                    echo "<label><input type='radio' name='q4' value='No' required> No</label>";
-                    echo "</div>";
-
-                    echo "<label>Will you accept the project?</label>";
-                    echo "<div class='radio-group'>";
-                    echo "<label><input type='radio' name='q5' value='Yes' required> Yes</label>";
-                    echo "<label><input type='radio' name='q5' value='No' required> No</label>";
-                    echo "</div>";
-
-                    echo "<label>If Yes/No, why?</label><br>";
-                    echo "<textarea name='comment' rows='4' cols='50'></textarea><br>";
-
-                    echo "<label>Approved By: </label>";
-                    echo "<input type='text' name='approved_by' value='" . htmlspecialchars($carpenterDetails['First_Name'] . ' ' . $carpenterDetails['Last_Name']) . "' readonly><br>";
-
-                    echo "<label>Status:</label>";
-                    echo "<select name='status' style='width: 200px; height: 40px; margin-bottom: 20px;'>";
-                    echo "<option value='' disabled selected>Select an option</option>";
-                    echo "<option value='approve'>Approve</option>";
-                    echo "<option value='decline'>Decline</option>";
-                    echo "</select><br>";
-
-                    echo "<button type='submit'>Submit</button>";
+                        echo"<input type='hidden' name='plan_ID' value='{$plan_ID}'>";
+                        
+                        // Project Scope & Feasibility
+                        echo "<div class='evaluation-section'>";
+                            echo "<h3>1. Project Scope & Feasibility</h3>";
+                            echo "<table class='eval-table'>";
+                                echo "<tr><th>Criteria</th><th>Score (1-5)</th></tr>";
+                                echo "<tr><td>Project size aligns with our capacity</td><td><input type='number' name='scope_1' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Availability of required materials</td><td><input type='number' name='scope_2' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Timeline is realistic and achievable</td><td><input type='number' name='scope_3' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Budget is sufficient for project completion</td><td><input type='number' name='scope_4' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Client expectations are clear and defined</td><td><input type='number' name='scope_5' min='0' max='5' value='0' required></td></tr>";
+                            echo "</table>";
+                        echo "</div>";
+                    
+                        // Site & Environmental Considerations
+                        echo "<div class='evaluation-section'>";
+                            echo "<h3>2. Site & Environmental Considerations</h3>";
+                            echo "<table class='eval-table'>";
+                                echo "<tr><th>Criteria</th><th>Score (1-5)</th></tr>";
+                                echo "<tr><td>Accessibility of the project site</td><td><input type='number' name='site_1' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Environmental impact considerations</td><td><input type='number' name='site_2' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Legal and zoning requirements met</td><td><input type='number' name='site_3' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Safety concerns addressed</td><td><input type='number' name='site_4' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Potential hazards identified and manageable</td><td><input type='number' name='site_5' min='0' max='5' value='0' required></td></tr>";
+                            echo "</table>";
+                        echo "</div>";
+                    
+                        // Client Readiness & Commitment
+                        echo "<div class='evaluation-section'>";
+                            echo "<h3>3. Client Readiness & Commitment</h3>";
+                            echo "<table class='eval-table'>";
+                                echo "<tr><th>Criteria</th><th>Yes/No</th><th>Comments</th></tr>";
+                                echo "<tr>
+                                    <td>Client has secured necessary permits</td>
+                                    <td>
+                                        <input type='hidden' name='client_1' id='client_1' value='No'>
+                                        <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_1\", \"yes\", event)'>Yes</button>
+                                        <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_1\", \"no\", event)'>No</button>
+                                    </td>
+                                    <td><input type='text' name='client_1_comment'></td>
+                                </tr>";
+                                echo "<tr>
+                                    <td>Client is financially prepared</td>
+                                    <td>
+                                        <input type='hidden' name='client_3' id='client_3' value='No'>
+                                        <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_3\", \"yes\", event)'>Yes</button>
+                                        <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_3\", \"no\", event)'>No</button>
+                                    </td>
+                                    <td><input type='text' name='client_3_comment'></td>
+                                </tr>";
+                                echo "<tr>
+                                    <td>Client has realistic expectations</td>
+                                    <td>
+                                        <input type='hidden' name='client_4' id='client_4' value='No'>
+                                        <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_4\", \"yes\", event)'>Yes</button>
+                                        <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_4\", \"no\", event)'>No</button>
+                                    </td>
+                                    <td><input type='text' name='client_4_comment'></td>
+                                </tr>";
+                                echo "<tr>
+                                    <td>Client is cooperative and responsive</td>
+                                    <td>
+                                        <input type='hidden' name='client_5' id='client_5' value='No'>
+                                        <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_5\", \"yes\", event)'>Yes</button>
+                                        <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_5\", \"no\", event)'>No</button>
+                                    </td>
+                                    <td><input type='text' name='client_5_comment'></td>
+                                </tr>";
+                                echo "<tr>
+                                    <td>Client has a clear design or blueprint</td>
+                                    <td>
+                                        <input type='hidden' name='client_5' id='client_5' value='No'>
+                                        <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_5\", \"yes\", event)'>Yes</button>
+                                        <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_5\", \"no\", event)'>No</button>
+                                    </td>
+                                    <td><input type='text' name='client_5_comment'></td>
+                                </tr>";
+                            echo "</table>";
+                        echo "</div>";
+                            // Workforce & Resource Availability
+                            echo "<div class='evaluation-section'>";
+                            echo "<h3>4. Workforce & Resource Availability</h3>";
+                            echo "<table class='eval-table'>";
+                                echo "<tr><th>Criteria</th><th>Score (1-5)</th></tr>";
+                                echo "<tr><td>Skilled labor is available</td><td><input type='number' name='workforce_1' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Equipment and tools are available</td><td><input type='number' name='workforce_2' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Project workload is manageable</td><td><input type='number' name='workforce_3' min='0' max='5' value='0' required></td></tr>";
+                                echo "<tr><td>Subcontractors (if needed) are available</td><td><input type='number' name='workforce_4' min='0' max='5' value='0' required></td></tr>";
+                            echo "</table>";
+                        echo "</div>";
+                        
+                        // Add Total Score Section
+                        // Replace the total score section
+                        echo "<div class='evaluation-section'>";
+                            echo "<div class='total-score'>";
+                                echo "<label>Total Evaluation Score: </label>";
+                                echo "<input type='number' id='totalScore' name='total_score' value='0' readonly>";
+                                echo "<span>/70</span>";
+                            echo "</div>";
+                        echo "</div>";
+                    
+                        // Final Decision section
+                        echo "<div class='evaluation-section'>";
+                            echo "<h3>Final Decision</h3>";
+                            echo "<div class='decision-group'>";
+                                echo "<label><input type='radio' name='final_decision' value='accept' required> Accept Project</label><br>";
+                                echo "<label><input type='radio' name='final_decision' value='accept_conditions'> Accept with Conditions</label><br>";
+                                echo "<label><input type='radio' name='final_decision' value='revise'> Revise and Resubmit</label><br>";
+                                echo "<label><input type='radio' name='final_decision' value='reject'> Reject Project</label>";
+                            echo "</div>";
+                        echo "</div>";
+                    
+                        // Evaluator Information
+                        echo "<div class='evaluation-section'>";
+                            echo "<label>Evaluator Name: </label>";
+                            echo "<input type='text' name='evaluator_name' value='" . htmlspecialchars($carpenterDetails['First_Name'] . ' ' . $carpenterDetails['Last_Name']) . "' readonly><br>";
+                            
+                            echo "<label>Date: </label>";
+                            echo "<input type='text' name='evaluation_date' value='" . date('Y-m-d') . "' readonly><br>";
+                        echo "</div>";
+                    
+                        echo "<button type='submit' class='submit-btn'>Submit Evaluation</button>";
                     echo "</form>";
-
+                    
+                    // Remove the duplicate styles and keep only the back button
                     echo "<button onclick=\"history.back()\">Go back</button>";
                     echo "</div>";
                 } else {
@@ -495,4 +800,89 @@ function submitForm(action) {
     document.getElementById('planForm').submit();
 }
 </script>
-</html>
+<script>
+function toggleYesNo(inputId, value, event) {
+    document.getElementById(inputId).value = value;
+    
+    // Get all buttons inside the parent td
+    const buttons = event.target.parentElement.getElementsByClassName('yes-no-btn');
+    
+    // Remove 'active' class from all buttons
+    Array.from(buttons).forEach(btn => {
+        btn.classList.remove('active');
+    });
+
+    // Add 'active' class to the clicked button
+    event.target.classList.add('active');
+}
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    function calculateTotalScore() {
+        let total = 0;
+
+        // Calculate Project Scope scores (5 items)
+        for (let i = 1; i <= 5; i++) {
+            let input = document.getElementsByName('scope_' + i)[0];
+            let value = parseInt(input.value) || 0;
+
+            if (value < 1) {
+                input.value = 0; // Set to 0 instead of 1
+                value = 0;
+            }
+            if (value > 5) {
+                input.value = 5;
+                value = 5;
+            }
+
+            total += value;
+        }
+
+        // Calculate Site Considerations scores (5 items)
+        for (let i = 1; i <= 5; i++) {
+            let input = document.getElementsByName('site_' + i)[0];
+            let value = parseInt(input.value) || 0;
+
+            if (value < 1) {
+                input.value = 0;
+                value = 0;
+            }
+            if (value > 5) {
+                input.value = 5;
+                value = 5;
+            }
+
+            total += value;
+        }
+
+        // Calculate Workforce scores (4 items)
+        for (let i = 1; i <= 4; i++) {
+            let input = document.getElementsByName('workforce_' + i)[0];
+            let value = parseInt(input.value) || 0;
+
+            if (value < 1) {
+                input.value = 0;
+                value = 0;
+            }
+            if (value > 5) {
+                input.value = 5;
+                value = 5;
+            }
+
+            total += value;
+        }
+
+        // Update the total score display
+        document.getElementById('totalScore').value = total;
+    }
+
+    // Add event listeners to all number inputs
+    const numberInputs = document.querySelectorAll('input[type="number"]');
+    numberInputs.forEach(input => {
+        input.addEventListener('input', calculateTotalScore);
+    });
+
+    // Run initial calculation
+    calculateTotalScore();
+});
+</script>
