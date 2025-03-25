@@ -398,6 +398,8 @@
         }
 
         .yes-no-btn:hover:not(.active) {
+            background-color: #FF8C00;
+            color: white;
             border-color: #FF8C00;
         }
 
@@ -420,13 +422,99 @@
             padding: 5px;
         }
         
-        .decision-group {
-            margin: 15px 0;
+        .evaluation-section h4 {
+            color: #000000;
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+
+        .evaluation-section ul {
+            margin-bottom: 15px;
+        }
+
+        .evaluation-section ul li {
+            color: #000000;
+            font-size: 18px;
+            margin-bottom: 8px;
+            padding: 5px 0;
+        }
+
+        .decision-result {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .decision-result h4 {
+            margin-bottom: 10px;
+            font-size: 20px;
+        }
+
+        .decision-result p {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .decision-result.accept {
+            background-color: #4CAF50;
+            color: white;
+        }
+
+        .decision-result.accept-conditions {
+            background-color: #FFA500;
+            color: white;
+        }
+
+        .decision-result.revise {
+            background-color: #FF8C00;
+            color: white;
+        }
+
+        .decision-result.reject {
+            background-color: #f44336;
+            color: white;
         }
         
-        .decision-group label {
-            display: block;
-            margin: 10px 0;
+        /* Add floating summary styles */
+        .floating-summary {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.98);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            min-width: 300px;
+            max-width: 400px;
+            border: 2px solid #FF8C00;
+            cursor: move; /* Add this line */
+            user-select: none; /* Add this line */
+        }
+
+        .floating-summary .total-score {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #f8f8f8;
+            border-radius: 8px;
+            text-align: center;
+            font-size: 24px;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .floating-summary .decision-result {
+            margin: 0;
+            font-size: 0.9em;
+        }
+
+        .floating-summary .decision-result h4 {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .floating-summary .decision-result p {
+            font-size: 16px;
         }
         
         .submit-btn {
@@ -718,7 +806,6 @@
                             echo "</table>";
                         echo "</div>";
                         
-                        // Add Total Score Section
                         // Replace the total score section
                         echo "<div class='evaluation-section'>";
                             echo "<div class='total-score'>";
@@ -728,14 +815,33 @@
                             echo "</div>";
                         echo "</div>";
                     
+                        // Evaluation Summary section
+                        echo "<div class='evaluation-section'>";
+                            echo "<h3>Evaluation Summary</h3>";
+                            echo "<h4>Scoring System:</h4>";
+                            echo "<ul style='list-style-type: none; padding-left: 0;'>";
+                                echo "<li>5 - Excellent (Meets all requirements)</li>";
+                                echo "<li>4 - Good (Minor issues, manageable)</li>";
+                                echo "<li>3 - Fair (Requires adjustments)</li>";
+                                echo "<li>2 - Poor (Major concerns, needs discussion)</li>";
+                                echo "<li>1 - Unacceptable (Not feasible)</li>";
+                            echo "</ul>";
+                            
+                            echo "<h4 style='margin-top: 20px;'>Decision Criteria:</h4>";
+                            echo "<ul style='list-style-type: none; padding-left: 0;'>";
+                                echo "<li>40-50: Highly Acceptable - Proceed with the project.</li>";
+                                echo "<li>30-39: Acceptable - Minor adjustments needed.</li>";
+                                echo "<li>20-29: Conditional - Requires significant changes.</li>";
+                                echo "<li>Below 20: Not Acceptable - Recommend project revision or rejection.</li>";
+                            echo "</ul>";
+                        echo "</div>";
+                    
                         // Final Decision section
                         echo "<div class='evaluation-section'>";
                             echo "<h3>Final Decision</h3>";
                             echo "<div class='decision-group'>";
-                                echo "<label><input type='radio' name='final_decision' value='accept' required> Accept Project</label><br>";
-                                echo "<label><input type='radio' name='final_decision' value='accept_conditions'> Accept with Conditions</label><br>";
-                                echo "<label><input type='radio' name='final_decision' value='revise'> Revise and Resubmit</label><br>";
-                                echo "<label><input type='radio' name='final_decision' value='reject'> Reject Project</label>";
+                            echo "<div id='autoDecision'></div>";  // Container for automated decision
+                            echo "<input type='hidden' name='final_decision' id='finalDecisionInput'>";
                             echo "</div>";
                         echo "</div>";
                     
@@ -750,6 +856,15 @@
                     
                         echo "<button type='submit' class='submit-btn'>Submit Evaluation</button>";
                     echo "</form>";
+
+                    echo "<div class='floating-summary' id='floatingSummary'>
+                            <div class='total-score'>
+                                <label>Total Score: </label>
+                                <input type='number' id='floatingTotalScore' value='0' readonly>
+                                <span>/70</span>
+                            </div>
+                            <div id='floatingDecision'></div>
+                        </div>";
                     
                     // Remove the duplicate styles and keep only the back button
                     echo "<button onclick=\"history.back()\">Go back</button>";
@@ -763,37 +878,7 @@
 
 
 </body>
-<script>
-    function openModal(photoPath) {
-        var modal = document.createElement('div');
-        modal.style.display = 'block';
-        modal.style.position = 'fixed';
-        modal.style.zIndex = '1';
-        modal.style.paddingTop = '100px';
-        modal.style.left = '0';
-        modal.style.top = '0';
-        modal.style.width = '100%';
-        modal.style.height = '100%';
-        modal.style.overflow = 'auto';
-        modal.style.backgroundColor = 'rgb(0,0,0)';
-        modal.style.backgroundColor = 'rgba(0,0,0,0.9)';
-        
-        var img = document.createElement('img');
-        img.src = photoPath;
-        img.style.margin = 'auto';
-        img.style.display = 'block';
-        img.style.width = '80%';
-        img.style.maxWidth = '700px';
-        
-        modal.appendChild(img);
-        
-        modal.onclick = function() {
-            modal.style.display = 'none';
-        }
-        
-        document.body.appendChild(modal);
-    }
-</script>
+
 <script>
 function submitForm(action) {
     document.getElementById('planForm').action = action;
@@ -824,56 +909,66 @@ document.addEventListener('DOMContentLoaded', function() {
         // Calculate Project Scope scores (5 items)
         for (let i = 1; i <= 5; i++) {
             let input = document.getElementsByName('scope_' + i)[0];
-            let value = parseInt(input.value) || 0;
-
-            if (value < 1) {
-                input.value = 0; // Set to 0 instead of 1
-                value = 0;
-            }
-            if (value > 5) {
-                input.value = 5;
-                value = 5;
-            }
-
-            total += value;
+            total += parseInt(input.value) || 0;
         }
 
         // Calculate Site Considerations scores (5 items)
         for (let i = 1; i <= 5; i++) {
             let input = document.getElementsByName('site_' + i)[0];
-            let value = parseInt(input.value) || 0;
-
-            if (value < 1) {
-                input.value = 0;
-                value = 0;
-            }
-            if (value > 5) {
-                input.value = 5;
-                value = 5;
-            }
-
-            total += value;
+            total += parseInt(input.value) || 0;
         }
 
         // Calculate Workforce scores (4 items)
         for (let i = 1; i <= 4; i++) {
             let input = document.getElementsByName('workforce_' + i)[0];
-            let value = parseInt(input.value) || 0;
-
-            if (value < 1) {
-                input.value = 0;
-                value = 0;
-            }
-            if (value > 5) {
-                input.value = 5;
-                value = 5;
-            }
-
-            total += value;
+            total += parseInt(input.value) || 0;
         }
 
-        // Update the total score display
+        // Update both main and floating total scores
         document.getElementById('totalScore').value = total;
+        document.getElementById('floatingTotalScore').value = total;
+        
+        // Update the decisions
+        updateFinalDecision(total);
+    }
+
+    function updateFinalDecision(totalScore) {
+        const decisionContainer = document.getElementById('autoDecision');
+        const floatingDecision = document.getElementById('floatingDecision');
+        const decisionInput = document.getElementById('finalDecisionInput');
+        let decision = '';
+        let decisionText = '';
+        let decisionClass = '';
+
+        if (totalScore >= 40) {
+            decision = 'accept';
+            decisionText = 'Highly Acceptable - Proceed with the project';
+            decisionClass = 'accept';
+        } else if (totalScore >= 30) {
+            decision = 'accept_conditions';
+            decisionText = 'Acceptable - Minor adjustments needed';
+            decisionClass = 'accept-conditions';
+        } else if (totalScore >= 20) {
+            decision = 'revise';
+            decisionText = 'Conditional - Requires significant changes';
+            decisionClass = 'revise';
+        } else {
+            decision = 'reject';
+            decisionText = 'Not Acceptable - Project revision or rejection recommended';
+            decisionClass = 'reject';
+        }
+
+        decisionInput.value = decision;
+        
+        const decisionHTML = `
+            <div class="decision-result ${decisionClass}">
+                <h4>Automated Decision Based on Score:</h4>
+                <p>${decisionText}</p>
+            </div>
+        `;
+        
+        decisionContainer.innerHTML = decisionHTML;
+        floatingDecision.innerHTML = decisionHTML;
     }
 
     // Add event listeners to all number inputs
@@ -884,5 +979,53 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Run initial calculation
     calculateTotalScore();
+});
+</script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const floatingSummary = document.getElementById('floatingSummary');
+    let isDragging = false;
+    let currentX;
+    let currentY;
+    let initialX;
+    let initialY;
+    let xOffset = 0;
+    let yOffset = 0;
+
+    floatingSummary.addEventListener('mousedown', dragStart);
+    document.addEventListener('mousemove', drag);
+    document.addEventListener('mouseup', dragEnd);
+
+    function dragStart(e) {
+        initialX = e.clientX - xOffset;
+        initialY = e.clientY - yOffset;
+
+        if (e.target === floatingSummary) {
+            isDragging = true;
+        }
+    }
+
+    function drag(e) {
+        if (isDragging) {
+            e.preventDefault();
+            currentX = e.clientX - initialX;
+            currentY = e.clientY - initialY;
+
+            xOffset = currentX;
+            yOffset = currentY;
+
+            setTranslate(currentX, currentY, floatingSummary);
+        }
+    }
+
+    function setTranslate(xPos, yPos, el) {
+        el.style.transform = `translate3d(${xPos}px, ${yPos}px, 0)`;
+    }
+
+    function dragEnd() {
+        initialX = currentX;
+        initialY = currentY;
+        isDragging = false;
+    }
 });
 </script>

@@ -193,7 +193,7 @@ $carpenterDetails = $result->fetch_assoc();
             echo "<p>Carpenter ID: " . $Carpenter_ID . "</p>";
             ?>
         </div>
-        <a href="home.php"><i class="fas fa-home"></i> Home</a>
+        <a href="comment.php><i class="fas fa-home"></i> Home</a>
         <a href="about.php"><i class="fas fa-info-circle"></i> About</a>
         <a href="getideas.php"><i class="fas fa-lightbulb"></i> Get Ideas</a>
         <a href="project.php"><i class="fas fa-project-diagram"></i> Project</a>
