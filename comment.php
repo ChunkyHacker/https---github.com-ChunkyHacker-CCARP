@@ -474,7 +474,15 @@ $Carpenter_ID = $_SESSION['Carpenter_ID'];
                     $totalLikes = mysqli_stmt_get_result($likesCount)->fetch_row()[0];
                     
                     echo "<button class='like-btn " . ($isLiked ? 'liked' : '') . "'>" . ($isLiked ? 'Unlike' : 'Like') . " (" . $totalLikes . ")</button>";
-                    echo "<a href='clientsplan.php?plan_ID={$row['plan_ID']}' class='view-plan-btn'>View client plan</a>";
+
+                    // Get current views
+                    $viewsQuery = mysqli_prepare($conn, "SELECT views FROM plan WHERE plan_ID = ?");
+                    mysqli_stmt_bind_param($viewsQuery, "i", $row['plan_ID']);
+                    mysqli_stmt_execute($viewsQuery);
+                    $viewsResult = mysqli_stmt_get_result($viewsQuery);
+                    $views = mysqli_fetch_assoc($viewsResult)['views'];
+
+                    echo "<a href='clientsplan.php?plan_ID={$row['plan_ID']}' class='view-plan-btn' data-plan-id='{$row['plan_ID']}'>View client plan ({$views} views)</a>";
                     echo "</div>";
                 
                     // Display existing comments
@@ -597,7 +605,28 @@ $(document).ready(function() {
         }
     });
 
-    // Add this inside your $(document).ready(function() { ... });
+    // Add this inside $(document).ready(function() { ... });
+    $('.view-plan-btn').click(function(e) {
+        const btn = $(this);
+        const planId = btn.data('plan-id');
+        
+        // Send AJAX request to update views
+        $.ajax({
+            url: 'handle_view.php',
+            type: 'POST',
+            data: { plan_id: planId },
+            success: function(response) {
+                try {
+                    const data = JSON.parse(response);
+                    if (data.success) {
+                        btn.text(`View client plan (${data.views} views)`);
+                    }
+                } catch (e) {
+                    console.error('Error parsing response:', e);
+                }
+            }
+        });
+    });
     // Handle comment deletion
     $('.comments-container').on('click', '.delete-comment', function() {
         const btn = $(this);
