@@ -355,3 +355,13 @@
 2025-04-07 03:11:13 - Updating contract ID: 1 with User_ID: 1
 2025-04-07 03:11:13 - Query: UPDATE contracts SET status = ?, rejection_reason = ?, User_ID = ? WHERE contract_ID = ?
 2025-04-07 03:11:13 - Success: Contract status updated to accepted
+2025-04-08 03:08:53 - Request: Array
+(
+    [plan_id] => 1
+    [status] => accepted
+)
+
+2025-04-08 03:08:53 - Extracted values: plan_id=1, status=accepted, reason=
+2025-04-08 03:08:53 - Updating contract ID: 2 with User_ID: 1
+2025-04-08 03:08:53 - Query: UPDATE contracts SET status = ?, rejection_reason = ?, User_ID = ? WHERE contract_ID = ?
+2025-04-08 03:08:53 - Success: Contract status updated to accepted
