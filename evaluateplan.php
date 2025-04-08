@@ -475,47 +475,6 @@
             color: white;
         }
         
-        /* Add floating summary styles */
-        .floating-summary {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.98);
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            z-index: 1000;
-            min-width: 300px;
-            max-width: 400px;
-            border: 2px solid #FF8C00;
-            cursor: move; /* Add this line */
-            user-select: none; /* Add this line */
-        }
-
-        .floating-summary .total-score {
-            margin-bottom: 15px;
-            padding: 10px;
-            background: #f8f8f8;
-            border-radius: 8px;
-            text-align: center;
-            font-size: 24px;
-            font-weight: bold;
-            color: #000000;
-        }
-
-        .floating-summary .decision-result {
-            margin: 0;
-            font-size: 0.9em;
-        }
-
-        .floating-summary .decision-result h4 {
-            font-size: 18px;
-            margin-bottom: 8px;
-        }
-
-        .floating-summary .decision-result p {
-            font-size: 16px;
-        }
         
         .submit-btn {
             background-color: #FF8C00;
@@ -713,6 +672,27 @@
                     echo "</div>";
                     
                     echo"<h2>Project Evaluation Form</h2>";
+                    // Evaluation Summary section
+                    echo "<div class='evaluation-section'>";
+                    echo "<h3>Evaluation Summary</h3>";
+                        echo "<h4>Scoring System:</h4>";
+                        echo "<ul style='list-style-type: none; padding-left: 0;'>";
+                            echo "<li>5 - Excellent (Meets all requirements)</li>";
+                            echo "<li>4 - Good (Minor issues, manageable)</li>";
+                            echo "<li>3 - Fair (Requires adjustments)</li>";
+                            echo "<li>2 - Poor (Major concerns, needs discussion)</li>";
+                            echo "<li>1 - Unacceptable (Not feasible)</li>";
+                        echo "</ul>";
+                                            
+                    echo "<h4 style='margin-top: 20px;'>Decision Criteria:</h4>";
+                        echo "<ul style='list-style-type: none; padding-left: 0;'>";
+                            echo "<li>40-50: Highly Acceptable - Proceed with the project.</li>";
+                            echo "<li>30-39: Acceptable - Minor adjustments needed.</li>";
+                            echo "<li>20-29: Conditional - Requires significant changes.</li>";
+                            echo "<li>Below 20: Not Acceptable - Recommend project revision or rejection.</li>";
+                        echo "</ul>";
+                    echo "</div>";
+                
                     echo"<form method='post' action='approveplan.php'>";
                         echo"<input type='hidden' name='plan_ID' value='{$plan_ID}'>";
                         
@@ -815,26 +795,6 @@
                             echo "</div>";
                         echo "</div>";
                     
-                        // Evaluation Summary section
-                        echo "<div class='evaluation-section'>";
-                            echo "<h3>Evaluation Summary</h3>";
-                            echo "<h4>Scoring System:</h4>";
-                            echo "<ul style='list-style-type: none; padding-left: 0;'>";
-                                echo "<li>5 - Excellent (Meets all requirements)</li>";
-                                echo "<li>4 - Good (Minor issues, manageable)</li>";
-                                echo "<li>3 - Fair (Requires adjustments)</li>";
-                                echo "<li>2 - Poor (Major concerns, needs discussion)</li>";
-                                echo "<li>1 - Unacceptable (Not feasible)</li>";
-                            echo "</ul>";
-                            
-                            echo "<h4 style='margin-top: 20px;'>Decision Criteria:</h4>";
-                            echo "<ul style='list-style-type: none; padding-left: 0;'>";
-                                echo "<li>40-50: Highly Acceptable - Proceed with the project.</li>";
-                                echo "<li>30-39: Acceptable - Minor adjustments needed.</li>";
-                                echo "<li>20-29: Conditional - Requires significant changes.</li>";
-                                echo "<li>Below 20: Not Acceptable - Recommend project revision or rejection.</li>";
-                            echo "</ul>";
-                        echo "</div>";
                     
                         // Final Decision section
                         echo "<div class='evaluation-section'>";
@@ -857,16 +817,8 @@
                         echo "<button type='submit' class='submit-btn'>Submit Evaluation</button>";
                     echo "</form>";
 
-                    echo "<div class='floating-summary' id='floatingSummary'>
-                            <div class='total-score'>
-                                <label>Total Score: </label>
-                                <input type='number' id='floatingTotalScore' value='0' readonly>
-                                <span>/70</span>
-                            </div>
-                            <div id='floatingDecision'></div>
-                        </div>";
+                    echo "</form>";
                     
-                    // Remove the duplicate styles and keep only the back button
                     echo "<button onclick=\"history.back()\">Go back</button>";
                     echo "</div>";
                 } else {
@@ -925,8 +877,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Update both main and floating total scores
+        // Update total score
         document.getElementById('totalScore').value = total;
-        document.getElementById('floatingTotalScore').value = total;
+        // Remove this line
+        // document.getElementById('floatingTotalScore').value = total;
         
         // Update the decisions
         updateFinalDecision(total);
@@ -934,7 +888,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function updateFinalDecision(totalScore) {
         const decisionContainer = document.getElementById('autoDecision');
-        const floatingDecision = document.getElementById('floatingDecision');
+        // Remove this line
+        // const floatingDecision = document.getElementById('floatingDecision');
         const decisionInput = document.getElementById('finalDecisionInput');
         let decision = '';
         let decisionText = '';
