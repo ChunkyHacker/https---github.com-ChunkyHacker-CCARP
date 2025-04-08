@@ -74,11 +74,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $stmt->bind_param("iiiiiiiiiiiss", $contract_ID, $plan_ID, $user_ID, $criteria1, $criteria2, $criteria3, $criteria4, $criteria5, $criteria6, $criteria7, $criteria8, $comments, $rating_date);
     
     if ($stmt->execute()) {
-        // Update contract status to indicate it's been rated
-        $update_sql = "UPDATE contracts SET status = 'Rated' WHERE contract_ID = ?";
-        $update_stmt = $conn->prepare($update_sql);
-        $update_stmt->bind_param("i", $contract_ID);
-        $update_stmt->execute();
+        // Only update status if it's completed
+        $check_status_sql = "SELECT status FROM contracts WHERE contract_ID = ?";
+        $check_status_stmt = $conn->prepare($check_status_sql);
+        $check_status_stmt->bind_param("i", $contract_ID);
+        $check_status_stmt->execute();
+        $status_result = $check_status_stmt->get_result();
+        $status_row = $status_result->fetch_assoc();
+
+        // Only update to 'Rated' if current status is 'Completed'
+        if ($status_row['status'] == 'Completed') {
+            $update_sql = "UPDATE contracts SET status = 'Rated' WHERE contract_ID = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("i", $contract_ID);
+            $update_stmt->execute();
+        }
 
         echo "<script>
             document.addEventListener('DOMContentLoaded', function() {

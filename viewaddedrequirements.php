@@ -402,6 +402,21 @@
                         style="width: 150px; height: 50px; background-color: #4CAF50; color: white; 
                         border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
                         Check progress</button>
+                <?php
+                // Check if plan has been rated
+                $check_rating_sql = "SELECT * FROM ratings WHERE contract_ID = ?";
+                $check_rating_stmt = $conn->prepare($check_rating_sql);
+                $check_rating_stmt->bind_param("i", $contract_ID);
+                $check_rating_stmt->execute();
+                $rating_result = $check_rating_stmt->get_result();
+                
+                if ($rating_result->num_rows > 0) {
+                    echo "<button onclick=\"window.location.href='carpenterviewrratings.php?contract_ID=" . $contract_ID . "'\" 
+                            style='width: 150px; height: 50px; background-color: #FF8C00; color: white; 
+                            border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
+                            View Rating</button>";
+                }
+                ?>
             </div>
 
         <?php else: ?>

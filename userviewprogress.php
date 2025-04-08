@@ -805,9 +805,9 @@
                   
                   if ($resultCompleted->num_rows > 0) {
                       echo "<table class='styled-table'>";
-                      echo "<tr><th>Task</th><th>Details</th><th>Status</th></tr>";
+                      echo "<tr><th>Task</th><th>Time</th><th>Status</th></tr>";
                       while ($row = $resultCompleted->fetch_assoc()) {
-                          echo "<tr><td>" . htmlspecialchars($row['name']) . "</td><td>" . htmlspecialchars($row['details']) . "</td><td>" . ucfirst(htmlspecialchars($row['status'])) . "</td></tr>";
+                          echo "<tr><td>" . htmlspecialchars($row['name']) . "</td><td>" . htmlspecialchars($row['timestamp']) . "</td><td>" . ucfirst(htmlspecialchars($row['status'])) . "</td></tr>";
                       }
                       echo "</table>";
                   } else {
@@ -826,9 +826,9 @@
                   
                   if (mysqli_num_rows($resultAttendance) > 0) {
                       echo "<table class='styled-table'>";
-                      echo "<tr><th>Type</th><th>Time In</th><th>Time Out</th></tr>";
+                      echo "<tr><th>Time In</th><th>Time Out</th></tr>";
                       while ($row = mysqli_fetch_assoc($resultAttendance)) {
-                          echo "<tr><td>{$row['Type_of_work']}</td><td>{$row['Time_in']}</td><td>{$row['Time_out']}</td></tr>";
+                          echo "<tr><td>{$row['Time_in']}</td><td>{$row['Time_out']}</td></tr>";
                       }
                       echo "</table>";
                   } else {
@@ -839,14 +839,30 @@
                   // Close the grid container
                   echo "</div>"; // Close grid-container
 
-                  // Go Back button - moved to the left
-                  echo "<div style='text-align: left; margin: 20px 0; padding-left: 20px; grid-column: span 3;'>"; // Span three columns for the button
-                    echo "<button onclick=\"window.location.href='userprofile.php'\" 
-                            style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
-                            border-radius: 5px; cursor: pointer; font-size: 16px;'>Go Back</button>";
-                    echo "<button onclick=\"window.location.href='rateplan.php?plan_ID=" . $plan_ID . "&contract_ID=" . $contractID . "'\" 
-                            style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
-                            border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;'>Rate Plan</button>";
+                  // Check if plan has been rated
+                  $check_rating_sql = "SELECT * FROM ratings WHERE plan_ID = ? AND contract_ID = ?";
+                  $check_rating_stmt = $conn->prepare($check_rating_sql);
+                  $check_rating_stmt->bind_param("ii", $plan_ID, $contractID);
+                  $check_rating_stmt->execute();
+                  $rating_result = $check_rating_stmt->get_result();
+                  
+                  // Buttons section
+                  echo "<div style='text-align: left; margin: 20px 0; padding-left: 20px; grid-column: span 3;'>";
+                  echo "<button onclick=\"window.location.href='userprofile.php'\" 
+                          style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
+                          border-radius: 5px; cursor: pointer; font-size: 16px;'>Go Back</button>";
+                  
+                  if ($rating_result->num_rows > 0) {
+                      // If plan has been rated, show both View Ratings and Rate Plan buttons
+                      echo "<button onclick=\"window.location.href='viewratings.php?plan_ID=" . $plan_ID . "&contract_ID=" . $contractID . "'\" 
+                              style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
+                              border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;'>View Ratings</button>";
+                  } else {
+                      // If plan hasn't been rated, show only Rate Plan button
+                      echo "<button onclick=\"window.location.href='rateplan.php?plan_ID=" . $plan_ID . "&contract_ID=" . $contractID . "'\" 
+                              style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
+                              border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;'>Rate Plan</button>";
+                  }
                   echo "</div>";
                   // Rate the plan
             echo "</div>"; // Close grid-container
