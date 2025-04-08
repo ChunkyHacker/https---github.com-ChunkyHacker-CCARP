@@ -844,8 +844,11 @@
                     echo "<button onclick=\"window.location.href='userprofile.php'\" 
                             style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
                             border-radius: 5px; cursor: pointer; font-size: 16px;'>Go Back</button>";
+                    echo "<button onclick=\"window.location.href='rateplan.php?plan_ID=" . $plan_ID . "&contract_ID=" . $contractID . "'\" 
+                            style='background-color: #FF8C00; color: white; border: none; padding: 10px 20px; 
+                            border-radius: 5px; cursor: pointer; font-size: 16px; margin-left: 10px;'>Rate Plan</button>";
                   echo "</div>";
-
+                  // Rate the plan
             echo "</div>"; // Close grid-container
                           // Go Back button - moved to the left
             echo "</div>"; // Close main div

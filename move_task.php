@@ -8,8 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($data as $task) {
             $task_id = intval($task["task_id"]);
             $task_name = $task["task_name"];
-            $task_details = $task["task_details"];
-            $status = $task["status"]; // Gikuha ang status gikan sa frontend
+            $task_timestamp = $task["task_details"]; // Using the timestamp from the task
+            $status = $task["status"];
 
             if ($status === "Done") {
                 // Get contract_ID from task table
@@ -21,10 +21,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 $rowRequirement = $resultRequirement->fetch_assoc();
                 $contract_ID = $rowRequirement['contract_ID'];
 
-                // Insert the task into completed_task table with contract_ID
-                $sql = "INSERT INTO completed_task (name, details, task_id, contract_ID, status) VALUES (?, ?, ?, ?, 'Completed')";
+                // Insert the task into completed_task table with contract_ID and new timestamp
+                $sql = "INSERT INTO completed_task (name, timestamp, task_id, contract_ID, status) VALUES (?, ?, ?, ?, 'Completed')";
                 $stmt = $conn->prepare($sql);
-                $stmt->bind_param("ssii", $task_name, $task_details, $task_id, $contract_ID);
+                $stmt->bind_param("ssii", $task_name, $task_timestamp, $task_id, $contract_ID);
                 
                 if ($stmt->execute()) {
                     // Temporarily disable foreign key checks

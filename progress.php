@@ -553,16 +553,16 @@
                             <label for="task">Task:</label>
                             <input type="text" id="task" name="task" required>
                         </div>
-                        <div>
-                            <label for="details">Details:</label>
-                            <textarea id="details" name="details" rows="4" required></textarea>
-                        </div>
+                        <!-- Hidden timestamp field -->
+                        <input type="hidden" id="timestamp" name="timestamp">
                         <!-- Hidden input field for contract_ID -->
                         <input type="hidden" name="contract_ID" value="<?php echo isset($_GET['contract_ID']) ? $_GET['contract_ID'] : ''; ?>">
-                        <button type="submit">Add Task</button>
+                        <button type="submit" onclick="setTimestamp()">Add Task</button>
                     </form>
                 </div>
             </div>
+
+
 
             <!--TABLE-->
             <div class="product-container">
@@ -614,14 +614,14 @@
                     echo '<tr>';
                     echo '<th>Status</th>';
                     echo '<th>Task</th>';
-                    echo '<th>Details</th>';
+                    echo '<th>Time</th>';
                     echo '</tr>';
 
                     if ($result->num_rows > 0) {
                         while ($row = $result->fetch_assoc()) {
                             echo '<tr>';
                             echo '<td class="table-cell">
-                                    <select name="status" class="task-status" data-task-id="' . $row["task_id"] . '" data-task-name="' . $row["task"] . '" data-task-details="' . $row["details"] . '" 
+                                    <select name="status" class="task-status" data-task-id="' . $row["task_id"] . '" data-task-name="' . $row["task"] . '" data-task-details="' . $row["timestamp"] . '" 
                                         style="padding: 8px; font-size: 16px; border-radius: 4px; border: 1px solid #ccc; background-color: #fff; cursor: pointer;">
                                         <option value="" disabled selected>Choose</option>
                                         <option value="Not yet started">Not yet started</option>
@@ -631,7 +631,7 @@
                                     </td>';
                         
                             echo '<td class="table-cell"><h3>' . $row["task"] . '</h3></td>';
-                            echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
+                            echo '<td class="table-cell"><h3>' . $row["timestamp"] . '</h3></td>';
                             echo '</tr>';
                         }
                     } else {
@@ -652,26 +652,26 @@
                     
                     echo '<h3>Completed Tasks</h3>';
                     echo '<div class="table-container">';
-                    echo '<table class="styled-table">';
-                    echo '<tr>';
-                    echo '<th>Task</th>';
-                    echo '<th>Details</th>';
-                    echo '<th>Status</th>';
-                    echo '</tr>';
+                        echo '<table class="styled-table">';
+                        echo '<tr>';
+                        echo '<th>Task</th>';
+                        echo '<th>Time</th>';
+                        echo '<th>Status</th>';
+                        echo '</tr>';
 
-                    if ($resultCompleted->num_rows > 0) {
-                        while ($row = $resultCompleted->fetch_assoc()) {
-                            echo '<tr>';
-                            echo '<td class="table-cell"><h3>' . $row["name"] . '</h3></td>';
-                            echo '<td class="table-cell"><h3>' . $row["details"] . '</h3></td>';
-                            echo '<td class="table-cell"><h3>' . ucfirst($row["status"]) . '</h3></td>';
-                            echo '</tr>';
+                        if ($resultCompleted->num_rows > 0) {
+                            while ($row = $resultCompleted->fetch_assoc()) {
+                                echo '<tr>';
+                                echo '<td class="table-cell"><h3>' . $row["name"] . '</h3></td>';
+                                echo '<td class="table-cell"><h3>' . $row["timestamp"] . '</h3></td>';
+                                echo '<td class="table-cell"><h3>' . ucfirst($row["status"]) . '</h3></td>';
+                                echo '</tr>';
+                            }
+                        } else {
+                            echo '<tr><td colspan="3">No completed tasks</td></tr>';
                         }
-                    } else {
-                        echo '<tr><td colspan="3">No completed tasks</td></tr>';
-                    }
 
-                    echo '</table>';
+                        echo '</table>';
                     echo '</div>';
                 } else {
                     echo '<p>Error: contract_ID is missing.</p>';
@@ -769,6 +769,20 @@
                 </div>
         </div>
     </div>
+
+    <script>
+            function setTimestamp() {
+                var currentDate = new Date();
+                var formattedDateTime = currentDate.toLocaleString();
+                document.getElementById('timestamp').value = formattedDateTime;
+            }
+
+            function openTaskModal(event) {
+                event.preventDefault();
+                document.getElementById('addTaskModal').style.display = 'block';
+                setTimestamp(); // Set timestamp when modal opens
+            }
+    </script>
 
     <!-- JavaScript -->
     <script>
@@ -977,17 +991,22 @@ function redirectToMoveTask() {
             dropdown.addEventListener("change", function () {
                 let taskID = this.getAttribute("data-task-id");
                 let taskName = this.getAttribute("data-task-name");
-                let taskDetails = this.getAttribute("data-task-details");
                 let status = this.value;
+                let currentTimestamp = new Date().toLocaleString();
 
                 let taskIndex = updatedTasks.findIndex(task => task.task_id === taskID);
                 if (taskIndex !== -1) {
-                    updatedTasks[taskIndex].status = status;
+                    updatedTasks[taskIndex] = {
+                        task_id: taskID,
+                        task_name: taskName,
+                        task_details: status === "Done" ? currentTimestamp : this.getAttribute("data-task-details"),
+                        status: status
+                    };
                 } else {
                     updatedTasks.push({
                         task_id: taskID,
                         task_name: taskName,
-                        task_details: taskDetails,
+                        task_details: status === "Done" ? currentTimestamp : this.getAttribute("data-task-details"),
                         status: status
                     });
                 }
@@ -997,7 +1016,7 @@ function redirectToMoveTask() {
                 }
             });
         });
-
+                
         document.getElementById("saveChangesBtn").addEventListener("click", function () {
             if (updatedTasks.length === 0) {
                 alert("No tasks selected!");
