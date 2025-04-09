@@ -739,6 +739,15 @@
                                 echo "<tr>
                                     <td>Client is financially prepared</td>
                                     <td>
+                                        <input type='hidden' name='client_2' id='client_2' value='No'>
+                                        <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_2\", \"yes\", event)'>Yes</button>
+                                        <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_2\", \"no\", event)'>No</button>
+                                    </td>
+                                    <td><input type='text' name='client_2_comment'></td>
+                                </tr>";
+                                echo "<tr>
+                                    <td>Client has realistic expectations</td>
+                                    <td>
                                         <input type='hidden' name='client_3' id='client_3' value='No'>
                                         <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_3\", \"yes\", event)'>Yes</button>
                                         <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_3\", \"no\", event)'>No</button>
@@ -746,22 +755,13 @@
                                     <td><input type='text' name='client_3_comment'></td>
                                 </tr>";
                                 echo "<tr>
-                                    <td>Client has realistic expectations</td>
+                                    <td>Client is cooperative and responsive</td>
                                     <td>
                                         <input type='hidden' name='client_4' id='client_4' value='No'>
                                         <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_4\", \"yes\", event)'>Yes</button>
                                         <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_4\", \"no\", event)'>No</button>
                                     </td>
                                     <td><input type='text' name='client_4_comment'></td>
-                                </tr>";
-                                echo "<tr>
-                                    <td>Client is cooperative and responsive</td>
-                                    <td>
-                                        <input type='hidden' name='client_5' id='client_5' value='No'>
-                                        <button type='button' class='yes-no-btn' onclick='toggleYesNo(\"client_5\", \"yes\", event)'>Yes</button>
-                                        <button type='button' class='yes-no-btn active' onclick='toggleYesNo(\"client_5\", \"no\", event)'>No</button>
-                                    </td>
-                                    <td><input type='text' name='client_5_comment'></td>
                                 </tr>";
                                 echo "<tr>
                                     <td>Client has a clear design or blueprint</td>

@@ -55,11 +55,11 @@ for ($i = 1; $i <= 4; $i++) {
 $client_responses = [];
 $client_comments = [];
 for ($i = 1; $i <= 5; $i++) {
-    // Get the response and comment values
-    $response = $_POST["client_$i"];
-    $comment = $_POST["client_{$i}_comment"];
+    // Get the response and comment values using isset check
+    $response = isset($_POST["client_$i"]) ? $_POST["client_$i"] : '';
+    $comment = isset($_POST["client_{$i}_comment"]) ? $_POST["client_{$i}_comment"] : '';
     
-    // Add to arrays regardless of empty check
+    // Add to arrays
     $client_responses[] = $response;
     $client_comments[] = $comment;
 }
