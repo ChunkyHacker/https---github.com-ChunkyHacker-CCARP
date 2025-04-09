@@ -27,6 +27,7 @@
 
 <!DOCTYPE html>
 <html lang="en">
+<!-- Add this style in the head section -->
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -41,6 +42,26 @@
         .card {
             margin-top: 20px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .table-responsive-container {
+            max-height: 400px;
+            overflow-x: auto;
+            overflow-y: auto;
+            margin-bottom: 20px;
+        }
+        
+        .table {
+            width: 100%;
+            table-layout: auto;
+        }
+        
+        .table td, .table th {
+            white-space: nowrap;
+            min-width: 100px;
+        }
+        
+        .table td.actions {
+            width: 160px;  /* Increased width for buttons */
         }
     </style>
 </head>
@@ -115,99 +136,104 @@
         <div class="card">
             <div class="card-body">
                 <h4>Users</h4>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Phone Number</th>
-                            <th>Email</th>
-                            <th>Address</th>
-                            <th>Date of Birth</th>
-                            <th>Username</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Loop through each user and display in the table
-                        if ($result_users->num_rows > 0) {
-                            while($user = $result_users->fetch_assoc()) {
-                                echo "<tr>
-                                    <td>" . $user['User_ID'] . "</td>
-                                    <td>" . $user['First_Name'] . "</td>
-                                    <td>" . $user['Last_Name'] . "</td>
-                                    <td>" . $user['Phone_Number'] . "</td>
-                                    <td>" . $user['Email'] . "</td>
-                                    <td>" . $user['Address'] . "</td>
-                                    <td>" . $user['Date_Of_Birth'] . "</td>
-                                    <td>" . $user['Username'] . "</td>
-                                    <td>
-                                        <a href='edit_user.php?id=" . $user['User_ID'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                        <a href='delete_user.php?id=" . $user['User_ID'] . "' class='btn btn-danger btn-sm'>Delete</a>
-                                    </td>
-                                </tr>";
+                <div class="table-responsive-container">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Date of Birth</th>
+                                <th>Username</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Loop through each user and display in the table
+                            if ($result_users->num_rows > 0) {
+                                while($user = $result_users->fetch_assoc()) {
+                                    echo "<tr>
+                                        <td>" . $user['User_ID'] . "</td>
+                                        <td>" . $user['First_Name'] . "</td>
+                                        <td>" . $user['Last_Name'] . "</td>
+                                        <td>" . $user['Phone_Number'] . "</td>
+                                        <td>" . $user['Email'] . "</td>
+                                        <td>" . $user['Address'] . "</td>
+                                        <td>" . $user['Date_Of_Birth'] . "</td>
+                                        <td>" . $user['Username'] . "</td>
+                                        <td>
+                                            <a href='edit_user.php?id=" . $user['User_ID'] . "' class='btn btn-warning btn-sm'>Edit</a>
+                                            <a href='delete_user.php?id=" . $user['User_ID'] . "' class='btn btn-danger btn-sm'>Delete</a>
+                                        </td>
+                                    </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='9' class='text-center'>No users found</td></tr>";
                             }
-                        } else {
-                            echo "<tr><td colspan='9' class='text-center'>No users found</td></tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
         <!-- Carpenters Table -->
         <div class="card">
+            <!-- In each card-body div, wrap the table with a responsive container -->
             <div class="card-body">
                 <h4>Carpenters</h4>
-                <table class="table table-striped table-bordered">
-                    <thead>
-                        <tr>
-                            <th>ID</th>
-                            <th>First Name</th>
-                            <th>Last Name</th>
-                            <th>Phone Number</th>
-                            <th>Email</th>
-                            <th>Address</th>
-                            <th>Date of Birth</th>
-                            <th>Experience</th>
-                            <th>Projects Completed</th>
-                            <th>Specialization</th>
-                            <th>Username</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <?php
-                        // Loop through each carpenter and display in the table
-                        if ($result_carpenters->num_rows > 0) {
-                            while($carpenter = $result_carpenters->fetch_assoc()) {
-                                echo "<tr>
-                                    <td>" . $carpenter['Carpenter_ID'] . "</td>
-                                    <td>" . $carpenter['First_Name'] . "</td>
-                                    <td>" . $carpenter['Last_Name'] . "</td>
-                                    <td>" . $carpenter['Phone_Number'] . "</td>
-                                    <td>" . $carpenter['Email'] . "</td>
-                                    <td>" . $carpenter['Address'] . "</td>
-                                    <td>" . $carpenter['Date_Of_Birth'] . "</td>
-                                    <td>" . $carpenter['Experiences'] . "</td>
-                                    <td>" . $carpenter['Project_Completed'] . "</td>
-                                    <td>" . $carpenter['specialization'] . "</td>
-                                    <td>" . $carpenter['username'] . "</td>
-                                    <td>
-                                        <a href='edit_carpenter.php?id=" . $carpenter['Carpenter_ID'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                        <a href='delete_carpenter.php?id=" . $carpenter['Carpenter_ID'] . "' class='btn btn-danger btn-sm'>Delete</a>
-                                    </td>
-                                </tr>";
+                <div class="table-responsive-container">
+                    <table class="table table-striped table-bordered">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>First Name</th>
+                                <th>Last Name</th>
+                                <th>Phone Number</th>
+                                <th>Email</th>
+                                <th>Address</th>
+                                <th>Date of Birth</th>
+                                <th>Experience</th>
+                                <th>Projects Completed</th>
+                                <th>Specialization</th>
+                                <th>Username</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            // Loop through each carpenter and display in the table
+                            if ($result_carpenters->num_rows > 0) {
+                                while($carpenter = $result_carpenters->fetch_assoc()) {
+                                    echo "<tr>
+                                        <td>" . $carpenter['Carpenter_ID'] . "</td>
+                                        <td>" . $carpenter['First_Name'] . "</td>
+                                        <td>" . $carpenter['Last_Name'] . "</td>
+                                        <td>" . $carpenter['Phone_Number'] . "</td>
+                                        <td>" . $carpenter['Email'] . "</td>
+                                        <td>" . $carpenter['Address'] . "</td>
+                                        <td>" . $carpenter['Date_Of_Birth'] . "</td>
+                                        <td>" . $carpenter['Experiences'] . "</td>
+                                        <td>" . $carpenter['Project_Completed'] . "</td>
+                                        <td>" . $carpenter['specialization'] . "</td>
+                                        <td>" . $carpenter['username'] . "</td>
+                                        <td class='actions'>
+                                            <a href='edit_carpenter.php?id=" . $carpenter['Carpenter_ID'] . "' class='btn btn-warning btn-sm'>Edit</a>
+                                            <a href='delete_carpenter.php?id=" . $carpenter['Carpenter_ID'] . "' class='btn btn-danger btn-sm'>Delete</a>
+                                        </td>
+                                    </tr>";
+                                }
+                            } else {
+                                echo "<tr><td colspan='12' class='text-center'>No carpenters found</td></tr>";
                             }
-                        } else {
-                            echo "<tr><td colspan='12' class='text-center'>No carpenters found</td></tr>";
-                        }
-                        ?>
-                    </tbody>
-                </table>
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
     </div>
 
