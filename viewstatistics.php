@@ -1,0 +1,301 @@
+<?php
+// Include the database configuration file
+include 'config.php';
+
+// Start session to check if the admin is logged in
+session_start();
+
+// Check if the admin is logged in
+if (!isset($_SESSION['admin_id'])) {
+    header("Location: adminlogin.html");
+    exit();
+}
+
+// Query to get plan data with views and count likes
+$sql = "SELECT p.plan_id, p.views, COUNT(l.like_id) as likes_count 
+        FROM plan p 
+        LEFT JOIN likes l ON p.plan_id = l.plan_id 
+        GROUP BY p.plan_id";
+$result = $conn->query($sql);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Statistics</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Statistics</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="admindashboard.php">Back to Dashboard</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="card">
+            <div class="card-header">
+                <h5>Plan Statistics</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Plan ID</th>
+                            <th>Views</th>
+                            <th>Likes</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        if ($result->num_rows > 0) {
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row['plan_id'] . "</td>";
+                                echo "<td>" . $row['views'] . "</td>";
+                                echo "<td>" . $row['likes_count'] . "</td>";
+                                echo "<td><button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#progressModal' data-plan-id='" . $row['plan_id'] . "'>View Progress</button></td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='4' class='text-center'>No data available</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Single Carpenter Progress card -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Carpenter Progress</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Contract ID</th>
+                            <th>Carpenter</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $sql = "SELECT c.contract_ID, CONCAT(cp.First_Name, ' ', cp.Last_Name) as carpenter_name 
+                               FROM contracts c 
+                               JOIN carpenters cp ON c.Carpenter_ID = cp.Carpenter_ID";
+                        $result = $conn->query($sql);
+                        if ($result->num_rows > 0) {
+                            while($row = $result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row['contract_ID'] . "</td>";
+                                echo "<td>" . $row['carpenter_name'] . "</td>";
+                                echo "<td><button class='btn btn-primary btn-sm' data-bs-toggle='modal' 
+                                      data-bs-target='#progressModal' 
+                                      data-contract-id='" . $row['contract_ID'] . "'>View Progress</button></td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='3' class='text-center'>No carpenters available</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Single Ratings Section -->
+        <div class="card mt-4">
+            <div class="card-header">
+                <h5>Evaluation Ratings</h5>
+            </div>
+            <div class="card-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Contract ID</th>
+                            <th>Evaluator Name</th>
+                            <th>Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php
+                        $ratings_sql = "SELECT DISTINCT r.contract_ID, u.First_Name, u.Last_Name 
+                                      FROM ratings r 
+                                      JOIN users u ON r.user_ID = u.User_ID";
+                        $ratings_result = $conn->query($ratings_sql);
+                        if ($ratings_result->num_rows > 0) {
+                            while($row = $ratings_result->fetch_assoc()) {
+                                echo "<tr>";
+                                echo "<td>" . $row['contract_ID'] . "</td>";
+                                echo "<td>" . $row['First_Name'] . " " . $row['Last_Name'] . "</td>";
+                                echo "<td><button class='btn btn-primary btn-sm'>View Ratings</button></td>";
+                                echo "</tr>";
+                            }
+                        } else {
+                            echo "<tr><td colspan='3' class='text-center'>No ratings available</td></tr>";
+                        }
+                        ?>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Single Go Back Button -->
+        <div class="mt-4 mb-4">
+            <a href="javascript:history.back()" class="btn btn-secondary">Go Back</a>
+        </div>
+
+        <!-- Single Bootstrap JS -->
+        <!-- Add this right after your tables but before the scripts -->
+        <div class="modal fade" id="progressModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Progress and Attendance</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Progress -->
+                        <div class="mb-5">
+                            <h6>Progress</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="progressTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Tasks -->
+                        <div class="mb-5">
+                            <h6>Tasks</h6>
+                            <h6 class="mt-3">Pending Task</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Status</th>
+                                        <th>Task</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="pendingTasksTableBody">
+                                </tbody>
+                            </table>
+
+                            <h6 class="mt-4">Completed Task</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Task</th>
+                                        <th>Time</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="completedTasksTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- Attendance -->
+                        <div>
+                            <h6>Attendance</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Type of Work</th>
+                                        <th>Time In</th>
+                                        <th>Time Out</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="attendanceTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Update your script section -->
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const progressModal = document.getElementById('progressModal');
+                progressModal.addEventListener('show.bs.modal', function(event) {
+                    const button = event.relatedTarget;
+                    const contractId = button.getAttribute('data-contract-id');
+                    
+                    if (contractId) {
+                        fetch('get_contract_progress.php?contract_id=' + contractId)
+                            .then(response => response.json())
+                            .then(data => {
+                                // Update Progress
+                                document.getElementById('progressTableBody').innerHTML = data.progress.map(item => `
+                                    <tr>
+                                        <td>${item.Name}</td>
+                                        <td>${item.Status}</td>
+                                    </tr>
+                                `).join('') || '<tr><td colspan="2">No Progress yet</td></tr>';
+
+                                // Update Pending Tasks
+                                document.getElementById('pendingTasksTableBody').innerHTML = data.pending_tasks.map(task => `
+                                    <tr>
+                                        <td>${task.status}</td>
+                                        <td>${task.task}</td>
+                                        <td>${task.Time}</td>
+                                    </tr>
+                                `).join('') || '<tr><td colspan="3">No pending tasks</td></tr>';
+
+                                // Update Completed Tasks
+                                document.getElementById('completedTasksTableBody').innerHTML = data.completed_tasks.map(task => `
+                                    <tr>
+                                        <td>${task.Task}</td>
+                                        <td>${task.Time}</td>
+                                        <td>${task.Status}</td>
+                                    </tr>
+                                `).join('') || '<tr><td colspan="3">No completed tasks</td></tr>';
+
+                                // Update Attendance
+                                document.getElementById('attendanceTableBody').innerHTML = data.attendance.map(att => `
+                                    <tr>
+                                        <td>${att['Type of Work']}</td>
+                                        <td>${att['Time In']}</td>
+                                        <td>${att['Time Out']}</td>
+                                    </tr>
+                                `).join('') || '<tr><td colspan="3">No attendance yet</td></tr>';
+                            })
+                            .catch(error => console.error('Error:', error));
+                    }
+                });
+            });
+        </script>
+    </div>
+</body>
+</html>
+
+<?php
+$conn->close();
+?>

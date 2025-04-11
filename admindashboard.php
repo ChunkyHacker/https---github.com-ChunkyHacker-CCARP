@@ -112,9 +112,9 @@ $admin = $result->fetch_assoc();
             <div class="col-md-4">
                 <div class="card dashboard-card">
                     <div class="card-body">
-                        <h5 class="card-title">Settings</h5>
-                        <p class="card-text">Update system settings.</p>
-                        <a href="settings.php" class="btn btn-primary">Settings</a>
+                        <h5 class="card-title">Statistics</h5>
+                        <p class="card-text">View system statistics.</p>
+                        <a href="viewstatistics.php" class="btn btn-primary">View Statistics</a>
                     </div>
                 </div>
             </div>
