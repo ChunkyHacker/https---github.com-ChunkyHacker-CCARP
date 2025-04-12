@@ -57,7 +57,6 @@ $result = $conn->query($sql);
                             <th>Plan ID</th>
                             <th>Views</th>
                             <th>Likes</th>
-                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -68,11 +67,10 @@ $result = $conn->query($sql);
                                 echo "<td>" . $row['plan_id'] . "</td>";
                                 echo "<td>" . $row['views'] . "</td>";
                                 echo "<td>" . $row['likes_count'] . "</td>";
-                                echo "<td><button class='btn btn-primary btn-sm' data-bs-toggle='modal' data-bs-target='#progressModal' data-plan-id='" . $row['plan_id'] . "'>View Progress</button></td>";
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='4' class='text-center'>No data available</td></tr>";
+                            echo "<tr><td colspan='3' class='text-center'>No data available</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -144,7 +142,9 @@ $result = $conn->query($sql);
                                 echo "<tr>";
                                 echo "<td>" . $row['contract_ID'] . "</td>";
                                 echo "<td>" . $row['First_Name'] . " " . $row['Last_Name'] . "</td>";
-                                echo "<td><button class='btn btn-primary btn-sm'>View Ratings</button></td>";
+                                echo "<td><button class='btn btn-primary btn-sm' data-bs-toggle='modal' 
+                                      data-bs-target='#ratingsModal' 
+                                      data-contract-id='" . $row['contract_ID'] . "'>View Ratings</button></td>";
                                 echo "</tr>";
                             }
                         } else {
@@ -239,10 +239,54 @@ $result = $conn->query($sql);
             </div>
         </div>
 
+        <!-- Ratings Modal -->
+        <div class="modal fade" id="ratingsModal" tabindex="-1">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Evaluation Ratings</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body">
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Criteria</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>The finished project matched the agreed design and measurements.</td><td id="criteria1"></td></tr>
+                                <tr><td>There were no alignment issues (e.g., no uneven surfaces, gaps, or misalignment).</td><td id="criteria2"></td></tr>
+                                <tr><td>The finishing quality (sanding, painting, varnishing) is smooth and professionally done.</td><td id="criteria3"></td></tr>
+                                <tr><td>There were no visible defects (e.g., cracks, loose fittings, rough edges).</td><td id="criteria4"></td></tr>
+                                <tr><td>The carpenter followed proper carpentry techniques (e.g., joints, reinforcements, fastening).</td><td id="criteria5"></td></tr>
+                                <tr><td>The project was completed within the agreed timeframe.</td><td id="criteria6"></td></tr>
+                                <tr><td>I am satisfied with the overall quality of the carpentry work.</td><td id="criteria7"></td></tr>
+                                <tr><td>I would recommend this carpenter for future projects.</td><td id="criteria8"></td></tr>
+                            </tbody>
+                        </table>
+                        <div class="mt-3">
+                            <h6>Comments:</h6>
+                            <p id="ratingComments"></p>
+                        </div>
+                        <div class="mt-3">
+                            <h6>Rating Date:</h6>
+                            <p id="ratingDate"></p>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Update your script section -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
+                // Progress Modal
                 const progressModal = document.getElementById('progressModal');
                 progressModal.addEventListener('show.bs.modal', function(event) {
                     const button = event.relatedTarget;
@@ -291,6 +335,32 @@ $result = $conn->query($sql);
                     }
                 });
             });
+        // Add Ratings Modal Handler
+        const ratingsModal = document.getElementById('ratingsModal');
+        ratingsModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const contractId = button.getAttribute('data-contract-id');
+            
+            if (contractId) {
+                fetch('get_ratings.php?contract_id=' + contractId)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (!data.error) {
+                            // Update criteria ratings
+                            for (let i = 1; i <= 8; i++) {
+                                document.getElementById('criteria' + i).textContent = data['criteria' + i];
+                            }
+                            
+                            // Update comments and date
+                            document.getElementById('ratingComments').textContent = data.comments || 'No comments';
+                            document.getElementById('ratingDate').textContent = data.rating_date || 'Not specified';
+                        } else {
+                            console.error('Error:', data.error);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
         </script>
     </div>
 </body>
