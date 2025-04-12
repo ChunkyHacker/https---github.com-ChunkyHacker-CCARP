@@ -414,16 +414,21 @@
         </div>
     </div>
 
-    <form method="POST" action="save_agreement.php">
-        <input type="hidden" name="plan_ID" value="<?php echo $plan_ID; ?>">
-        <input type="hidden" name="labor_cost" id="labor_cost_input" value="0.00">
-        <input type="hidden" name="type_of_work" id="type_of_work_input" value="">
-        <input type="hidden" name="duration" value="<?php echo $duration; ?>">
-        <input type="hidden" name="approval_ID" value="<?php echo $approval_ID; ?>">
-        <input type="hidden" name="Carpenter_ID" value="<?php echo $Carpenter_ID; ?>">
-        <button type="submit">Submit to Client</button>
-    </form>
-</div>
+    <form method="POST" action="save_agreement.php" style="display: flex; gap: 10px; justify-content: flex-start;">
+            <input type="hidden" name="plan_ID" value="<?php echo $plan_ID; ?>">
+            <input type="hidden" name="labor_cost" id="labor_cost_input" value="0.00">
+            <input type="hidden" name="type_of_work" id="type_of_work_input" value="">
+            <input type="hidden" name="duration" value="<?php echo $duration; ?>">
+            <input type="hidden" name="approval_ID" value="<?php echo $approval_ID; ?>">
+            <input type="hidden" name="Carpenter_ID" value="<?php echo $Carpenter_ID; ?>">
+            <button type="button" onclick="history.back()" 
+                style="width: 150px; height: 50px; background-color: #FF8C00; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                Go Back</button>
+            <button type="submit" 
+                style="width: 150px; height: 50px; background-color: #4CAF50; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                Submit to Client</button>
+        </form>
+    </div>
 
 <!-- Modal for Set Labor Cost -->
 <div id="contractModal" class="modal" style="display: none; 
