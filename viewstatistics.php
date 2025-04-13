@@ -31,6 +31,9 @@ $result = $conn->query($sql);
     <title>View Statistics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -385,12 +388,16 @@ $result = $conn->query($sql);
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Job Rating</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" style="margin-right: 0;"></button>
             </div>
-            <div class="modal-body">
-                <div class="mb-3">
+            <div class="modal-body px-0"> <!-- Removed left and right padding -->
+                <div class="mb-3 px-3"> <!-- Added padding to maintain spacing for this section -->
                     <h6>Rated by:</h6>
-                    <p id="job_carpenter_name"></p>  <!-- Changed ID to be unique -->
+                    <select id="carpenter_selector" class="form-select" style="width: 100%">
+                        <option value="">Select a carpenter...</option>
+                    </select>
+                </div>
+                <p id="job_carpenter_name"></p>  <!-- Changed ID to be unique -->
                 </div>
                 <table class="table table-bordered">
                     <thead>
@@ -456,74 +463,108 @@ $result = $conn->query($sql);
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const planRatingsModal = document.getElementById('planRatingsModal');
+    
+    // Initialize Select2
+    $('#carpenter_selector').select2({
+        dropdownParent: $('#planRatingsModal'),
+        width: '100%'
+    });
+
     planRatingsModal.addEventListener('show.bs.modal', function(event) {
         const button = event.relatedTarget;
         const planId = button.getAttribute('data-plan-id');
         
         if (planId) {
-            fetch('get_job_ratings.php?plan_id=' + planId)
+            // First, fetch carpenters who rated this plan
+            fetch('get_plan_raters.php?plan_id=' + planId)
                 .then(response => response.json())
                 .then(data => {
-                    // Update carpenter name with unique ID
-                    document.getElementById('job_carpenter_name').textContent = data.carpenter_name || 'Not available';
-                    
-                    for (let i = 1; i <= 7; i++) {
-                        document.getElementById('q' + i + '_rating').textContent = 
-                            data['q' + i + '_rating'] + ' - ' + data['q' + i + '_description'];
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        return;
                     }
                     
-                    // Update issues
-                    document.getElementById('q8_answer').textContent = data.q8_answer;
+                    // Clear and populate the dropdown
+                    const select = $('#carpenter_selector');
+                    select.empty().append('<option value="">Select a carpenter...</option>');
+                    
+                    data.forEach(carpenter => {
+                        const option = new Option(
+                            carpenter.First_Name + ' ' + carpenter.Last_Name,
+                            carpenter.Carpenter_ID,
+                            false,
+                            false
+                        );
+                        select.append(option);
+                    });
+                    
+                    // Trigger change event to update Select2
+                    select.trigger('change');
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+    });
+
+    // Handle carpenter selection change
+    $('#carpenter_selector').on('change', function() {
+        const carpenterId = $(this).val();
+        const planId = document.querySelector('[data-bs-target="#planRatingsModal"]').getAttribute('data-plan-id');
+        
+        if (carpenterId && planId) {
+            fetch(`get_job_ratings.php?plan_id=${planId}&carpenter_id=${carpenterId}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Received data:', data); // Debug log
+                    
+                    if (data.error) {
+                        console.error('Error:', data.error);
+                        return;
+                    }
+
+                    // Update all the ratings and other fields
+                    for (let i = 1; i <= 7; i++) {
+                        const ratingElement = document.getElementById('q' + i + '_rating');
+                        if (ratingElement) {
+                            ratingElement.textContent = data['q' + i + '_rating'] + ' - ' + data['q' + i + '_description'];
+                        }
+                    }
+                    
+                    // Update other fields
+                    document.getElementById('q8_answer').textContent = data.q8_answer || 'No issues reported';
                     if (data.q8_answer === 'yes') {
-                        document.getElementById('q8_explanation').textContent = 'Explanation: ' + data.q8_explanation;
+                        document.getElementById('q8_explanation').textContent = 'Explanation: ' + (data.q8_explanation || 'No explanation provided');
                     } else {
                         document.getElementById('q8_explanation').textContent = '';
                     }
-                    
-                    // Update additional features and feedback
-                    document.getElementById('q9_answer').textContent = data.q9_answer;
-                    document.getElementById('q10_answer').textContent = data.q10_answer;
-                    
-                    // Update rating date
-                    document.getElementById('job_rating_date').textContent = data.rating_date;
+                    document.getElementById('q9_answer').textContent = data.q9_answer || 'No additional features suggested';
+                    document.getElementById('q10_answer').textContent = data.q10_answer || 'No feedback provided';
+                    document.getElementById('job_rating_date').textContent = data.rating_date || 'Date not available';
 
-                    // Create chart data
-                    const ctx = document.getElementById('ratingsChart').getContext('2d');
+                    // Calculate and update chart
                     const ratings = [];
-                    const labels = [
-                        'Navigation Ease',
-                        'Job Relevance',
-                        'Job Opportunities',
-                        'Communication Ease',
-                        'Engagement Level',
-                        'Recommendation',
-                        'Accessibility'
-                    ];
-                    
                     for (let i = 1; i <= 7; i++) {
-                        ratings.push(parseInt(data['q' + i + '_rating']));
-                    }
-                    
-                    // Calculate average accessibility score from all ratings
-                    const totalScore = ratings.reduce((sum, rating) => sum + rating, 0);
-                    const averageScore = (totalScore / (ratings.length * 5)) * 100; // Convert to percentage
-                    document.getElementById('accessibilityScore').textContent = `${averageScore.toFixed(1)}%`;
-                    
-                    // Show status based on 30% goal
-                    const statusElement = document.getElementById('accessibilityStatus');
-                    if (averageScore >= 30) {
-                        statusElement.textContent = 'Goal Achieved! ✅';
-                        statusElement.className = 'text-success';
-                    } else {
-                        statusElement.textContent = 'In Progress';
-                        statusElement.className = 'text-warning';
+                        ratings.push(parseInt(data['q' + i + '_rating']) || 0);
                     }
                     
                     // Create chart
-                    new Chart(ctx, {
+                    const ctx = document.getElementById('ratingsChart').getContext('2d');
+                    if (window.ratingChart) {
+                        window.ratingChart.destroy();
+                    }
+                    window.ratingChart = new Chart(ctx, {
                         type: 'bar',
                         data: {
-                            labels: labels,
+                            labels: [
+                                'Navigation Ease',
+                                'Job Relevance',
+                                'Job Opportunities',
+                                'Communication Ease',
+                                'Engagement Level',
+                                'Recommendation',
+                                'Accessibility'
+                            ],
                             datasets: [{
                                 label: 'Rating Score',
                                 data: ratings,
@@ -542,17 +583,26 @@ document.addEventListener('DOMContentLoaded', function() {
                                         stepSize: 1
                                     }
                                 }
-                            },
-                            plugins: {
-                                title: {
-                                    display: true,
-                                    text: 'Job Accessibility Ratings'
-                                }
                             }
                         }
                     });
+
+                    // Calculate and display overall score
+                    const averageScore = (ratings.reduce((a, b) => a + b, 0) / (ratings.length * 5)) * 100;
+                    document.getElementById('accessibilityScore').textContent = `${averageScore.toFixed(1)}%`;
+                    
+                    const statusElement = document.getElementById('accessibilityStatus');
+                    if (averageScore >= 30) {
+                        statusElement.textContent = 'Goal Achieved! ✅';
+                        statusElement.className = 'text-success';
+                    } else {
+                        statusElement.textContent = 'In Progress';
+                        statusElement.className = 'text-warning';
+                    }
                 })
-                .catch(error => console.error('Error:', error));
+                .catch(error => {
+                    console.error('Fetch error:', error);
+                });
         }
     });
 });
