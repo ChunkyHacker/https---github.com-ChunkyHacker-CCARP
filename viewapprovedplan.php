@@ -395,12 +395,28 @@ $carpenterDetails = $result->fetch_assoc();
                         border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
                         Generate Contract</button>";
 
-                    // Rate Job Opportunity button
-                    echo "<button onclick=\"window.location.href='rate_job.php?plan_ID=" . $plan_ID . "'\" 
-                        style='width: 150px; height: 50px; background-color: #2196F3; color: white; 
-                        border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
-                        Rate Job</button>";
-                    
+                    // Check if THIS carpenter has already rated this plan
+                    $ratingCheck = "SELECT * FROM job_ratings WHERE Carpenter_ID = ? AND plan_ID = ?";
+                    $ratingStmt = mysqli_prepare($conn, $ratingCheck);
+                    mysqli_stmt_bind_param($ratingStmt, "ii", $Carpenter_ID, $plan_ID);
+                    mysqli_stmt_execute($ratingStmt);
+                    $ratingResult = mysqli_stmt_get_result($ratingStmt);
+
+                    // Rate Job Opportunity or View Ratings button
+                    if (mysqli_num_rows($ratingResult) > 0) {
+                        // This carpenter has already rated, show their rating
+                        echo "<button onclick=\"window.location.href='view_job_ratings.php?plan_ID=" . $plan_ID . "&Carpenter_ID=" . $Carpenter_ID . "'\" 
+                            style='width: 150px; height: 50px; background-color: #2196F3; color: white; 
+                            border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
+                            View My Rating</button>";
+                    } else {
+                        // This carpenter hasn't rated yet
+                        echo "<button onclick=\"window.location.href='rate_job.php?plan_ID=" . $plan_ID . "'\" 
+                            style='width: 150px; height: 50px; background-color: #2196F3; color: white; 
+                            border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
+                            Rate Job</button>";
+                    }
+                    mysqli_stmt_close($ratingStmt);
                     echo "</div>";
 
                     echo "</div>"; // Close main div
