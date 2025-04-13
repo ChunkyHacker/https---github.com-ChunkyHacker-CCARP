@@ -92,77 +92,124 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <title>Job Ratings Results</title>
     <style>
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin: 20px 0;
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
         }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
+        .rating-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
-        th {
-            background-color: #4CAF50;
-            color: white;
+        .rating-header {
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 20px;
         }
-        tr:nth-child(even) {
-            background-color: #f2f2f2;
+        .rating-item {
+            padding: 10px;
+            margin: 5px 0;
+            background: #f9f9f9;
+            border-radius: 3px;
         }
-        .question-text {
+        .rating-value {
+            color: #ff6b01;
             font-weight: bold;
-            margin-top: 10px;
+            float: right;
+        }
+        .rating-date {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 20px;
+        }
+        .back-btn {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #FF8C00;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            margin-top: 20px;
         }
     </style>
 </head>
 <body>
-    <h1>Job Ratings Results</h1>
-    <table>
-        <tr>
-            <th>Carpenter Name</th>
-            <th>Plan Type</th>
-            <th>Q1. Navigation Ease</th>
-            <th>Q2. Job Relevance</th>
-            <th>Q3. Job Opportunities</th>
-            <th>Q4. Communication Ease</th>
-            <th>Q5. Engagement Level</th>
-            <th>Q6. Recommendation</th>
-            <th>Q7. Accessibility</th>
-            <th>Q8. Issues</th>
-            <th>Q9. Additional Features</th>
-            <th>Q10. Feedback</th>
-        </tr>
+    <div class="rating-container">
         <?php while($row = $result->fetch_assoc()): ?>
-        <tr>
-            <td><?php echo $row['First_Name'] . ' ' . $row['Last_Name']; ?></td>
-            <td><?php echo $row['type']; ?></td>
-            <td>Rating: <?php echo $row['q1_rating']; ?> - <?php echo $rating_descriptions['q1'][$row['q1_rating']]; ?></td>
-            <td>Rating: <?php echo $row['q2_rating']; ?> - <?php echo $rating_descriptions['q2'][$row['q2_rating']]; ?></td>
-            <td>Rating: <?php echo $row['q3_rating']; ?> - <?php echo $rating_descriptions['q3'][$row['q3_rating']]; ?></td>
-            <td>Rating: <?php echo $row['q4_rating']; ?> - <?php echo $rating_descriptions['q4'][$row['q4_rating']]; ?></td>
-            <td>Rating: <?php echo $row['q5_rating']; ?> - <?php echo $rating_descriptions['q5'][$row['q5_rating']]; ?></td>
-            <td>Rating: <?php echo $row['q6_rating']; ?> - <?php echo $rating_descriptions['q6'][$row['q6_rating']]; ?></td>
-            <td>Rating: <?php echo $row['q7_rating']; ?> - <?php echo $rating_descriptions['q7'][$row['q7_rating']]; ?></td>
-            <td>
-                Answer: <?php 
-                echo $row['q8_answer'];
-                if ($row['q8_answer'] == 'yes') {
-                    echo '<br>Explanation: ' . $row['q8_explanation'];
-                }
-                ?>
-            </td>
-            <td>Answer: <?php echo $row['q9_answer']; ?></td>
-            <td>Answer: <?php echo $row['q10_answer']; ?></td>
-        </tr>
-        <?php endwhile; ?>
-    </table>
+            <div class="rating-header">
+                <h2>Rating Details</h2>
+                <p>Rated by: <?php echo $row['First_Name'] . ' ' . $row['Last_Name']; ?></p>
+            </div>
 
-    <!-- Add the button here, after the table -->
-    <div style="margin: 20px;">
-        <button onclick="window.location.href='viewapprovedplan.php?plan_ID=<?php echo $plan_ID; ?>'" 
-            style='padding: 10px 20px; background-color: #FF8C00; color: white; 
-            border: none; border-radius: 5px; cursor: pointer;'>
-            Go Back</button>
+            <div class="rating-item">
+                <span>Navigation Ease:</span>
+                <span class="rating-value"><?php echo $row['q1_rating']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span>Job Relevance:</span>
+                <span class="rating-value"><?php echo $row['q2_rating']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span>Job Opportunities:</span>
+                <span class="rating-value"><?php echo $row['q3_rating']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span>Communication Ease:</span>
+                <span class="rating-value"><?php echo $row['q4_rating']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span>Engagement Level:</span>
+                <span class="rating-value"><?php echo $row['q5_rating']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span>Recommendation:</span>
+                <span class="rating-value"><?php echo $row['q6_rating']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span>Accessibility:</span>
+                <span class="rating-value"><?php echo $row['q7_rating']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span>Issues:</span>
+                <div>
+                    <?php 
+                    echo $row['q8_answer'];
+                    if ($row['q8_answer'] == 'yes') {
+                        echo '<br>Explanation: ' . $row['q8_explanation'];
+                    }
+                    ?>
+                </div>
+            </div>
+
+            <div class="rating-item">
+                <span>Additional Features:</span>
+                <div><?php echo $row['q9_answer']; ?></div>
+            </div>
+
+            <div class="rating-item">
+                <span>Feedback:</span>
+                <div><?php echo $row['q10_answer']; ?></div>
+            </div>
+
+            <div class="rating-date">
+                Rating Date: <?php echo date('F j, Y, g:i a', strtotime($row['rating_date'])); ?>
+            </div>
+        <?php endwhile; ?>
+
+        <a href="viewapprovedplan.php?plan_ID=<?php echo $plan_ID; ?>" class="back-btn">Go Back</a>
     </div>
 </body>
 </html>

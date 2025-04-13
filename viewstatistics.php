@@ -12,9 +12,13 @@ if (!isset($_SESSION['admin_id'])) {
 }
 
 // Query to get plan data with views and count likes
-$sql = "SELECT p.plan_id, p.views, COUNT(l.like_id) as likes_count 
+// Update the SQL query to include carpenter info
+$sql = "SELECT p.plan_id, p.views, COUNT(l.like_id) as likes_count, 
+        CONCAT(c.First_Name, ' ', c.Last_Name) as carpenter_name
         FROM plan p 
         LEFT JOIN likes l ON p.plan_id = l.plan_id 
+        LEFT JOIN job_ratings jr ON p.plan_id = jr.plan_ID
+        LEFT JOIN carpenters c ON jr.Carpenter_ID = c.Carpenter_ID
         GROUP BY p.plan_id";
 $result = $conn->query($sql);
 ?>
@@ -57,6 +61,7 @@ $result = $conn->query($sql);
                             <th>Plan ID</th>
                             <th>Views</th>
                             <th>Likes</th>
+                            <th>Action</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -67,10 +72,14 @@ $result = $conn->query($sql);
                                 echo "<td>" . $row['plan_id'] . "</td>";
                                 echo "<td>" . $row['views'] . "</td>";
                                 echo "<td>" . $row['likes_count'] . "</td>";
+                                // Update the button to include modal attributes and plan_id
+                                echo "<td><button class='btn btn-primary btn-sm' data-bs-toggle='modal' 
+                                      data-bs-target='#planRatingsModal' 
+                                      data-plan-id='" . $row['plan_id'] . "'>View Ratings</button></td>";
                                 echo "</tr>";
                             }
                         } else {
-                            echo "<tr><td colspan='3' class='text-center'>No data available</td></tr>";
+                            echo "<tr><td colspan='4' class='text-center'>No data available</td></tr>";
                         }
                         ?>
                     </tbody>
@@ -247,8 +256,13 @@ $result = $conn->query($sql);
                         <h5 class="modal-title">Evaluation Ratings</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
+                    // Add Carpenter Name field in the modal
                     <div class="modal-body">
-                        <table class="table table-bordered">
+                    <div class="mb-3">
+                    <h6>Rated by:</h6>
+                    <p id="carpenter_name"></p>
+                    </div>
+                    <table class="table table-bordered">
                             <thead>
                                 <tr>
                                     <th>Criteria</th>
@@ -366,6 +380,97 @@ $result = $conn->query($sql);
 </body>
 </html>
 
+<?php
+// Add this before the closing </body> tag
+?>
+<!-- Plan Ratings Modal -->
+<div class="modal fade" id="planRatingsModal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Job Rating</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Criteria</th>
+                            <th>Rating</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>Navigation Ease</td><td id="q1_rating"></td></tr>
+                        <tr><td>Job Relevance</td><td id="q2_rating"></td></tr>
+                        <tr><td>Job Opportunities</td><td id="q3_rating"></td></tr>
+                        <tr><td>Communication Ease</td><td id="q4_rating"></td></tr>
+                        <tr><td>Engagement Level</td><td id="q5_rating"></td></tr>
+                        <tr><td>Recommendation</td><td id="q6_rating"></td></tr>
+                        <tr><td>Accessibility</td><td id="q7_rating"></td></tr>
+                    </tbody>
+                </table>
+                <div class="mt-3">
+                    <h6>Issues:</h6>
+                    <p id="q8_answer"></p>
+                    <p id="q8_explanation"></p>
+                </div>
+                <div class="mt-3">
+                    <h6>Additional Features:</h6>
+                    <p id="q9_answer"></p>
+                </div>
+                <div class="mt-3">
+                    <h6>Feedback:</h6>
+                    <p id="q10_answer"></p>
+                </div>
+                <div class="mt-3">
+                    <h6>Rating Date:</h6>
+                    <p id="job_rating_date"></p>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const planRatingsModal = document.getElementById('planRatingsModal');
+    planRatingsModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const planId = button.getAttribute('data-plan-id');
+        
+        if (planId) {
+            fetch('get_job_ratings.php?plan_id=' + planId)
+                .then(response => response.json())
+                .then(data => {
+                    // Update ratings
+                    for (let i = 1; i <= 7; i++) {
+                        document.getElementById('q' + i + '_rating').textContent = 
+                            data['q' + i + '_rating'] + ' - ' + data['q' + i + '_description'];
+                    }
+                    
+                    // Update issues
+                    document.getElementById('q8_answer').textContent = data.q8_answer;
+                    if (data.q8_answer === 'yes') {
+                        document.getElementById('q8_explanation').textContent = 'Explanation: ' + data.q8_explanation;
+                    } else {
+                        document.getElementById('q8_explanation').textContent = '';
+                    }
+                    
+                    // Update additional features and feedback
+                    document.getElementById('q9_answer').textContent = data.q9_answer;
+                    document.getElementById('q10_answer').textContent = data.q10_answer;
+                    
+                    // Update rating date
+                    document.getElementById('job_rating_date').textContent = data.rating_date;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+});
+</script>
 <?php
 $conn->close();
 ?>
