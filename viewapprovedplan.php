@@ -394,6 +394,12 @@ $carpenterDetails = $result->fetch_assoc();
                         style='width: 150px; height: 50px; background-color: #4CAF50; color: white; 
                         border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
                         Generate Contract</button>";
+
+                    // Rate Job Opportunity button
+                    echo "<button onclick=\"window.location.href='rate_job.php?plan_ID=" . $plan_ID . "'\" 
+                        style='width: 150px; height: 50px; background-color: #2196F3; color: white; 
+                        border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
+                        Rate Job</button>";
                     
                     echo "</div>";
 
