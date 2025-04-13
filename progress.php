@@ -751,6 +751,12 @@
                         No Payment Available
                 </button>
             <?php endif; ?>
+            <button onclick="window.location.href='turnover.php?contract_ID=<?php echo $contract_ID; ?>'"
+                    style="width: 150px; height: 50px; background-color: #FF8C00; color: white; 
+                    border: none; border-radius: 5px; cursor: pointer; font-size: 16px;">
+                    Turnover Project
+            </button>
+
         </div>
         <!-- Add Time Out Modal -->
         <div id="timeOutModal" class="modal" style="display: none;">
