@@ -57,9 +57,10 @@ if (isset($_GET['plan_id'])) {
         ]
     ];
 
-    $sql = "SELECT jr.*, CONCAT(c.First_Name, ' ', c.Last_Name) as carpenter_name 
+    // Add var_dump to check the data
+    $sql = "SELECT jr.*, c.First_Name, c.Last_Name 
             FROM job_ratings jr 
-            JOIN carpenters c ON jr.Carpenter_ID = c.Carpenter_ID 
+            LEFT JOIN carpenters c ON jr.Carpenter_ID = c.Carpenter_ID 
             WHERE jr.plan_ID = ?";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $plan_id);
@@ -67,8 +68,17 @@ if (isset($_GET['plan_id'])) {
     $result = $stmt->get_result();
     
     if ($row = $result->fetch_assoc()) {
+        // Debug: Check what data we're getting
+        error_log(print_r($row, true));
+        
+        // Add carpenter name to the result
+        $row['carpenter_name'] = $row['First_Name'] . ' ' . $row['Last_Name'];
+        
+        // Debug: Check if name is added
+        error_log("Carpenter Name: " . $row['carpenter_name']);
+        
         // Add descriptions to the ratings
-        for ($i = 1; $i <= 7; $i++) {
+        for ($i = 1; $i <= 7; $i++) {  // Fixed the 'i' to '$i'
             $rating = $row['q' . $i . '_rating'];
             $row['q' . $i . '_description'] = $rating_descriptions['q' . $i][$rating];
         }

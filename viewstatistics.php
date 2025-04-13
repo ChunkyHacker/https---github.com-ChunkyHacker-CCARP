@@ -30,6 +30,7 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Statistics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -256,12 +257,7 @@ $result = $conn->query($sql);
                         <h5 class="modal-title">Evaluation Ratings</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
-                    // Add Carpenter Name field in the modal
                     <div class="modal-body">
-                    <div class="mb-3">
-                    <h6>Rated by:</h6>
-                    <p id="carpenter_name"></p>
-                    </div>
                     <table class="table table-bordered">
                             <thead>
                                 <tr>
@@ -392,6 +388,10 @@ $result = $conn->query($sql);
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
+                <div class="mb-3">
+                    <h6>Rated by:</h6>
+                    <p id="job_carpenter_name"></p>  <!-- Changed ID to be unique -->
+                </div>
                 <table class="table table-bordered">
                     <thead>
                         <tr>
@@ -400,13 +400,13 @@ $result = $conn->query($sql);
                         </tr>
                     </thead>
                     <tbody>
-                        <tr><td>Navigation Ease</td><td id="q1_rating"></td></tr>
-                        <tr><td>Job Relevance</td><td id="q2_rating"></td></tr>
-                        <tr><td>Job Opportunities</td><td id="q3_rating"></td></tr>
-                        <tr><td>Communication Ease</td><td id="q4_rating"></td></tr>
-                        <tr><td>Engagement Level</td><td id="q5_rating"></td></tr>
-                        <tr><td>Recommendation</td><td id="q6_rating"></td></tr>
-                        <tr><td>Accessibility</td><td id="q7_rating"></td></tr>
+                        <tr><td>1. Website Navigation and Usability</td><td id="q1_rating"></td></tr>
+                        <tr><td>2. Job Post Relevance to Skills</td><td id="q2_rating"></td></tr>
+                        <tr><td>3. Available Job Opportunities</td><td id="q3_rating"></td></tr>
+                        <tr><td>4. Client Communication Platform</td><td id="q4_rating"></td></tr>
+                        <tr><td>5. User Engagement and Activity</td><td id="q5_rating"></td></tr>
+                        <tr><td>6. Platform Recommendation Rate</td><td id="q6_rating"></td></tr>
+                        <tr><td>7. Overall Job Accessibility</td><td id="q7_rating"></td></tr>
                     </tbody>
                 </table>
                 <div class="mt-3">
@@ -425,6 +425,25 @@ $result = $conn->query($sql);
                 <div class="mt-3">
                     <h6>Rating Date:</h6>
                     <p id="job_rating_date"></p>
+                </div>
+                
+                <!-- Add Chart Section -->
+                <div class="mt-4">
+                    <h6>Ratings Analysis:</h6>
+                    <div class="row">
+                        <div class="col-md-8">
+                            <canvas id="ratingsChart"></canvas>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h6>Over all Score</h6>
+                                    <h3 id="accessibilityScore" class="text-center"></h3>
+                                    <p id="accessibilityStatus" class="text-center"></p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <div class="modal-footer">
@@ -445,7 +464,9 @@ document.addEventListener('DOMContentLoaded', function() {
             fetch('get_job_ratings.php?plan_id=' + planId)
                 .then(response => response.json())
                 .then(data => {
-                    // Update ratings
+                    // Update carpenter name with unique ID
+                    document.getElementById('job_carpenter_name').textContent = data.carpenter_name || 'Not available';
+                    
                     for (let i = 1; i <= 7; i++) {
                         document.getElementById('q' + i + '_rating').textContent = 
                             data['q' + i + '_rating'] + ' - ' + data['q' + i + '_description'];
@@ -465,6 +486,71 @@ document.addEventListener('DOMContentLoaded', function() {
                     
                     // Update rating date
                     document.getElementById('job_rating_date').textContent = data.rating_date;
+
+                    // Create chart data
+                    const ctx = document.getElementById('ratingsChart').getContext('2d');
+                    const ratings = [];
+                    const labels = [
+                        'Navigation Ease',
+                        'Job Relevance',
+                        'Job Opportunities',
+                        'Communication Ease',
+                        'Engagement Level',
+                        'Recommendation',
+                        'Accessibility'
+                    ];
+                    
+                    for (let i = 1; i <= 7; i++) {
+                        ratings.push(parseInt(data['q' + i + '_rating']));
+                    }
+                    
+                    // Calculate average accessibility score from all ratings
+                    const totalScore = ratings.reduce((sum, rating) => sum + rating, 0);
+                    const averageScore = (totalScore / (ratings.length * 5)) * 100; // Convert to percentage
+                    document.getElementById('accessibilityScore').textContent = `${averageScore.toFixed(1)}%`;
+                    
+                    // Show status based on 30% goal
+                    const statusElement = document.getElementById('accessibilityStatus');
+                    if (averageScore >= 30) {
+                        statusElement.textContent = 'Goal Achieved! ✅';
+                        statusElement.className = 'text-success';
+                    } else {
+                        statusElement.textContent = 'In Progress';
+                        statusElement.className = 'text-warning';
+                    }
+                    
+                    // Create chart
+                    new Chart(ctx, {
+                        type: 'bar',
+                        data: {
+                            labels: labels,
+                            datasets: [{
+                                label: 'Rating Score',
+                                data: ratings,
+                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                borderColor: 'rgba(54, 162, 235, 1)',
+                                borderWidth: 1
+                            }]
+                        },
+                        options: {
+                            responsive: true,
+                            scales: {
+                                y: {
+                                    beginAtZero: true,
+                                    max: 5,
+                                    ticks: {
+                                        stepSize: 1
+                                    }
+                                }
+                            },
+                            plugins: {
+                                title: {
+                                    display: true,
+                                    text: 'Job Accessibility Ratings'
+                                }
+                            }
+                        }
+                    });
                 })
                 .catch(error => console.error('Error:', error));
         }
