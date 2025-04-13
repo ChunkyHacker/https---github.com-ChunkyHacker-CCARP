@@ -390,68 +390,69 @@ $result = $conn->query($sql);
                 <h5 class="modal-title">Job Rating</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" style="margin-right: 0;"></button>
             </div>
-            <div class="modal-body px-0"> <!-- Removed left and right padding -->
-                <div class="mb-3 px-3"> <!-- Added padding to maintain spacing for this section -->
-                    <h6>Rated by:</h6>
-                    <select id="carpenter_selector" class="form-select" style="width: 100%">
-                        <option value="">Select a carpenter...</option>
-                    </select>
-                </div>
-                <p id="job_carpenter_name"></p>  <!-- Changed ID to be unique -->
-                </div>
-                <table class="table table-bordered">
-                    <thead>
-                        <tr>
-                            <th>Criteria</th>
-                            <th>Rating</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr><td>1. Website Navigation and Usability</td><td id="q1_rating"></td></tr>
-                        <tr><td>2. Job Post Relevance to Skills</td><td id="q2_rating"></td></tr>
-                        <tr><td>3. Available Job Opportunities</td><td id="q3_rating"></td></tr>
-                        <tr><td>4. Client Communication Platform</td><td id="q4_rating"></td></tr>
-                        <tr><td>5. User Engagement and Activity</td><td id="q5_rating"></td></tr>
-                        <tr><td>6. Platform Recommendation Rate</td><td id="q6_rating"></td></tr>
-                        <tr><td>7. Overall Job Accessibility</td><td id="q7_rating"></td></tr>
-                    </tbody>
-                </table>
-                <div class="mt-3">
-                    <h6>Issues:</h6>
-                    <p id="q8_answer"></p>
-                    <p id="q8_explanation"></p>
-                </div>
-                <div class="mt-3">
-                    <h6>Additional Features:</h6>
-                    <p id="q9_answer"></p>
-                </div>
-                <div class="mt-3">
-                    <h6>Feedback:</h6>
-                    <p id="q10_answer"></p>
-                </div>
-                <div class="mt-3">
-                    <h6>Rating Date:</h6>
-                    <p id="job_rating_date"></p>
-                </div>
-                
-                <!-- Add Chart Section -->
-                <div class="mt-4">
-                    <h6>Ratings Analysis:</h6>
-                    <div class="row">
-                        <div class="col-md-8">
-                            <canvas id="ratingsChart"></canvas>
-                        </div>
-                        <div class="col-md-4">
-                            <div class="card">
-                                <div class="card-body">
-                                    <h6>Over all Score</h6>
-                                    <h3 id="accessibilityScore" class="text-center"></h3>
-                                    <p id="accessibilityStatus" class="text-center"></p>
+            <div class="modal-body px-0">
+                <div class="px-3"> <!-- Container for all content with consistent padding -->
+                    <div class="mb-3">
+                        <h6>Rated by:</h6>
+                        <select id="carpenter_selector" class="form-select" style="width: 100%">
+                            <option value="">Select a carpenter...</option>
+                        </select>
+                    </div>
+                    
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Criteria</th>
+                                <th>Rating</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td>1. Website Navigation and Usability</td><td id="q1_rating"></td></tr>
+                            <tr><td>2. Job Post Relevance to Skills</td><td id="q2_rating"></td></tr>
+                            <tr><td>3. Available Job Opportunities</td><td id="q3_rating"></td></tr>
+                            <tr><td>4. Client Communication Platform</td><td id="q4_rating"></td></tr>
+                            <tr><td>5. User Engagement and Activity</td><td id="q5_rating"></td></tr>
+                            <tr><td>6. Platform Recommendation Rate</td><td id="q6_rating"></td></tr>
+                            <tr><td>7. Overall Job Accessibility</td><td id="q7_rating"></td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="mt-3">
+                        <h6>Issues:</h6>
+                        <p id="q8_answer"></p>
+                        <p id="q8_explanation"></p>
+                    </div>
+                    <div class="mt-3">
+                        <h6>Additional Features:</h6>
+                        <p id="q9_answer"></p>
+                    </div>
+                    <div class="mt-3">
+                        <h6>Feedback:</h6>
+                        <p id="q10_answer"></p>
+                    </div>
+                    <div class="mt-3">
+                        <h6>Rating Date:</h6>
+                        <p id="job_rating_date"></p>
+                    </div>
+                    
+                    <!-- Add Chart Section -->
+                    <div class="mt-4">
+                        <h6>Ratings Analysis:</h6>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <canvas id="ratingsChart"></canvas>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Over all Score</h6>
+                                        <h3 id="accessibilityScore" class="text-center"></h3>
+                                        <p id="accessibilityStatus" class="text-center"></p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
