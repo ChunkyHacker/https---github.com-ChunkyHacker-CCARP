@@ -360,9 +360,54 @@ $User_ID = $_SESSION['User_ID'];
             </div>
         </div>
 
-        <!-- Ongoing Project Section -->
-         
+        <!-- Pending turnover project Section -->
+        <div class="info-card">
+            <h2>Completed Projects</h2>
+            <div class="row">
+                <?php
+                // Query to get completed contracts and turnover details
+                $query = "SELECT p.*, c.First_Name AS carpenter_first, c.Last_Name AS carpenter_last,
+                          co.contract_ID, pt.client_feedback, pt.confirmation_status
+                          FROM plan p 
+                          JOIN contracts co ON p.plan_ID = co.plan_ID 
+                          JOIN carpenters c ON co.Carpenter_ID = c.Carpenter_ID 
+                          JOIN project_turnover pt ON co.contract_ID = pt.contract_ID
+                          WHERE p.User_ID = ? AND co.status = 'completed'";
 
+                $stmt = mysqli_prepare($conn, $query);
+                mysqli_stmt_bind_param($stmt, "i", $User_ID);
+                mysqli_stmt_execute($stmt);
+                $result = mysqli_stmt_get_result($stmt);
+
+                if ($result && mysqli_num_rows($result) > 0) {
+                    while ($row = mysqli_fetch_assoc($result)) {
+                        echo '<div class="col-md-4">';
+                        echo '<div class="project-card">';
+                        
+                        // Display Carpenter Name
+                        echo "<h5 style='margin-bottom: 5px;'>Carpenter: {$row['carpenter_first']} {$row['carpenter_last']}</h5>";
+
+                        // Display Plan Photo
+                        $photoPath = $row['Photo'];
+                        if (!empty($photoPath) && file_exists($photoPath)) {
+                            echo "<img src='{$photoPath}' alt='Plan Photo' style='width: 100%; height: auto; margin-bottom: 10px;' onclick='openModal(this.src)'>";
+                        }
+
+                        // Check if project has been reviewed
+                        if (!empty($row['client_feedback']) && $row['confirmation_status'] == 'confirmed') {
+                            echo "<a href='viewcompletedproject.php?contract_ID={$row['contract_ID']}' class='btn btn-info w-100'>View Project Details</a>";
+                        } else {
+                            echo "<a href='viewturnover.php?contract_ID={$row['contract_ID']}' class='btn btn-success w-100'>Review Project</a>";
+                        }
+                        echo '</div>';
+                        echo '</div>';
+                    }
+                } else {
+                    echo "<p class='text-center w-100'>No completed projects found.</p>";
+                }
+                ?>
+            </div>
+        </div>
     </div>
     
     <!-- Modal for Image Preview -->

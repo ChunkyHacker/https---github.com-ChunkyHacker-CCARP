@@ -310,6 +310,8 @@ $user = $result->fetch_assoc();
                             $color = "#FF8C00"; // Orange for pending
                         } elseif ($status === 'rejected') {
                             $color = "#f44336"; // Red for rejected
+                        } elseif ($status === 'completed') {
+                            $color = "#4CAF50"; // Green for completed
                         } else {
                             $color = "#000"; // Default color if status is unknown
                         }
