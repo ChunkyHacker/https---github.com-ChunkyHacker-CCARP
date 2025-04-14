@@ -91,10 +91,10 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-        <!-- Single Carpenter Progress card -->
+        <!-- Single Project Progress card -->
         <div class="card mt-4">
             <div class="card-header">
-                <h5>Carpenter Progress</h5>
+                <h5>Project Progress</h5>
             </div>
             <div class="card-body">
                 <table class="table table-bordered">
@@ -246,6 +246,9 @@ $result = $conn->query($sql);
                         </div>
                     </div>
                     <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#efficiencyModal">
+                            View Efficiency Report
+                        </button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -253,7 +256,7 @@ $result = $conn->query($sql);
         </div>
 
         <!-- Ratings Modal -->
-        <div class="modal fade" id="ratingsModal" tabindex="-1">
+        <div class="modal fade" id="ratingsModal">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
@@ -295,7 +298,6 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-        <!-- Update your script section -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
         <script>
             document.addEventListener('DOMContentLoaded', function() {
@@ -375,84 +377,39 @@ $result = $conn->query($sql);
             }
         });
         </script>
-    </div>
+    </div><!-- End of container -->
 </body>
 </html>
 
-<?php
-// Add this before the closing </body> tag
-?>
-<!-- Plan Ratings Modal -->
-<div class="modal fade" id="planRatingsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
+<!-- Efficiency Report Modal -->
+<div class="modal fade" id="efficiencyModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-xl"> <!-- Changed from modal-lg to modal-xl -->
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Job Rating</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" style="margin-right: 0;"></button>
+                <h5 class="modal-title">Project Efficiency Report</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
-            <div class="modal-body px-0">
-                <div class="px-3"> <!-- Container for all content with consistent padding -->
-                    <div class="mb-3">
-                        <h6>Rated by:</h6>
-                        <select id="carpenter_selector" class="form-select" style="width: 100%">
-                            <option value="">Select a carpenter...</option>
-                        </select>
-                    </div>
-                    
+            <div class="modal-body">
+                <div class="table-responsive"> <!-- Added table-responsive wrapper -->
                     <table class="table table-bordered">
                         <thead>
                             <tr>
-                                <th>Criteria</th>
-                                <th>Rating</th>
+                                <th>Contract ID</th>
+                                <th>Carpenter ID</th>
+                                <th>Start Date</th>
+                                <th>End Date</th>
+                                <th>Actual Completion Date</th>
+                                <th>Task Completed</th>
+                                <th>Total Days Estimated</th>
+                                <th>Total Days Spent</th>
+                                <th>Efficiency Gain (%)</th>
+                                <th>Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            <tr><td>1. Website Navigation and Usability</td><td id="q1_rating"></td></tr>
-                            <tr><td>2. Job Post Relevance to Skills</td><td id="q2_rating"></td></tr>
-                            <tr><td>3. Available Job Opportunities</td><td id="q3_rating"></td></tr>
-                            <tr><td>4. Client Communication Platform</td><td id="q4_rating"></td></tr>
-                            <tr><td>5. User Engagement and Activity</td><td id="q5_rating"></td></tr>
-                            <tr><td>6. Platform Recommendation Rate</td><td id="q6_rating"></td></tr>
-                            <tr><td>7. Overall Job Accessibility</td><td id="q7_rating"></td></tr>
+                        <tbody id="efficiencyTableBody">
                         </tbody>
                     </table>
-
-                    <div class="mt-3">
-                        <h6>Issues:</h6>
-                        <p id="q8_answer"></p>
-                        <p id="q8_explanation"></p>
-                    </div>
-                    <div class="mt-3">
-                        <h6>Additional Features:</h6>
-                        <p id="q9_answer"></p>
-                    </div>
-                    <div class="mt-3">
-                        <h6>Feedback:</h6>
-                        <p id="q10_answer"></p>
-                    </div>
-                    <div class="mt-3">
-                        <h6>Rating Date:</h6>
-                        <p id="job_rating_date"></p>
-                    </div>
-                    
-                    <!-- Add Chart Section -->
-                    <div class="mt-4">
-                        <h6>Ratings Analysis:</h6>
-                        <div class="row">
-                            <div class="col-md-8">
-                                <canvas id="ratingsChart"></canvas>
-                            </div>
-                            <div class="col-md-4">
-                                <div class="card">
-                                    <div class="card-body">
-                                        <h6>Over all Score</h6>
-                                        <h3 id="accessibilityScore" class="text-center"></h3>
-                                        <p id="accessibilityStatus" class="text-center"></p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
@@ -462,150 +419,44 @@ $result = $conn->query($sql);
 </div>
 
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    const planRatingsModal = document.getElementById('planRatingsModal');
+// Add efficiency modal handler here
+const efficiencyModal = document.getElementById('efficiencyModal');
+efficiencyModal.addEventListener('show.bs.modal', function(event) {
+    // Add console.log for debugging
+    console.log('Fetching efficiency data...');
     
-    // Initialize Select2
-    $('#carpenter_selector').select2({
-        dropdownParent: $('#planRatingsModal'),
-        width: '100%'
-    });
-
-    planRatingsModal.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const planId = button.getAttribute('data-plan-id');
-        
-        if (planId) {
-            // First, fetch carpenters who rated this plan
-            fetch('get_plan_raters.php?plan_id=' + planId)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.error) {
-                        console.error('Error:', data.error);
-                        return;
-                    }
-                    
-                    // Clear and populate the dropdown
-                    const select = $('#carpenter_selector');
-                    select.empty().append('<option value="">Select a carpenter...</option>');
-                    
-                    data.forEach(carpenter => {
-                        const option = new Option(
-                            carpenter.First_Name + ' ' + carpenter.Last_Name,
-                            carpenter.Carpenter_ID,
-                            false,
-                            false
-                        );
-                        select.append(option);
-                    });
-                    
-                    // Trigger change event to update Select2
-                    select.trigger('change');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
-    });
-
-    // Handle carpenter selection change
-    $('#carpenter_selector').on('change', function() {
-        const carpenterId = $(this).val();
-        const planId = document.querySelector('[data-bs-target="#planRatingsModal"]').getAttribute('data-plan-id');
-        
-        if (carpenterId && planId) {
-            fetch(`get_job_ratings.php?plan_id=${planId}&carpenter_id=${carpenterId}`)
-                .then(response => response.json())
-                .then(data => {
-                    console.log('Received data:', data); // Debug log
-                    
-                    if (data.error) {
-                        console.error('Error:', data.error);
-                        return;
-                    }
-
-                    // Update all the ratings and other fields
-                    for (let i = 1; i <= 7; i++) {
-                        const ratingElement = document.getElementById('q' + i + '_rating');
-                        if (ratingElement) {
-                            ratingElement.textContent = data['q' + i + '_rating'] + ' - ' + data['q' + i + '_description'];
-                        }
-                    }
-                    
-                    // Update other fields
-                    document.getElementById('q8_answer').textContent = data.q8_answer || 'No issues reported';
-                    if (data.q8_answer === 'yes') {
-                        document.getElementById('q8_explanation').textContent = 'Explanation: ' + (data.q8_explanation || 'No explanation provided');
-                    } else {
-                        document.getElementById('q8_explanation').textContent = '';
-                    }
-                    document.getElementById('q9_answer').textContent = data.q9_answer || 'No additional features suggested';
-                    document.getElementById('q10_answer').textContent = data.q10_answer || 'No feedback provided';
-                    document.getElementById('job_rating_date').textContent = data.rating_date || 'Date not available';
-
-                    // Calculate and update chart
-                    const ratings = [];
-                    for (let i = 1; i <= 7; i++) {
-                        ratings.push(parseInt(data['q' + i + '_rating']) || 0);
-                    }
-                    
-                    // Create chart
-                    const ctx = document.getElementById('ratingsChart').getContext('2d');
-                    if (window.ratingChart) {
-                        window.ratingChart.destroy();
-                    }
-                    window.ratingChart = new Chart(ctx, {
-                        type: 'bar',
-                        data: {
-                            labels: [
-                                'Navigation Ease',
-                                'Job Relevance',
-                                'Job Opportunities',
-                                'Communication Ease',
-                                'Engagement Level',
-                                'Recommendation',
-                                'Accessibility'
-                            ],
-                            datasets: [{
-                                label: 'Rating Score',
-                                data: ratings,
-                                backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                                borderColor: 'rgba(54, 162, 235, 1)',
-                                borderWidth: 1
-                            }]
-                        },
-                        options: {
-                            responsive: true,
-                            scales: {
-                                y: {
-                                    beginAtZero: true,
-                                    max: 5,
-                                    ticks: {
-                                        stepSize: 1
-                                    }
-                                }
-                            }
-                        }
-                    });
-
-                    // Calculate and display overall score
-                    const averageScore = (ratings.reduce((a, b) => a + b, 0) / (ratings.length * 5)) * 100;
-                    document.getElementById('accessibilityScore').textContent = `${averageScore.toFixed(1)}%`;
-                    
-                    const statusElement = document.getElementById('accessibilityStatus');
-                    if (averageScore >= 30) {
-                        statusElement.textContent = 'Goal Achieved! ✅';
-                        statusElement.className = 'text-success';
-                    } else {
-                        statusElement.textContent = 'In Progress';
-                        statusElement.className = 'text-warning';
-                    }
-                })
-                .catch(error => {
-                    console.error('Fetch error:', error);
-                });
-        }
-    });
+    fetch('get_efficiency_report.php')
+        .then(response => {
+            console.log('Response:', response);
+            return response.json();
+        })
+        .then(data => {
+            console.log('Data received:', data);
+            const tbody = document.getElementById('efficiencyTableBody');
+            tbody.innerHTML = data.map(row => `
+                <tr>
+                    <td>${row.contract_ID}</td>
+                    <td>${row.Carpenter_ID}</td>
+                    <td>${row.start_date}</td>
+                    <td>${row.end_date}</td>
+                    <td>${row.actual_completion_date}</td>
+                    <td>${row.task_completed}</td>
+                    <td>${row.total_days_estimated}</td>
+                    <td>${row.total_days_spent}</td>
+                    <td>${row.efficiency_gain}%</td>
+                    <td>
+                        ${row.efficiency_gain >= 20 ? 
+                            '<span class="text-success">✓ Efficient</span>' : 
+                            '<span class="text-warning">Delayed</span>'}
+                    </td>
+                </tr>
+            `).join('');
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            document.getElementById('efficiencyTableBody').innerHTML = 
+                '<tr><td colspan="10" class="text-center">Error loading data</td></tr>';
+        });
 });
 </script>
 <?php

@@ -50,18 +50,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Insert into project_turnover
     $sql = "INSERT INTO project_turnover (contract_ID, plan_ID, task_id, completed_task_id, 
-            actual_completion_date, client_signature, turnover_notes, supporting_documents) 
-            VALUES (?, ?, ?, ?, CURRENT_DATE(), ?, ?, ?)";
+            actual_completion_date, client_signature, turnover_notes, supporting_documents, turnedover_by) 
+            VALUES (?, ?, ?, ?, CURRENT_DATE(), ?, ?, ?, ?)";
             
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iiissss", 
+    $stmt->bind_param("iiissssi", 
         $contract_ID,
         $plan_ID,
         $task_id,
         $completed_task_id,
         $_POST['client_signature'],
         $_POST['turnover_notes'],
-        $supporting_documents
+        $supporting_documents,
+        $_POST['carpenter_ID']  // Added carpenter_ID
     );
 
     if ($stmt->execute()) {

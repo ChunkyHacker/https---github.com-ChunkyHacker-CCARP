@@ -206,6 +206,16 @@ if ($result->num_rows === 0) {
 
         <form action="process_turnover.php" method="POST" enctype="multipart/form-data">
             <input type="hidden" name="contract_ID" value="<?php echo $contract_ID; ?>">
+            <?php
+            // Fetch carpenter ID from contracts table
+            $sql_carpenter = "SELECT carpenter_ID FROM contracts WHERE contract_ID = ?";
+            $stmt = $conn->prepare($sql_carpenter);
+            $stmt->bind_param("i", $contract_ID);
+            $stmt->execute();
+            $carpenter_result = $stmt->get_result();
+            $carpenter_data = $carpenter_result->fetch_assoc();
+            ?>
+            <input type="hidden" name="carpenter_ID" value="<?php echo $carpenter_data['carpenter_ID']; ?>">
             
             <!-- Client Confirmation Section -->
             <div class="form-group">
