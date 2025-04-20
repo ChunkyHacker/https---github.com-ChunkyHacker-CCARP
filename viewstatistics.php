@@ -156,7 +156,7 @@ $result = $conn->query($sql);
                                 echo "<td>" . $row['contract_ID'] . "</td>";
                                 echo "<td>" . $row['First_Name'] . " " . $row['Last_Name'] . "</td>";
                                 echo "<td><button class='btn btn-primary btn-sm' data-bs-toggle='modal' 
-                                      data-bs-target='#ratingsModal' 
+                                      data-bs-target='#checklistratingsmodal' 
                                       data-contract-id='" . $row['contract_ID'] . "'>View Ratings</button></td>";
                                 echo "</tr>";
                             }
