@@ -30,10 +30,10 @@ $result = $conn->query($sql);
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Statistics</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <!-- Navbar -->
@@ -255,42 +255,79 @@ $result = $conn->query($sql);
             </div>
         </div>
 
-        <!-- Ratings Modal -->
-        <div class="modal fade" id="ratingsModal">
+        <!-- Plan Ratings Modal -->
+        <div class="modal fade" id="planRatingsModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-header">
-                        <h5 class="modal-title">Evaluation Ratings</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        <h5 class="modal-title">Job Rating</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" style="margin-right: 0;"></button>
                     </div>
-                    <div class="modal-body">
-                    <table class="table table-bordered">
-                            <thead>
-                                <tr>
-                                    <th>Criteria</th>
-                                    <th>Rating</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr><td>The finished project matched the agreed design and measurements.</td><td id="criteria1"></td></tr>
-                                <tr><td>There were no alignment issues (e.g., no uneven surfaces, gaps, or misalignment).</td><td id="criteria2"></td></tr>
-                                <tr><td>The finishing quality (sanding, painting, varnishing) is smooth and professionally done.</td><td id="criteria3"></td></tr>
-                                <tr><td>There were no visible defects (e.g., cracks, loose fittings, rough edges).</td><td id="criteria4"></td></tr>
-                                <tr><td>The carpenter followed proper carpentry techniques (e.g., joints, reinforcements, fastening).</td><td id="criteria5"></td></tr>
-                                <tr><td>The project was completed within the agreed timeframe.</td><td id="criteria6"></td></tr>
-                                <tr><td>I am satisfied with the overall quality of the carpentry work.</td><td id="criteria7"></td></tr>
-                                <tr><td>I would recommend this carpenter for future projects.</td><td id="criteria8"></td></tr>
-                            </tbody>
-                        </table>
-                        <div class="mt-3">
-                            <h6>Comments:</h6>
-                            <p id="ratingComments"></p>
-                        </div>
-                        <div class="mt-3">
-                            <h6>Rating Date:</h6>
-                            <p id="ratingDate"></p>
-                        </div>
-                    </div>
+                    <div class="modal-body px-0">
+                        <div class="px-3"> <!-- Container for all content with consistent padding -->
+                            <div class="mb-3">
+                                <h6>Rated by:</h6>
+                                <select id="carpenter_selector" class="form-select" style="width: 100%">
+                                    <option value="">Select a carpenter...</option>
+                                </select>
+                            </div>
+                            
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Criteria</th>
+                                        <th>Rating</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr><td>1. Website Navigation and Usability</td><td id="q1_rating"></td></tr>
+                                    <tr><td>2. Job Post Relevance to Skills</td><td id="q2_rating"></td></tr>
+                                    <tr><td>3. Available Job Opportunities</td><td id="q3_rating"></td></tr>
+                                    <tr><td>4. Client Communication Platform</td><td id="q4_rating"></td></tr>
+                                    <tr><td>5. User Engagement and Activity</td><td id="q5_rating"></td></tr>
+                                    <tr><td>6. Platform Recommendation Rate</td><td id="q6_rating"></td></tr>
+                                    <tr><td>7. Overall Job Accessibility</td><td id="q7_rating"></td></tr>
+                                </tbody>
+                            </table>
+
+                            <div class="mt-3">
+                                <h6>Issues:</h6>
+                                <p id="q8_answer"></p>
+                                <p id="q8_explanation"></p>
+                            </div>
+                            <div class="mt-3">
+                                <h6>Additional Features:</h6>
+                                <p id="q9_answer"></p>
+                            </div>
+                            <div class="mt-3">
+                                <h6>Feedback:</h6>
+                                <p id="q10_answer"></p>
+                            </div>
+                            <div class="mt-3">
+                                <h6>Rating Date:</h6>
+                                <p id="job_rating_date"></p>
+                            </div>
+                            
+                            <!-- Add Chart Section -->
+                            <div class="mt-4">
+                                <h6>Ratings Analysis:</h6>
+                                <div class="row">
+                                    <div class="col-md-8">
+                                        <canvas id="ratingsChart" style="width: 100%; height: 300px;"></canvas>
+                                    </div>
+                                    <div class="col-md-4">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <h6>Over all Score</h6>
+                                                <h3 id="accessibilityScore" class="text-center"></h3>
+                                                <p id="accessibilityStatus" class="text-center"></p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div> <!-- Close px-3 container -->
+                    </div> <!-- Close modal-body -->
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
@@ -419,46 +456,229 @@ $result = $conn->query($sql);
 </div>
 
 <script>
+// Initialize Select2 and Plan Ratings Modal Handler
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize Select2
+    $('#carpenter_selector').select2({
+        dropdownParent: $('#planRatingsModal'),
+        width: '100%'
+    });
+
+    // Plan Ratings Modal Handler
+    const planRatingsModal = document.getElementById('planRatingsModal');
+    planRatingsModal.addEventListener('show.bs.modal', function(event) {
+        const button = event.relatedTarget;
+        const planId = button.getAttribute('data-plan-id');
+        planRatingsModal.setAttribute('data-plan-id', planId); // Store plan_id directly on modal
+        
+        // Clear previous data
+        $('#carpenter_selector').empty().append('<option value="">Select a carpenter...</option>');
+        
+        if (planId) {
+            // Fetch carpenters who rated this plan
+            fetch('get_plan_raters.php?plan_id=' + planId)
+                .then(response => response.json())
+                .then(data => {
+                    const select = $('#carpenter_selector');
+                    
+                    data.forEach(carpenter => {
+                        select.append(new Option(
+                            carpenter.First_Name + ' ' + carpenter.Last_Name,
+                            carpenter.Carpenter_ID
+                        ));
+                    });
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+
+    // Handle carpenter selection change
+    $('#carpenter_selector').on('change', function() {
+        const carpenterId = $(this).val();
+        const planId = planRatingsModal.getAttribute('data-plan-id'); // Get plan_id directly from modal
+        
+        console.log('Selected carpenter:', carpenterId); // Debug log
+        console.log('Plan ID:', planId); // Debug log
+        
+        // Inside the carpenter selection change handler, in the .then(data => {}) block
+        if (carpenterId && planId) {
+            fetch(`get_job_ratings.php?plan_id=${planId}&carpenter_id=${carpenterId}`)
+                .then(response => response.json())
+                .then(data => {
+                    // Update ratings with descriptions
+                    for (let i = 1; i <= 7; i++) {
+                        $(`#q${i}_rating`).text(data[`q${i}_description`] + ` (${data[`q${i}_rating`]}/5)`);
+                    }
+            
+                    // Update additional fields
+                    $('#q8_answer').text(data.q8_answer || 'No issues reported');
+                    $('#q8_explanation').text(data.q8_explanation || '');
+                    $('#q9_answer').text(data.q9_answer || 'No additional features suggested');
+                    $('#q10_answer').text(data.q10_answer || 'No feedback provided');
+                    $('#job_rating_date').text(data.rating_date || 'Not specified');
+                    
+                    // Inside the Plan Ratings Modal section, let's modify the chart initialization code
+                    // Make sure Chart.js is loaded
+                    if (typeof Chart === 'undefined') {
+                        console.error('Chart.js is not loaded!');
+                        return;
+                    }
+                    
+                    // Create chart data
+                    const ctx = document.getElementById('ratingsChart');
+                    if (!ctx) {
+                        console.error('Canvas element not found!', 'ratingsChart');
+                        // Add debugging to check all canvas elements
+                        console.log('All canvas elements:', document.querySelectorAll('canvas'));
+                        return;
+                    }
+                    
+                    const ratings = [];
+                    const labels = [
+                        'Navigation Ease',
+                        'Job Relevance',
+                        'Job Opportunities',
+                        'Communication',
+                        'User Engagement',
+                        'Recommendation',
+                        'Accessibility'
+                    ];
+                    
+                    // Get ratings from q1 to q7
+                    for (let i = 1; i <= 7; i++) {
+                        ratings.push(parseInt(data['q' + i + '_rating']));
+                    }
+                    
+                    // Calculate average accessibility score from all ratings
+                    const totalScore = ratings.reduce((sum, rating) => sum + rating, 0);
+                    const averageScore = (totalScore / (ratings.length * 5)) * 100; // Convert to percentage
+                    document.getElementById('accessibilityScore').textContent = `${averageScore.toFixed(1)}%`;
+                    
+                    // Show status based on 60% goal
+                    const statusElement = document.getElementById('accessibilityStatus');
+                    if (averageScore >= 60) {
+                        statusElement.textContent = 'Goal Achieved! ✅';
+                        statusElement.className = 'text-center text-success';
+                    } else {
+                        statusElement.textContent = 'In Progress';
+                        statusElement.className = 'text-center text-warning';
+                    }
+                    
+                    // Add debugging to check if chart exists before destroying
+                    console.log('Existing chart:', window.ratingsChart);
+                    
+                    // Destroy existing chart if it exists - FIX THE ERROR HERE
+                    if (window.ratingsChart && typeof window.ratingsChart.destroy === 'function') {
+                        window.ratingsChart.destroy();
+                    } else {
+                        // If chart exists but destroy method doesn't, create a new canvas
+                        if (window.ratingsChart) {
+                            const parent = ctx.parentNode;
+                            parent.removeChild(ctx);
+                            const newCanvas = document.createElement('canvas');
+                            newCanvas.id = 'ratingsChart';
+                            newCanvas.style = 'width: 100%; height: 300px;';
+                            parent.appendChild(newCanvas);
+                            // Use let instead of const for ctx so we can reassign it
+                        }
+                    }
+                    
+                    // Get the canvas element again after potential recreation
+                    let chartCanvas = document.getElementById('ratingsChart');
+                    
+                    // Create chart with consistent blue color and add debugging
+                    console.log('Creating new chart on canvas:', chartCanvas);
+                    try {
+                        window.ratingsChart = new Chart(chartCanvas, {
+                            type: 'bar',
+                            data: {
+                                labels: labels,
+                                datasets: [{
+                                    label: 'Rating Score',
+                                    data: ratings,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    y: {
+                                        beginAtZero: true,
+                                        max: 5,
+                                        ticks: {
+                                            stepSize: 1
+                                        }
+                                    }
+                                },
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Job Accessibility Ratings'
+                                    }
+                                }
+                            }
+                        });
+                        console.log('Chart created successfully:', window.ratingsChart);
+                    } catch (error) {
+                        console.error('Error creating chart:', error);
+                    }
+                    
+                    // Add debugging to confirm chart was created
+                    console.log('Chart created:', window.ratingsChart);
+                })
+                .catch(error => console.error('Error:', error));
+        }
+    });
+});
+</script>
+<script>
 // Add efficiency modal handler here
 const efficiencyModal = document.getElementById('efficiencyModal');
 efficiencyModal.addEventListener('show.bs.modal', function(event) {
-    // Add console.log for debugging
     console.log('Fetching efficiency data...');
     
     fetch('get_efficiency_report.php')
-        .then(response => {
-            console.log('Response:', response);
-            return response.json();
-        })
+        .then(response => response.json())
         .then(data => {
             console.log('Data received:', data);
             const tbody = document.getElementById('efficiencyTableBody');
-            tbody.innerHTML = data.map(row => `
-                <tr>
-                    <td>${row.contract_ID}</td>
-                    <td>${row.Carpenter_ID}</td>
-                    <td>${row.start_date}</td>
-                    <td>${row.end_date}</td>
-                    <td>${row.actual_completion_date}</td>
-                    <td>${row.task_completed}</td>
-                    <td>${row.total_days_estimated}</td>
-                    <td>${row.total_days_spent}</td>
-                    <td>${row.efficiency_gain}%</td>
-                    <td>
-                        ${row.efficiency_gain >= 20 ? 
-                            '<span class="text-success">✓ Efficient</span>' : 
-                            '<span class="text-warning">Delayed</span>'}
-                    </td>
-                </tr>
-            `).join('');
+            // Check if data.data exists (from the new response structure)
+            const reportData = data.data || data;
+            
+            if (reportData && reportData.length > 0) {
+                tbody.innerHTML = reportData.map(row => `
+                    <tr>
+                        <td>Plan_${row.contract_ID}</td>
+                        <td>${row.Carpenter_ID}</td>
+                        <td>${row.start_date}</td>
+                        <td>${row.end_date}</td>
+                        <td>${row.actual_completion_date}</td>
+                        <td>${row.task_completed}</td>
+                        <td>${row.total_days_estimated}</td>
+                        <td>${row.total_days_spent}</td>
+                        <td>${row.efficiency_gain}%</td>
+                        <td>
+                            ${row.efficiency_gain >= 20 ? 
+                                '<span class="text-success">✓ Efficient</span>' : 
+                                '<span class="text-warning">Delayed</span>'}
+                        </td>
+                    </tr>
+                `).join('');
+            } else {
+                tbody.innerHTML = '<tr><td colspan="10" class="text-center">No efficiency data available</td></tr>';
+            }
         })
         .catch(error => {
             console.error('Error:', error);
             document.getElementById('efficiencyTableBody').innerHTML = 
-                '<tr><td colspan="10" class="text-center">Error loading data</td></tr>';
+                '<tr><td colspan="10" class="text-center">Error loading efficiency data</td></tr>';
         });
 });
 </script>
+
 <?php
 $conn->close();
 ?>

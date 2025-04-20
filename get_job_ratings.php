@@ -7,7 +7,6 @@ if (isset($_GET['plan_id']) && isset($_GET['carpenter_id'])) {
     
     $sql = "SELECT 
         jr.*,
-        CONCAT(c.First_Name, ' ', c.Last_Name) as carpenter_name,
         CASE 
             WHEN q1_rating = 1 THEN 'Very difficult'
             WHEN q1_rating = 2 THEN 'Difficult'
@@ -56,9 +55,13 @@ if (isset($_GET['plan_id']) && isset($_GET['carpenter_id'])) {
             WHEN q7_rating = 3 THEN 'Fair'
             WHEN q7_rating = 4 THEN 'Good'
             WHEN q7_rating = 5 THEN 'Excellent'
-        END as q7_description
+        END as q7_description,
+        q8_answer,
+        q8_explanation,
+        q9_answer,
+        q10_answer,
+        DATE_FORMAT(rating_date, '%M %d, %Y %h:%i %p') as rating_date
         FROM job_ratings jr
-        LEFT JOIN carpenters c ON jr.Carpenter_ID = c.Carpenter_ID
         WHERE jr.plan_ID = ? AND jr.Carpenter_ID = ?";
 
     $stmt = $conn->prepare($sql);
@@ -68,6 +71,7 @@ if (isset($_GET['plan_id']) && isset($_GET['carpenter_id'])) {
     
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
+        header('Content-Type: application/json');
         echo json_encode($data);
     } else {
         echo json_encode(['error' => 'No ratings found']);

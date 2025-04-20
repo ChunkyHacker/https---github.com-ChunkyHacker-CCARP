@@ -4,24 +4,29 @@ include 'config.php';
 if (isset($_GET['plan_id'])) {
     $plan_id = $_GET['plan_id'];
     
-    $sql = "SELECT DISTINCT c.Carpenter_ID, c.First_Name, c.Last_Name
-            FROM job_ratings jr
-            JOIN carpenters c ON jr.Carpenter_ID = c.Carpenter_ID
-            WHERE jr.plan_ID = ?";
+    $sql = "SELECT 
+        CONCAT(c.First_Name, ' ', c.Last_Name) as carpenter_name,
+        jr.rating,
+        jr.comments,
+        jr.rating_date
+    FROM job_ratings jr
+    JOIN carpenters c ON jr.Carpenter_ID = c.Carpenter_ID
+    WHERE jr.plan_ID = ?";
     
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $plan_id);
     $stmt->execute();
     $result = $stmt->get_result();
     
-    $carpenters = array();
+    $ratings = array();
     while ($row = $result->fetch_assoc()) {
-        $carpenters[] = $row;
+        $ratings[] = $row;
     }
     
     header('Content-Type: application/json');
-    echo json_encode($carpenters);
+    echo json_encode($ratings);
 } else {
+    header('HTTP/1.1 400 Bad Request');
     echo json_encode(['error' => 'Plan ID not provided']);
 }
 
