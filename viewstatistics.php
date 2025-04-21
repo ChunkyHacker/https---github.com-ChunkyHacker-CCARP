@@ -557,10 +557,10 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Show status based on 60% goal
                     const statusElement = document.getElementById('accessibilityStatus');
                     if (averageScore >= 60) {
-                        statusElement.textContent = 'Goal Achieved! ✅';
+                        statusElement.textContent = '';
                         statusElement.className = 'text-center text-success';
                     } else {
-                        statusElement.textContent = 'In Progress';
+                        statusElement.textContent = '';
                         statusElement.className = 'text-center text-warning';
                     }
                     
@@ -682,3 +682,213 @@ efficiencyModal.addEventListener('show.bs.modal', function(event) {
 <?php
 $conn->close();
 ?>
+
+<!-- Checklist Ratings Modal -->
+<div class="modal fade" id="checklistratingsmodal" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Evaluation Rating Details</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body px-0">
+                <div class="px-3">
+                    <div class="mb-3">
+                        <h6>Carpenter:</h6>
+                        <p id="carpenter_name" class="form-control-static"></p>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <h6>Criteria:</h6>
+                        <table class="table table-bordered">
+                            <thead>
+                                <tr>
+                                    <th>Criteria</th>
+                                    <th>Rating</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr><td>1. Site Preparation and Safety</td><td id="criteria1_rating"></td></tr>
+                                <tr><td>2. Materials</td><td id="criteria2_rating"></td></tr>
+                                <tr><td>3. Foundations and Structural Framing</td><td id="criteria3_rating"></td></tr>
+                                <tr><td>4. Mechanical, Electrical, and Plumbing (MEP)</td><td id="criteria4_rating"></td></tr>
+                                <tr><td>5. Exterior Cladding and Roofing</td><td id="criteria5_rating"></td></tr>
+                                <tr><td>6. Interior Finishes</td><td id="criteria6_rating"></td></tr>
+                                <tr><td>7. Windows, Doors, and Hardware</td><td id="criteria7_rating"></td></tr>
+                                <tr><td>8. Insulation and Ventilation</td><td id="criteria8_rating"></td></tr>
+                                <tr><td>9. Landscaping and External Works</td><td id="criteria9_rating"></td></tr>
+                                <tr><td>10. Final Inspection</td><td id="criteria10_rating"></td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="mt-3">
+                        <h6>Comments:</h6>
+                        <p id="rating_comments"></p>
+                    </div>
+
+                    <div class="mt-3">
+                        <h6>Rating Date:</h6>
+                        <p id="rating_date"></p>
+                    </div>
+                    
+                    <!-- Analysis Section -->
+                    <div class="mt-4">
+                        <h6>Ratings Analysis:</h6>
+                        <div class="row">
+                            <div class="col-md-8">
+                                <canvas id="evaluationChart" style="width: 100%; height: 300px;"></canvas>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-body">
+                                        <h6>Overall Score</h6>
+                                        <h3 id="overallScore" class="text-center"></h3>
+                                        <p id="qualityStatus" class="text-center"></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Add this to your existing JavaScript
+    // In the checklistModal event listener
+    document.addEventListener('DOMContentLoaded', function() {
+        const checklistModal = document.getElementById('checklistratingsmodal');
+        checklistModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const contractId = button.getAttribute('data-contract-id');
+            
+            if (contractId) {
+                fetch('get_checklist_ratings.php?contract_id=' + contractId)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Update carpenter name
+                        document.getElementById('carpenter_name').textContent = data.carpenter_name;
+                        
+                        // Update criteria ratings (changed from 8 to 10)
+                        // Update criteria ratings
+                        for (let i = 1; i <= 10; i++) {
+                            let ratingText = '';
+                            const rating = data['criteria' + i + '_rating'];
+                            
+                            switch(parseInt(rating)) {  // Convert to integer for proper comparison
+                                case 1: ratingText = 'Not Compliant'; break;
+                                case 2: ratingText = 'Poor'; break;
+                                case 3: ratingText = 'Fair'; break;
+                                case 4: ratingText = 'Good'; break;
+                                case 5: ratingText = 'Excellent'; break;
+                                default: ratingText = 'Not Rated';
+                            }
+                            
+                            document.getElementById('criteria' + i + '_rating').textContent = 
+                                ratingText + ` (${rating}/5)`;
+                        }
+                        
+                        // Update additional fields
+                        document.getElementById('rating_comments').textContent = data.comments || 'No comments provided';
+                        document.getElementById('rating_date').textContent = data.rating_date || 'Not specified';
+                        
+                        // Calculate and update overall score (changed from 8 to 10)
+                        // Calculate and update overall score
+                        const ratings = [];
+                        for (let i = 1; i <= 10; i++) {
+                            const rating = parseInt(data['criteria' + i + '_rating']) || 0;
+                            ratings.push(rating);
+                        }
+                        
+                        // Calculate average score (out of 5)
+                        const totalScore = ratings.reduce((sum, rating) => sum + rating, 0);
+                        const averageScore = (totalScore / (10 * 5)) * 100; // Convert to percentage
+                        
+                        // Update the display with just the percentage
+                        document.getElementById('overallScore').textContent = `${averageScore.toFixed(1)}%`;
+                        
+                        const qualityStatus = document.getElementById('qualityStatus');
+                        if (averageScore >= 60) {
+                            qualityStatus.textContent = '';
+                            qualityStatus.className = 'text-center text-success';
+                        } else {
+                            qualityStatus.textContent = '';
+                            qualityStatus.className = 'text-center text-warning';
+                        }
+                        // Create/Update chart
+                        const ctx = document.getElementById('evaluationChart');
+                        
+                        // Properly handle chart cleanup
+                        if (window.evaluationChart && typeof window.evaluationChart.destroy === 'function') {
+                            window.evaluationChart.destroy();
+                        }
+                        window.evaluationChart = null;
+                        
+                        // Ensure we have a fresh canvas
+                        const chartContainer = document.querySelector('#checklistratingsmodal .col-md-8');
+                        if (chartContainer) {
+                            chartContainer.innerHTML = '<canvas id="evaluationChart" style="width: 100%; height: 300px;"></canvas>';
+                        }
+                        
+                        const newCtx = document.getElementById('evaluationChart');
+                        
+                        try {
+                            window.evaluationChart = new Chart(newCtx, {
+                                type: 'bar',
+                                data: {
+                                    labels: [
+                                        'Site Prep & Safety',
+                                        'Materials',
+                                        'Foundations',
+                                        'MEP',
+                                        'Exterior',
+                                        'Interior',
+                                        'Windows & Doors',
+                                        'Insulation',
+                                        'Landscaping',
+                                        'Final Inspection'
+                                    ],
+                                    datasets: [{
+                                        label: 'Rating Score',
+                                        data: ratings,
+                                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                        borderColor: 'rgba(54, 162, 235, 1)',
+                                        borderWidth: 1
+                                    }]
+                                },
+                                options: {
+                                    responsive: true,
+                                    maintainAspectRatio: false,
+                                    scales: {
+                                        y: {
+                                            beginAtZero: true,
+                                            max: 5,
+                                            ticks: {
+                                                stepSize: 1
+                                            }
+                                        }
+                                    },
+                                    plugins: {
+                                        title: {
+                                            display: true,
+                                            text: 'Construction Quality Ratings'
+                                        }
+                                    }
+                                }
+                            });
+                            console.log('Chart created successfully:', window.evaluationChart);
+                        } catch (error) {
+                            console.error('Error creating chart:', error);
+                        }
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    });
+</script>

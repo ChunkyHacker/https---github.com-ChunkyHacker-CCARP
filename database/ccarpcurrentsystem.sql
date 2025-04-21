@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 08, 2025 at 06:32 AM
+-- Generation Time: Apr 21, 2025 at 08:13 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,7 +40,7 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`admin_id`, `firstname`, `lastname`, `username`, `password`) VALUES
-(3, 'daidailabdinbir', 'daidai', 'daidai3', '123');
+(3, 'francel jean', 'bicbic', 'daidai3', '123');
 
 -- --------------------------------------------------------
 
@@ -83,9 +83,9 @@ CREATE TABLE `carpenters` (
 --
 
 INSERT INTO `carpenters` (`Carpenter_ID`, `First_Name`, `Last_Name`, `Phone_Number`, `Email`, `Address`, `Date_Of_Birth`, `Experiences`, `Project_Completed`, `username`, `password`, `specialization`, `Photo`) VALUES
-(1, 'John Denvier', 'Alngog', 9153520025, 'denvieralngog10@gmail.com', 'st jude village daliao toril davao city', '2002-09-10', 'EEnttrryy', 'sasdahsdasad', 'denviercarp', '123', 'Roofer, Tile Setter', 0x6173736574732f63617270656e7465722f706963747572652e6a7067),
-(2, 'car1', 'car1', 9153520025, 'car1@gmail.com', 'asdasd', '2025-02-03', '222', '22', 'car1', '123', 'Roofer, Tile Setter', 0x6173736574732f63617270656e7465722f53637265656e73686f745f35312e6a7067),
-(3, 'car2', 'car2', 9153520025, 'denvieralngog10@gmail.com', 'dasd', '2025-02-20', 'ww', 'ww', 'car2', '123', '', 0x6173736574732f63617270656e7465722f7764737063732e6a7067),
+(1, 'John Denvier', 'Alngog Carpenter', 9153520025, 'denvieralngog10@gmail.com', 'st jude village daliao toril davao city', '2002-09-10', 'EEnttrryy', 'sasdahsdasad', 'denviercarp', '123', 'Roofer, Tile Setter', 0x6173736574732f63617270656e7465722f706963747572652e6a7067),
+(2, 'Carpenter', 'One', 9153520025, 'car1@gmail.com', 'asdasd', '2025-02-03', '222', '22', 'car1', '123', 'Roofer, Tile Setter', 0x6173736574732f63617270656e7465722f53637265656e73686f745f35312e6a7067),
+(3, 'Carpenter', 'Two', 9153520025, 'denvieralngog10@gmail.com', 'dasd', '2025-02-20', 'ww', 'ww', 'car2', '123', 'wwww', 0x6173736574732f63617270656e7465722f7764737063732e6a7067),
 (4, 'car3', 'car3', 9153520025, 'car3@gmail.com', 'asdasd', '2025-02-22', 'www', 'wwww', 'car3', '123', '', 0x6173736574732f63617270656e7465722f53637265656e73686f745f35382e6a7067),
 (5, 'car4', 'car4', 9153520025, 'car4@gmail.com', 'wwww', '2025-02-22', 'wwww', 'www', 'car4', '123', '', 0x6173736574732f63617270656e7465722f3437363839323938365f323033353233323535333633313635385f363639363135313432313333333234323636335f6e202831292e706e67);
 
@@ -132,7 +132,7 @@ CREATE TABLE `contracts` (
   `approval_ID` int(11) NOT NULL,
   `Carpenter_ID` int(11) NOT NULL,
   `duration` int(11) NOT NULL,
-  `status` enum('pending','accepted','rejected') DEFAULT 'pending',
+  `status` enum('pending','accepted','rejected','completed') DEFAULT 'pending',
   `rejection_reason` text DEFAULT NULL,
   `attendance_ID` int(11) NOT NULL,
   `Progress_id` int(11) NOT NULL,
@@ -161,6 +161,30 @@ CREATE TABLE `expenses` (
   `Days_Of_Work` int(11) NOT NULL,
   `Rate_per_day` int(11) NOT NULL,
   `overall_cost` int(11) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `job_ratings`
+--
+
+CREATE TABLE `job_ratings` (
+  `job_rating_ID` int(11) NOT NULL,
+  `Carpenter_ID` int(11) NOT NULL,
+  `plan_ID` int(11) NOT NULL,
+  `q1_rating` int(11) NOT NULL,
+  `q2_rating` int(11) NOT NULL,
+  `q3_rating` int(11) NOT NULL,
+  `q4_rating` int(11) NOT NULL,
+  `q5_rating` int(11) NOT NULL,
+  `q6_rating` int(11) NOT NULL,
+  `q7_rating` int(11) NOT NULL,
+  `q8_answer` varchar(5) NOT NULL,
+  `q8_explanation` text DEFAULT NULL,
+  `q9_answer` text NOT NULL,
+  `q10_answer` text NOT NULL,
+  `rating_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -294,6 +318,30 @@ INSERT INTO `prematerialsinventory` (`prematerialsinventory_id`, `structure`, `n
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `project_turnover`
+--
+
+CREATE TABLE `project_turnover` (
+  `turnover_id` int(11) NOT NULL,
+  `contract_ID` int(11) DEFAULT NULL,
+  `plan_ID` int(11) DEFAULT NULL,
+  `task_id` int(11) DEFAULT NULL,
+  `completed_task_id` int(11) DEFAULT NULL,
+  `actual_completion_date` date DEFAULT NULL,
+  `client_signature` varchar(255) DEFAULT NULL,
+  `turnover_notes` text DEFAULT NULL,
+  `supporting_documents` varchar(255) DEFAULT NULL,
+  `confirmation_status` enum('pending','confirmed') DEFAULT 'pending',
+  `client_feedback` text DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `approved_by` int(11) DEFAULT NULL,
+  `approved_at` timestamp NULL DEFAULT NULL,
+  `turnedover_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `ratings`
 --
 
@@ -302,16 +350,19 @@ CREATE TABLE `ratings` (
   `contract_ID` int(11) NOT NULL,
   `plan_ID` int(11) NOT NULL,
   `user_ID` int(11) NOT NULL,
-  `criteria1` int(11) NOT NULL,
-  `criteria2` int(11) NOT NULL,
-  `criteria3` int(11) NOT NULL,
-  `criteria4` int(11) NOT NULL,
-  `criteria5` int(11) NOT NULL,
-  `criteria6` int(11) NOT NULL,
-  `criteria7` int(11) NOT NULL,
-  `criteria8` int(11) NOT NULL,
+  `Carpenter_ID` int(11) NOT NULL,
+  `site_prep_score` int(11) NOT NULL,
+  `materials_score` int(11) NOT NULL,
+  `foundation_score` int(11) NOT NULL,
+  `mep_score` int(11) NOT NULL,
+  `exterior_score` int(11) NOT NULL,
+  `interior_score` int(11) NOT NULL,
+  `windows_score` int(11) NOT NULL,
+  `insulation_score` int(11) NOT NULL,
   `comments` text DEFAULT NULL,
-  `rating_date` datetime NOT NULL
+  `rating_date` datetime NOT NULL,
+  `landscaping_score` int(11) NOT NULL,
+  `final_score` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -324,9 +375,6 @@ CREATE TABLE `report` (
   `Progress_id` int(11) NOT NULL,
   `Name` varchar(255) NOT NULL,
   `Status` enum('Not yet started','Working','Done','') NOT NULL,
-  `Materials` varchar(255) NOT NULL,
-  `Material_cost` varchar(255) NOT NULL,
-  `Total_cost` varchar(255) NOT NULL,
   `contract_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
@@ -381,7 +429,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`User_ID`, `First_Name`, `Last_Name`, `Phone_Number`, `Email`, `Address`, `Date_Of_Birth`, `Username`, `Password`, `Photo`) VALUES
-(1, 'denvier', 'john', 11213, 'denvieralngog10@gmail.com', 'sdsdasadaasadsd', '2024-11-14', 'denvier', '123', 0x6173736574732f757365722f34396234656636352d356636382d343633362d616166662d3136623239306534316232352e77656270);
+(1, 'John Denvier', 'Alngog', 9153520025, 'denvieralngog10@gmail.com', 'sdsdasadaasadsd', '2024-11-14', 'denvier', '123', 0x6173736574732f757365722f34396234656636352d356636382d343633362d616166662d3136623239306534316232352e77656270);
 
 --
 -- Indexes for dumped tables
@@ -442,6 +490,14 @@ ALTER TABLE `expenses`
   ADD PRIMARY KEY (`expenses_id`);
 
 --
+-- Indexes for table `job_ratings`
+--
+ALTER TABLE `job_ratings`
+  ADD PRIMARY KEY (`job_rating_ID`),
+  ADD KEY `Carpenter_ID` (`Carpenter_ID`),
+  ADD KEY `plan_ID` (`plan_ID`);
+
+--
 -- Indexes for table `likes`
 --
 ALTER TABLE `likes`
@@ -485,13 +541,26 @@ ALTER TABLE `prematerialsinventory`
   ADD PRIMARY KEY (`prematerialsinventory_id`);
 
 --
+-- Indexes for table `project_turnover`
+--
+ALTER TABLE `project_turnover`
+  ADD PRIMARY KEY (`turnover_id`),
+  ADD KEY `contract_ID` (`contract_ID`),
+  ADD KEY `plan_ID` (`plan_ID`),
+  ADD KEY `task_id` (`task_id`),
+  ADD KEY `completed_task_id` (`completed_task_id`),
+  ADD KEY `approved_by` (`approved_by`),
+  ADD KEY `turnedover_by` (`turnedover_by`);
+
+--
 -- Indexes for table `ratings`
 --
 ALTER TABLE `ratings`
   ADD PRIMARY KEY (`rating_ID`),
   ADD KEY `contract_ID` (`contract_ID`),
   ADD KEY `plan_ID` (`plan_ID`),
-  ADD KEY `user_ID` (`user_ID`);
+  ADD KEY `user_ID` (`user_ID`),
+  ADD KEY `fk_ratings_carpenter` (`Carpenter_ID`);
 
 --
 -- Indexes for table `report`
@@ -546,7 +615,7 @@ ALTER TABLE `carpenters`
 -- AUTO_INCREMENT for table `comments`
 --
 ALTER TABLE `comments`
-  MODIFY `comment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `comment_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `completed_task`
@@ -565,6 +634,12 @@ ALTER TABLE `contracts`
 --
 ALTER TABLE `expenses`
   MODIFY `expenses_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `job_ratings`
+--
+ALTER TABLE `job_ratings`
+  MODIFY `job_rating_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `likes`
@@ -603,6 +678,12 @@ ALTER TABLE `prematerialsinventory`
   MODIFY `prematerialsinventory_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
 
 --
+-- AUTO_INCREMENT for table `project_turnover`
+--
+ALTER TABLE `project_turnover`
+  MODIFY `turnover_id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `ratings`
 --
 ALTER TABLE `ratings`
@@ -618,7 +699,7 @@ ALTER TABLE `report`
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transaction`
@@ -660,6 +741,13 @@ ALTER TABLE `contracts`
   ADD CONSTRAINT `fk_transaction` FOREIGN KEY (`transaction_ID`) REFERENCES `transaction` (`transaction_ID`);
 
 --
+-- Constraints for table `job_ratings`
+--
+ALTER TABLE `job_ratings`
+  ADD CONSTRAINT `job_ratings_ibfk_1` FOREIGN KEY (`Carpenter_ID`) REFERENCES `carpenters` (`Carpenter_ID`),
+  ADD CONSTRAINT `job_ratings_ibfk_2` FOREIGN KEY (`plan_ID`) REFERENCES `plan` (`plan_ID`);
+
+--
 -- Constraints for table `payment`
 --
 ALTER TABLE `payment`
@@ -682,9 +770,21 @@ ALTER TABLE `plan_approval`
   ADD CONSTRAINT `plan_approval_ibfk_2` FOREIGN KEY (`carpenter_ID`) REFERENCES `carpenters` (`Carpenter_ID`) ON DELETE CASCADE;
 
 --
+-- Constraints for table `project_turnover`
+--
+ALTER TABLE `project_turnover`
+  ADD CONSTRAINT `project_turnover_ibfk_1` FOREIGN KEY (`contract_ID`) REFERENCES `contracts` (`contract_ID`),
+  ADD CONSTRAINT `project_turnover_ibfk_2` FOREIGN KEY (`plan_ID`) REFERENCES `plan` (`plan_ID`),
+  ADD CONSTRAINT `project_turnover_ibfk_3` FOREIGN KEY (`task_id`) REFERENCES `task` (`task_id`),
+  ADD CONSTRAINT `project_turnover_ibfk_4` FOREIGN KEY (`completed_task_id`) REFERENCES `completed_task` (`completed_task_id`),
+  ADD CONSTRAINT `project_turnover_ibfk_5` FOREIGN KEY (`approved_by`) REFERENCES `users` (`User_ID`),
+  ADD CONSTRAINT `project_turnover_ibfk_6` FOREIGN KEY (`turnedover_by`) REFERENCES `carpenters` (`Carpenter_ID`);
+
+--
 -- Constraints for table `ratings`
 --
 ALTER TABLE `ratings`
+  ADD CONSTRAINT `fk_ratings_carpenter` FOREIGN KEY (`Carpenter_ID`) REFERENCES `carpenters` (`Carpenter_ID`),
   ADD CONSTRAINT `ratings_ibfk_1` FOREIGN KEY (`contract_ID`) REFERENCES `contracts` (`contract_ID`),
   ADD CONSTRAINT `ratings_ibfk_2` FOREIGN KEY (`plan_ID`) REFERENCES `plan` (`plan_ID`),
   ADD CONSTRAINT `ratings_ibfk_3` FOREIGN KEY (`user_ID`) REFERENCES `users` (`User_ID`);
