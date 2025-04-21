@@ -23,7 +23,11 @@ if ($verify_result->num_rows === 0) {
 }
 
 // Fetch rating details
-$rating_sql = "SELECT r.*, u.First_Name, u.Last_Name 
+$rating_sql = "SELECT r.*, u.First_Name, u.Last_Name,
+               r.site_prep_score, r.materials_score, r.foundation_score,
+               r.mep_score, r.exterior_score, r.interior_score,
+               r.windows_score, r.insulation_score, r.landscaping_score,
+               r.final_score, r.comments, r.rating_date
                FROM ratings r 
                JOIN contracts c ON r.contract_ID = c.contract_ID 
                JOIN users u ON r.user_ID = u.User_ID 
@@ -115,43 +119,53 @@ $rating = $rating_result->fetch_assoc();
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">The finished project matched the agreed design and measurements:</span>
-                <span class="rating-value"><?php echo $rating['criteria1']; ?>/5</span>
+                <span class="rating-label">Site Preparation and Safety:</span>
+                <span class="rating-value"><?php echo $rating['site_prep_score']; ?>/5</span>
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">There were no alignment issues:</span>
-                <span class="rating-value"><?php echo $rating['criteria2']; ?>/5</span>
+                <span class="rating-label">Materials:</span>
+                <span class="rating-value"><?php echo $rating['materials_score']; ?>/5</span>
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">The finishing quality is smooth and professionally done:</span>
-                <span class="rating-value"><?php echo $rating['criteria3']; ?>/5</span>
+                <span class="rating-label">Foundations and Structural Framing:</span>
+                <span class="rating-value"><?php echo $rating['foundation_score']; ?>/5</span>
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">There were no visible defects:</span>
-                <span class="rating-value"><?php echo $rating['criteria4']; ?>/5</span>
+                <span class="rating-label">Mechanical, Electrical, and Plumbing (MEP):</span>
+                <span class="rating-value"><?php echo $rating['mep_score']; ?>/5</span>
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">The carpenter followed proper carpentry techniques:</span>
-                <span class="rating-value"><?php echo $rating['criteria5']; ?>/5</span>
+                <span class="rating-label">Exterior Cladding and Roofing:</span>
+                <span class="rating-value"><?php echo $rating['exterior_score']; ?>/5</span>
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">The project was completed within the agreed timeline:</span>
-                <span class="rating-value"><?php echo $rating['criteria6']; ?>/5</span>
+                <span class="rating-label">Interior Finishes:</span>
+                <span class="rating-value"><?php echo $rating['interior_score']; ?>/5</span>
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">The carpenter maintained a clean and organized work area:</span>
-                <span class="rating-value"><?php echo $rating['criteria7']; ?>/5</span>
+                <span class="rating-label">Windows, Doors, and Hardware:</span>
+                <span class="rating-value"><?php echo $rating['windows_score']; ?>/5</span>
             </div>
             
             <div class="rating-item">
-                <span class="rating-label">The carpenter was professional and communicated effectively:</span>
-                <span class="rating-value"><?php echo $rating['criteria8']; ?>/5</span>
+                <span class="rating-label">Insulation and Ventilation:</span>
+                <span class="rating-value"><?php echo $rating['insulation_score']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span class="rating-label">Landscaping and External Works:</span>
+                <span class="rating-value"><?php echo $rating['landscaping_score']; ?>/5</span>
+            </div>
+
+            <div class="rating-item">
+                <span class="rating-label">Final Inspection:</span>
+                <span class="rating-value"><?php echo $rating['final_score']; ?>/5</span>
             </div>
 
             <div class="comments">

@@ -781,9 +781,9 @@
                   
                   if (mysqli_num_rows($resultTasks) > 0) {
                       echo "<table class='styled-table'>";
-                      echo "<tr><th>Task</th><th>Details</th></tr>";
+                      echo "<tr><th>Task</th><th>Status</th></tr>";
                       while ($row = mysqli_fetch_assoc($resultTasks)) {
-                          echo "<tr><td>" . htmlspecialchars($row['task']) . "</td><td>" . htmlspecialchars($row['details']) . "</td></tr>";
+                          echo "<tr><td>" . htmlspecialchars($row['task']) . "</td><td>" . htmlspecialchars($row['status']) . "</td></tr>";
                       }
                       echo "</table>";
                   } else {
