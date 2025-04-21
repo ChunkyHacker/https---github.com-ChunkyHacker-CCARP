@@ -87,46 +87,63 @@ $rating = $rating_result->fetch_assoc();
         <h2>Rating Details</h2>
         
         <?php if ($rating): ?>
+            <!-- Site Preparation and Safety -->
+            <h3>1. Site Preparation and Safety</h3>
             <div class="rating-item">
-                <span class="rating-label">The finished project matched the agreed design and measurements:</span>
-                <span class="rating-value"><?php echo $rating['criteria1']; ?>/5</span>
-            </div>
-            
-            <div class="rating-item">
-                <span class="rating-label">There were no alignment issues:</span>
-                <span class="rating-value"><?php echo $rating['criteria2']; ?>/5</span>
-            </div>
-            
-            <div class="rating-item">
-                <span class="rating-label">The finishing quality is smooth and professionally done:</span>
-                <span class="rating-value"><?php echo $rating['criteria3']; ?>/5</span>
-            </div>
-            
-            <div class="rating-item">
-                <span class="rating-label">There were no visible defects:</span>
-                <span class="rating-value"><?php echo $rating['criteria4']; ?>/5</span>
-            </div>
-            
-            <div class="rating-item">
-                <span class="rating-label">The carpenter followed proper carpentry techniques:</span>
-                <span class="rating-value"><?php echo $rating['criteria5']; ?>/5</span>
-            </div>
-            
-            <div class="rating-item">
-                <span class="rating-label">The project was completed within the agreed timeline:</span>
-                <span class="rating-value"><?php echo $rating['criteria6']; ?>/5</span>
-            </div>
-            
-            <div class="rating-item">
-                <span class="rating-label">The carpenter maintained a clean and organized work area:</span>
-                <span class="rating-value"><?php echo $rating['criteria7']; ?>/5</span>
-            </div>
-            
-            <div class="rating-item">
-                <span class="rating-label">The carpenter was professional and communicated effectively:</span>
-                <span class="rating-value"><?php echo $rating['criteria8']; ?>/5</span>
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['site_prep_score']; ?>/5</span>
             </div>
 
+            <!-- Materials -->
+            <h3>2. Materials</h3>
+            <div class="rating-item">
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['materials_score']; ?>/5</span>
+            </div>
+
+            <!-- Foundations and Structural Framing -->
+            <h3>3. Foundations and Structural Framing</h3>
+            <div class="rating-item">
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['foundation_score']; ?>/5</span>
+            </div>
+
+            <!-- MEP -->
+            <h3>4. Mechanical, Electrical, and Plumbing (MEP)</h3>
+            <div class="rating-item">
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['mep_score']; ?>/5</span>
+            </div>
+
+            <!-- Exterior -->
+            <h3>5. Exterior Cladding and Roofing</h3>
+            <div class="rating-item">
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['exterior_score']; ?>/5</span>
+            </div>
+
+            <!-- Interior -->
+            <h3>6. Interior Finishes</h3>
+            <div class="rating-item">
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['interior_score']; ?>/5</span>
+            </div>
+
+            <!-- Windows -->
+            <h3>7. Windows and Doors</h3>
+            <div class="rating-item">
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['windows_score']; ?>/5</span>
+            </div>
+
+            <!-- Insulation -->
+            <h3>8. Insulation and Ventilation</h3>
+            <div class="rating-item">
+                <span class="rating-label">Average Score:</span>
+                <span class="rating-value"><?php echo $rating['insulation_score']; ?>/5</span>
+            </div>
+
+            <!-- Comments -->
             <div class="comments">
                 <h3>Additional Comments:</h3>
                 <p><?php echo nl2br(htmlspecialchars($rating['comments'])); ?></p>

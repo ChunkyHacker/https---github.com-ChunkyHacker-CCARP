@@ -18,6 +18,15 @@ $check_plan_stmt->bind_param("i", $plan_ID);
 $check_plan_stmt->execute();
 $plan_result = $check_plan_stmt->get_result();
 
+// Get Carpenter_ID from contracts table
+$get_carpenter_sql = "SELECT Carpenter_ID FROM contracts WHERE contract_ID = ?";
+$get_carpenter_stmt = $conn->prepare($get_carpenter_sql);
+$get_carpenter_stmt->bind_param("i", $contract_ID);
+$get_carpenter_stmt->execute();
+$carpenter_result = $get_carpenter_stmt->get_result();
+$carpenter_row = $carpenter_result->fetch_assoc();
+$Carpenter_ID = $carpenter_row['Carpenter_ID'];
+
 if ($plan_result->num_rows === 0) {
     echo "<script>alert('Invalid plan ID.'); window.history.back();</script>";
     exit();
@@ -39,7 +48,36 @@ if (!$plan_ID || !$contract_ID) {
     exit();
 }
 
-// Handle form submission
+// After the initial checks and before displaying the form
+// Check if user has already submitted a rating for this contract
+$check_rating_sql = "SELECT * FROM ratings WHERE contract_ID = ? AND user_ID = ?";
+$check_rating_stmt = $conn->prepare($check_rating_sql);
+$check_rating_stmt->bind_param("ii", $contract_ID, $user_ID);
+$check_rating_stmt->execute();
+$rating_result = $check_rating_stmt->get_result();
+
+if ($rating_result->num_rows > 0) {
+    echo "<!DOCTYPE html>
+          <html>
+          <head>
+              <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          </head>
+          <body>
+              <script>
+                  Swal.fire({
+                      icon: 'warning',
+                      title: 'Already Submitted',
+                      text: 'You have already submitted a rating for this contract.',
+                      confirmButtonColor: '#FF8C00'
+                  }).then(function() {
+                      window.location.href = 'userviewprogress.php?plan_ID=" . $plan_ID . "';
+                  });
+              </script>
+          </body>
+          </html>";
+    exit();
+}
+
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Get all POST data first
     $site_prep_1 = $_POST['site_prep_1'];
@@ -89,40 +127,40 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $final_3 = $_POST['final_3'];
     $final_4 = $_POST['final_4'];
 
-    // Calculate average scores for each category
-    $site_prep_score = ($site_prep_1 + $site_prep_2 + $site_prep_3 + $site_prep_4) / 4;
-    $materials_score = ($materials_1 + $materials_2 + $materials_3) / 3;
-    $foundation_score = ($foundation_1 + $foundation_2 + $foundation_3 + $foundation_4) / 4;
-    $mep_score = ($mep_1 + $mep_2 + $mep_3 + $mep_4) / 4;
-    $exterior_score = ($exterior_1 + $exterior_2 + $exterior_3 + $exterior_4) / 4;
-    $interior_score = ($interior_1 + $interior_2 + $interior_3 + $interior_4) / 4;
-    $windows_score = ($windows_1 + $windows_2 + $windows_3 + $windows_4) / 4;
-    $insulation_score = ($insulation_1 + $insulation_2 + $insulation_3) / 3;
-    $landscaping_score = ($landscaping_1 + $landscaping_2 + $landscaping_3) / 3;
-    $final_score = ($final_1 + $final_2 + $final_3 + $final_4) / 4;
+    // Calculate average scores for each category (rounded to 1 decimal place)
+    $site_prep_score = round(($site_prep_1 + $site_prep_2 + $site_prep_3 + $site_prep_4) / 4, 1);
+    $materials_score = round(($materials_1 + $materials_2 + $materials_3) / 3, 1);
+    $foundation_score = round(($foundation_1 + $foundation_2 + $foundation_3 + $foundation_4) / 4, 1);
+    $mep_score = round(($mep_1 + $mep_2 + $mep_3 + $mep_4) / 4, 1);
+    $exterior_score = round(($exterior_1 + $exterior_2 + $exterior_3 + $exterior_4) / 4, 1);
+    $interior_score = round(($interior_1 + $interior_2 + $interior_3 + $interior_4) / 4, 1);
+    $windows_score = round(($windows_1 + $windows_2 + $windows_3 + $windows_4) / 4, 1);
+    $insulation_score = round(($insulation_1 + $insulation_2 + $insulation_3) / 3, 1);
+    $landscaping_score = round(($landscaping_1 + $landscaping_2 + $landscaping_3) / 3, 1);
+    $final_score = round(($final_1 + $final_2 + $final_3 + $final_4) / 4, 1);
 
     $comments = $_POST['comments'];
     $rating_date = date('Y-m-d H:i:s');
 
     // Insert into database
     $sql = "INSERT INTO ratings (
-        contract_ID, plan_ID, user_ID, 
+        contract_ID, plan_ID, user_ID, Carpenter_ID,
         site_prep_score, materials_score, foundation_score,
         mep_score, exterior_score, interior_score,
         windows_score, insulation_score, landscaping_score,
         final_score, comments, rating_date
     ) VALUES (
-        ?, ?, ?, 
+        ?, ?, ?, ?,
         ?, ?, ?, 
         ?, ?, ?,
         ?, ?, ?,
-        ?, ?, ?, ?
+        ?, ?, ?
     )";
 
     $stmt = $conn->prepare($sql);
     $stmt->bind_param(
-        "iiiddddddddddss",
-        $contract_ID, $plan_ID, $user_ID,
+        "iiiidddddddddsss",  // Changed from "iiiidddddddddss" to "iiiidddddddddsss"
+        $contract_ID, $plan_ID, $user_ID, $Carpenter_ID,
         $site_prep_score, $materials_score, $foundation_score,
         $mep_score, $exterior_score, $interior_score,
         $windows_score, $insulation_score, $landscaping_score,
@@ -145,25 +183,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $update_stmt->execute();
         }
 
-        echo "<script>
-            Swal.fire({
-                title: 'Success!',
-                text: 'Rating submitted successfully!',
-                icon: 'success',
-                confirmButtonColor: '#FF8C00'
-            }).then((result) => {
-                window.location.href = 'userviewprogress.php?plan_ID=" . $plan_ID . "';
-            });
-        </script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'Success!',
+                          text: 'Rating submitted successfully!',
+                          confirmButtonColor: '#FF8C00'
+                      }).then(function() {
+                          window.location.href = 'userviewprogress.php?plan_ID=" . $plan_ID . "';
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     } else {
-        echo "<script>
-            Swal.fire({
-                title: 'Error!',
-                text: 'Failed to submit rating. Please try again.',
-                icon: 'error',
-                confirmButtonColor: '#FF8C00'
-            });
-        </script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Error!',
+                          text: 'Failed to submit rating. Please try again.',
+                          confirmButtonColor: '#FF8C00'
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     }
 }
 ?>
@@ -298,6 +354,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <input type="hidden" name="plan_ID" value="<?php echo $plan_ID; ?>">
             <input type="hidden" name="contract_ID" value="<?php echo $contract_ID; ?>">
             <input type="hidden" name="user_ID" value="<?php echo $user_ID; ?>">
+            <input type="hidden" name="Carpenter_ID" value="<?php echo $Carpenter_ID; ?>">
             
             <!-- 1. Site Preparation and Safety -->
             <h3>1. Site Preparation and Safety</h3>
