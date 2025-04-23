@@ -30,11 +30,11 @@
 
         // Secure the query with a prepared statement
         $sql = "SELECT p.*, 
-                u1.First_Name AS Carpenter_First, u1.Last_Name AS Carpenter_Last, 
-                u2.First_Name AS Sender_First, u2.Last_Name AS Sender_Last 
+                c.First_Name AS Carpenter_First, c.Last_Name AS Carpenter_Last, 
+                u.First_Name AS Sender_First, u.Last_Name AS Sender_Last 
                 FROM payment p
-                JOIN users u1 ON p.Carpenter_ID = u1.User_ID
-                JOIN users u2 ON p.User_ID = u2.User_ID
+                JOIN carpenters c ON p.Carpenter_ID = c.Carpenter_ID
+                JOIN users u ON p.User_ID = u.User_ID
                 WHERE p.Payment_ID = ?";
                     
         $stmt = $conn->prepare($sql);

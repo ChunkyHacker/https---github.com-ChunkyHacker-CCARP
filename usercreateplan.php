@@ -221,7 +221,7 @@
 <div class="main-content">
     <div class="modal-content">
         <h2>Create Construction Plan</h2>
-        <form id="postForm" enctype="multipart/form-data" method="POST" action="plan.php">
+        <form id="postForm" enctype="multipart/form-data" method="POST" action="creatingplan.php">
             <input type="hidden" id="User_ID" name="User_ID" value="<?php echo $_SESSION['User_ID']; ?>">
 
             <h3>Lot Area</h3>
