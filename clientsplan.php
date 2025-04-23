@@ -377,24 +377,26 @@ $carpenterDetails = $result->fetch_assoc();
                     echo "</tr>";
                     echo "</thead>";
                     echo "<tbody>";
-                    $query_materials = "SELECT * FROM prematerials";
-                    $stmt_materials = mysqli_prepare($conn, $query_materials);
-                    mysqli_stmt_execute($stmt_materials);
-                    $result_materials = mysqli_stmt_get_result($stmt_materials);
+                        // Get materials for this specific user
+                        $query_materials = "SELECT * FROM prematerials WHERE User_ID = ?";
+                        $stmt_materials = mysqli_prepare($conn, $query_materials);
+                        mysqli_stmt_bind_param($stmt_materials, "i", $userId);  // Using $userId from the plan's User_ID
+                        mysqli_stmt_execute($stmt_materials);
+                        $result_materials = mysqli_stmt_get_result($stmt_materials);
 
-                    while ($material_row = mysqli_fetch_assoc($result_materials)) {
-                        ?>
-                        <tr>
-                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['part']); ?></td>
-                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['materials']); ?></td>
-                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['name']); ?></td>
-                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['quantity']); ?></td>
-                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['price']); ?></td>
-                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['total']); ?></td>
-                            <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['estimated_cost']); ?></td>
-                        </tr>
-                        <?php
-                    }
+                        while ($material_row = mysqli_fetch_assoc($result_materials)) {
+                            ?>
+                            <tr>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['part']); ?></td>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['materials']); ?></td>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['name']); ?></td>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['quantity']); ?></td>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['price']); ?></td>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['total']); ?></td>
+                                <td style="border: 1px solid #dddddd; text-align: left; padding: 8px;"><?php echo htmlspecialchars($material_row['estimated_cost']); ?></td>
+                            </tr>
+                            <?php
+                        }
                     echo "</tbody>";
                     echo "</table>";
                     echo "</div>";

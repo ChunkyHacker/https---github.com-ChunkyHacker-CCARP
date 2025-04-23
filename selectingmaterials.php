@@ -3,28 +3,39 @@ session_start();
 include('config.php');
 
 // Prepare SQL statement to insert selected items into the database
-$sql = "INSERT INTO prematerials (materials, part, name, quantity, price, total, estimated_cost) VALUES (?, ?, ?, ?, ?, ?, ?)";
+// Get user_ID from the form
+$user_ID = $_POST['user_ID'];
+
+// Modify SQL statement to include User_ID
+$sql = "INSERT INTO prematerials (User_ID, materials, part, name, quantity, price, total, estimated_cost) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
-    // Output an error message if the statement couldn't be prepared
     die("Error preparing the SQL statement: " . $conn->error);
 }
 
 // Check if the form is submitted and items are selected
 if (!empty($_POST["materials"])) {
-    // Bind parameters and execute the statement for each selected item
     foreach ($_POST["materials"] as $key => $materials) {
-        // Assuming other values are retrieved from $_POST as well
         $part = isset($_POST["part"][$key]) ? $_POST["part"][$key] : "";
         $name = $_POST["name"][$key];
         $quantity = $_POST["quantity"][$key];
         $price = $_POST["price"][$key];
         $total = $_POST["total"][$key];
-        $estimated_cost = (float)$_POST["estimated_cost"]; // No need for [$key] since it's a single value
+        $estimated_cost = (float)$_POST["estimated_cost"];
 
-        // Bind parameters and execute the statement
-        $stmt->bind_param("sssiddi", $materials, $part, $name, $quantity, $price, $total, $estimated_cost);
+        // Modified bind_param to include User_ID
+        $stmt->bind_param("isssiddi", 
+            $user_ID,      // Add User_ID parameter
+            $materials, 
+            $part, 
+            $name, 
+            $quantity, 
+            $price, 
+            $total, 
+            $estimated_cost
+        );
         $stmt->execute();
     }
 

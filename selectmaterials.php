@@ -226,6 +226,9 @@ if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['messag
     <div class="main-content">
         <div class="content-box">
             <form id="postForm" enctype="multipart/form-data" method="POST" action="selectingmaterials.php">
+                <!-- Add hidden input for User_ID -->
+                <input type="hidden" name="user_ID" value="<?php echo $_SESSION['User_ID']; ?>">
+                
                 <h2>Parts of the House</h2>
                 <p>What part of the house do you want to build or to renovate?</p>
 

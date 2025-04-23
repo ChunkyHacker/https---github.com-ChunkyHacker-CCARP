@@ -38,6 +38,13 @@
     mysqli_stmt_bind_param($stmt, "i", $contract_ID);
     mysqli_stmt_execute($stmt);
     $result = mysqli_stmt_get_result($stmt);
+
+    // Remove these lines from the top of the file
+    // Get the Plan_ID from the contract
+    // $plan_id = $row['Plan_ID'];
+    // Get the user ID from the plan
+    // $user_id = $row['User_ID'];
+
 ?>
 
 <!DOCTYPE html>
@@ -357,9 +364,25 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <?php
+                            <?php                                           
+                            // Get the user ID from the plan
+                            $user_id = $row['User_ID'];
+                            
+                            // Modify the query to show all materials
                             $query_materials = "SELECT * FROM prematerials";
                             $stmt_materials = mysqli_prepare($conn, $query_materials);
+                            mysqli_stmt_execute($stmt_materials);
+                            $result_materials = mysqli_stmt_get_result($stmt_materials);
+
+                            // Get the Plan_ID from the row data
+                            $plan_id = $row['plan_ID'];
+                            
+                            // Modify the query to join with plan table and filter by Plan_ID
+                            $query_materials = "SELECT pm.* FROM prematerials pm 
+                                             JOIN plan p ON p.Plan_ID = ?
+                                             WHERE pm.User_ID = p.User_ID";
+                            $stmt_materials = mysqli_prepare($conn, $query_materials);
+                            mysqli_stmt_bind_param($stmt_materials, "i", $plan_id);
                             mysqli_stmt_execute($stmt_materials);
                             $result_materials = mysqli_stmt_get_result($stmt_materials);
 

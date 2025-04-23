@@ -632,8 +632,11 @@
                     echo "</tr>";
                     echo "</thead>";
                     echo "<tbody>";
-                    $query_materials = "SELECT * FROM prematerials";
+                    // Modify query to filter by User_ID
+                    $query_materials = "SELECT * FROM prematerials WHERE User_ID = ?";
                     $stmt_materials = mysqli_prepare($conn, $query_materials);
+                    mysqli_stmt_bind_param($stmt_materials, "i", $userId);
+                    
                     mysqli_stmt_execute($stmt_materials);
                     $result_materials = mysqli_stmt_get_result($stmt_materials);
 
