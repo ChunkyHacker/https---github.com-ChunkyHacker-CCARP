@@ -10,13 +10,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $dateofbirth = $_POST['dateofbirth'] ?? '';
     $experience = $_POST['experience'] ?? '';
     $projectcompleted = $_POST['projectcompleted'] ?? '';
-    $specializations = $_POST['specialization'] ?? [];
     $username = $_POST['username'] ?? '';
     $password = $_POST['password'] ?? '';
 
     $response = array();
-
-    $selectedSpecializations = implode(", ", $specializations);
 
     // Simple file upload handling
     $targetDir = "assets/carpenter/";
@@ -34,11 +31,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         $photoPath = "";
     }
 
-    $insertCarpenterQuery = "INSERT INTO carpenters (First_Name, Last_Name, Phone_Number, Email, Address, Date_Of_Birth, Experiences, Project_Completed, Username, Password, specialization, Photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+    $insertCarpenterQuery = "INSERT INTO carpenters (First_Name, Last_Name, Phone_Number, Email, Address, Date_Of_Birth, Experiences, Project_Completed, Username, Password, Photo) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
     $stmtCarpenter = mysqli_prepare($conn, $insertCarpenterQuery);
 
     if ($stmtCarpenter) {
-        mysqli_stmt_bind_param($stmtCarpenter, "ssssssssssss", $firstname, $lastname, $phonenumber, $email, $address, $dateofbirth, $experience, $projectcompleted, $username, $password, $selectedSpecializations, $photoPath);
+        mysqli_stmt_bind_param($stmtCarpenter, "sssssssssss", $firstname, $lastname, $phonenumber, $email, $address, $dateofbirth, $experience, $projectcompleted, $username, $password, $photoPath);
 
         mysqli_begin_transaction($conn);
 

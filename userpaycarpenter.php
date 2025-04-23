@@ -50,7 +50,7 @@
     $carpenter_ID = $contract['Carpenter_ID'];
 
     // Fetch carpenter details
-    $carpenterQuery = "SELECT First_Name, Last_Name FROM users WHERE User_ID = ?";
+    $carpenterQuery = "SELECT First_Name, Last_Name FROM carpenters WHERE Carpenter_ID = ?";
     $carpenterStmt = $conn->prepare($carpenterQuery);
     $carpenterStmt->bind_param("i", $carpenter_ID);
     $carpenterStmt->execute();

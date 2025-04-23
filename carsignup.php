@@ -183,24 +183,6 @@
                 <input type="text" id="projectcompleted" name="projectcompleted" required>
             </div>
 
-            <div class="specialization-group">
-                <label>Specialization</label>
-                <?php
-                include('config.php');
-                $query = "SELECT Specialization_Name FROM specialization";
-                $result = mysqli_query($conn, $query);
-
-                if (mysqli_num_rows($result) > 0) {
-                    while ($row = mysqli_fetch_assoc($result)) {
-                        $specializationOption = $row['Specialization_Name'];
-                        echo "<div><label><input type='checkbox' name='specialization[]' value='$specializationOption'> $specializationOption</label></div>";
-                    }
-                } else {
-                    echo "No specialization options available.";
-                }
-                ?>
-            </div>
-
             <div class="form-group">
                 <label for="username">Username</label>
                 <input type="text" id="username" name="username" required>

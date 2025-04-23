@@ -646,8 +646,8 @@
                     </button>';
 
                     // Fetch completed tasks
-                    // Completed Task
-                    $sqlCompleted = "SELECT * FROM completed_task";
+                    
+                    $sqlCompleted = "SELECT * FROM completed_task WHERE contract_ID = $contractID";
                     $resultCompleted = $conn->query($sqlCompleted);
                     
                     echo '<h3>Completed Tasks</h3>';
