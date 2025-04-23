@@ -27,6 +27,19 @@ if (mysqli_num_rows($result) > 0) {
     exit();
 }
 
+// Check carpenter limit before proceeding
+$checkLimitQuery = "SELECT carpenter_limit FROM plan WHERE plan_ID = ?";
+$limitStmt = mysqli_prepare($conn, $checkLimitQuery);
+mysqli_stmt_bind_param($limitStmt, "i", $plan_id);
+mysqli_stmt_execute($limitStmt);
+$limitResult = mysqli_stmt_get_result($limitStmt);
+$limitData = mysqli_fetch_assoc($limitResult);
+
+if ($limitData['carpenter_limit'] <= 0) {
+    echo "<script>alert('This plan has reached its carpenter limit. No more approvals allowed.'); window.location.href = 'profile.php';</script>";
+    exit();
+}
+
 // Collect all scores
 $total_score = $_POST['total_score'] ?? 0;
 
@@ -117,10 +130,19 @@ mysqli_stmt_bind_param($stmt, "iiisssssssss",
 if (mysqli_stmt_execute($stmt)) {
     // Update carpenter limit after approval
     if ($status === 'approve') {
-        $updatePlanQuery = "UPDATE plan SET carpenter_limit = carpenter_limit - 1 WHERE plan_ID = ?";
-        $updateStmt = mysqli_prepare($conn, $updatePlanQuery);
-        mysqli_stmt_bind_param($updateStmt, "i", $plan_id);
-        mysqli_stmt_execute($updateStmt);
+        // Double check limit again before updating
+        $checkAgainStmt = mysqli_prepare($conn, $checkLimitQuery);
+        mysqli_stmt_bind_param($checkAgainStmt, "i", $plan_id);
+        mysqli_stmt_execute($checkAgainStmt);
+        $checkAgainResult = mysqli_stmt_get_result($checkAgainStmt);
+        $currentLimit = mysqli_fetch_assoc($checkAgainResult)['carpenter_limit'];
+
+        if ($currentLimit > 0) {
+            $updatePlanQuery = "UPDATE plan SET carpenter_limit = carpenter_limit - 1 WHERE plan_ID = ? AND carpenter_limit > 0";
+            $updateStmt = mysqli_prepare($conn, $updatePlanQuery);
+            mysqli_stmt_bind_param($updateStmt, "i", $plan_id);
+            mysqli_stmt_execute($updateStmt);
+        }
     }
     
     echo "<script>alert('Plan evaluation submitted successfully!'); window.location.href = 'profile.php';</script>";
