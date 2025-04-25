@@ -1,9 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 include('config.php');
 session_start();
 
 if (!isset($_SESSION['Carpenter_ID'])) {
-    echo "<script>alert('Error: Carpenter ID is not set. Please log in again.'); window.location.href = 'login.php';</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Carpenter ID is not set. Please log in again.',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'login.php';
+        });
+    </script>";
     exit();
 }
 
@@ -11,7 +27,17 @@ $Carpenter_ID = $_SESSION['Carpenter_ID'];
 $plan_id = $_POST['plan_ID'] ?? null;
 
 if (!$plan_id) {
-    echo "<script>alert('Error: Plan ID is missing.'); window.location.href = 'profile.php';</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Plan ID is missing.',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'profile.php';
+        });
+    </script>";
     exit();
 }
 
@@ -23,7 +49,17 @@ mysqli_stmt_execute($stmt);
 $result = mysqli_stmt_get_result($stmt);
 
 if (mysqli_num_rows($result) > 0) {
-    echo "<script>alert('You have already evaluated this plan! You cannot evaluate again.'); window.location.href = 'profile.php';</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Warning!',
+            text: 'You have already evaluated this plan! You cannot evaluate again.',
+            icon: 'warning',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'profile.php';
+        });
+    </script>";
     exit();
 }
 
@@ -36,7 +72,17 @@ $limitResult = mysqli_stmt_get_result($limitStmt);
 $limitData = mysqli_fetch_assoc($limitResult);
 
 if ($limitData['carpenter_limit'] <= 0) {
-    echo "<script>alert('This plan has reached its carpenter limit. No more approvals allowed.'); window.location.href = 'profile.php';</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Warning!',
+            text: 'This plan has reached its carpenter limit. No more approvals allowed.',
+            icon: 'warning',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'profile.php';
+        });
+    </script>";
     exit();
 }
 
@@ -145,10 +191,32 @@ if (mysqli_stmt_execute($stmt)) {
         }
     }
     
-    echo "<script>alert('Plan evaluation submitted successfully!'); window.location.href = 'profile.php';</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Success!',
+            text: 'Plan evaluation submitted successfully!',
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'profile.php';
+        });
+    </script>";
 } else {
-    echo "<script>alert('Error submitting evaluation: " . mysqli_error($conn) . "'); window.location.href = 'profile.php';</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Error submitting evaluation: " . mysqli_error($conn) . "',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'profile.php';
+        });
+    </script>";
 }
 
 mysqli_close($conn);
 ?>
+</body>
+</html>

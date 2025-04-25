@@ -1,11 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 session_start();
 include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-    // Check if 'User_ID' is set in the session
     if (!isset($_SESSION['User_ID'])) {
-        die("Error: User ID not set.");
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'User ID not set. Please login again.',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.location.href = 'login.html';
+            });
+        </script>";
+        exit();
     }
 
     $user_ID = $_SESSION['User_ID'];
@@ -45,29 +61,58 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
         if (mysqli_stmt_execute($stmt)) {
             mysqli_stmt_close($stmt);
             mysqli_close($conn);
-
-            $response['success'] = true;
-            $response['message'] = "Your plan has been successfully submitted.";
-
-            // Redirect with success message
-            header("Location: selectmaterials.php?success=true&message=" . urlencode($response['message']));
-            exit;
+            
+            echo "<script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Your plan has been successfully submitted',
+                    icon: 'success',
+                    timer: 3000,
+                    showConfirmButton: true
+                }).then(function() {
+                    window.location.href = 'selectmaterials.php';
+                });
+            </script>";
+            exit();
         } else {
-            $response['success'] = false;
-            $response['message'] = "Error: " . mysqli_error($conn);
+            echo "<script>
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Database error: " . mysqli_error($conn) . "',
+                    icon: 'error',
+                    timer: 3000,
+                    showConfirmButton: true
+                }).then(function() {
+                    window.history.back();
+                });
+            </script>";
         }
     } else {
-        $response['success'] = false;
-        $response['message'] = "Error: Database error.";
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to prepare database statement',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
     }
-
-    header("Content-Type: application/json");
-    echo json_encode($response);
 } else {
-    $response['success'] = false;
-    $response['message'] = "Error: Invalid request method.";
-
-    header("Content-Type: application/json");
-    echo json_encode($response);
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Invalid request method',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.history.back();
+        });
+    </script>";
 }
 ?>
+</body>
+</html>

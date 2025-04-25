@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 // Include the database configuration file
 include 'config.php';
@@ -15,18 +21,68 @@ if (isset($_GET['id'])) {
 
     // Check if the query executed successfully
     if ($stmt->execute()) {
-        // Show alert and redirect back to manage_users.php
-        echo "<script>
-            alert('Admin deleted successfully!');
-            window.location.href = 'manage_users.php';
-        </script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          title: 'Success!',
+                          text: 'Admin deleted successfully!',
+                          icon: 'success',
+                          timer: 3000,
+                          showConfirmButton: false
+                      }).then(function() {
+                          window.location.href = 'manage_users.php';
+                      });
+                  </script>
+              </body>
+              </html>";
     } else {
-        echo "Error: " . $stmt->error;
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          title: 'Error!',
+                          text: 'Failed to delete admin: " . $stmt->error . "',
+                          icon: 'error',
+                          timer: 3000,
+                          showConfirmButton: false
+                      }).then(function() {
+                          window.location.href = 'manage_users.php';
+                      });
+                  </script>
+              </body>
+              </html>";
     }
 
     $stmt->close();
 } else {
-    echo "No admin ID provided.";
+    echo "<!DOCTYPE html>
+          <html>
+          <head>
+              <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          </head>
+          <body>
+              <script>
+                  Swal.fire({
+                      title: 'Error!',
+                      text: 'No admin ID provided',
+                      icon: 'error',
+                      timer: 3000,
+                      showConfirmButton: false
+                  }).then(function() {
+                      window.location.href = 'manage_users.php';
+                  });
+              </script>
+          </body>
+          </html>";
 }
 
 // Close the database connection

@@ -1,21 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 session_start(); 
 include('config.php');
 
-// Prepare SQL statement to insert selected items into the database
-// Get user_ID from the form
 $user_ID = $_POST['user_ID'];
-
-// Modify SQL statement to include User_ID
 $sql = "INSERT INTO prematerials (User_ID, materials, part, name, quantity, price, total, estimated_cost) 
         VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
 $stmt = $conn->prepare($sql);
 
 if (!$stmt) {
-    die("Error preparing the SQL statement: " . $conn->error);
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Error preparing the SQL statement: " . $conn->error . "',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.history.back();
+        });
+    </script>";
+    exit();
 }
 
-// Check if the form is submitted and items are selected
 if (!empty($_POST["materials"])) {
     foreach ($_POST["materials"] as $key => $materials) {
         $part = isset($_POST["part"][$key]) ? $_POST["part"][$key] : "";
@@ -39,21 +51,36 @@ if (!empty($_POST["materials"])) {
         $stmt->execute();
     }
 
-    // Close statement
     $stmt->close();
+    $conn->close();
 
-    // Prepare a success message
-    $response['success'] = true;
-    $response['message'] = "Your materials have been successfully submitted.";
-
-    // Redirect to user profile with success message
-    header("Location: userprofile.php?success=true&message=" . urlencode($response['message']));
-    exit;
+    echo "<script>
+        Swal.fire({
+            title: 'Success!',
+            text: 'Your materials have been successfully submitted',
+            icon: 'success',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'userprofile.php';
+        });
+    </script>";
+    exit();
 } else {
-    // If no items are selected, display a message
-    echo "No items selected.";
+    echo "<script>
+        Swal.fire({
+            title: 'Warning!',
+            text: 'No items selected',
+            icon: 'warning',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.history.back();
+        });
+    </script>";
 }
 
-// Close connection
 $conn->close();
 ?>
+</body>
+</html>

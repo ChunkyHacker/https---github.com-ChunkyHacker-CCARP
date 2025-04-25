@@ -1,9 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 session_start();
 include('config.php');
 
 if (!isset($_SESSION['User_ID']) || !isset($_POST['contract_ID'])) {
-    header('Location: login.html');
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Unauthorized access',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(() => {
+            window.location.href = 'login.html';
+        });
+    </script>";
     exit();
 }
 
@@ -22,7 +38,6 @@ $stmt = $conn->prepare($sql);
 $stmt->bind_param("ssi", $approval_status, $comments, $contract_ID);
 
 if ($stmt->execute()) {
-    // If approved, update both project_turnover and contracts tables
     if ($approval_status === 'approved') {
         // Update project_turnover confirmation status
         $update_turnover = "UPDATE project_turnover 
@@ -41,7 +56,17 @@ if ($stmt->execute()) {
         $stmt->bind_param("i", $contract_ID);
         $stmt->execute();
         
-        header("Location: userprofile.php?success=true&message=Project approved successfully!");
+        echo "<script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Project approved successfully!',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(() => {
+                window.location.href = 'userprofile.php';
+            });
+        </script>";
     } else {
         // If revision requested, update project_turnover
         $update_turnover = "UPDATE project_turnover 
@@ -58,11 +83,33 @@ if ($stmt->execute()) {
         $stmt->bind_param("i", $contract_ID);
         $stmt->execute();
         
-        header("Location: userprofile.php?success=true&message=Revision requested successfully!");
+        echo "<script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Revision requested successfully!',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(() => {
+                window.location.href = 'userprofile.php';
+            });
+        </script>";
     }
 } else {
-    header("Location: viewturnover.php?contract_ID=" . $contract_ID . "&error=true&message=Failed to process approval");
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Failed to process approval',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(() => {
+            window.location.href = 'viewturnover.php?contract_ID=" . $contract_ID . "';
+        });
+    </script>";
 }
 
-exit();
+$conn->close();
 ?>
+</body>
+</html>

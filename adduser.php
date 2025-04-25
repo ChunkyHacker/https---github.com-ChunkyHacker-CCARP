@@ -34,27 +34,65 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     if ($stmt) {
         mysqli_stmt_bind_param($stmt, "sssssssss", $firstname, $lastname, $phonenumber, $email, $address, $dateofbirth, $username, $password, $photoPath);
 
-        $response = array();
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>";
 
         if (mysqli_stmt_execute($stmt)) {
-            mysqli_stmt_close($stmt);
-            mysqli_close($conn);
-            header("Location: success.php");
+            echo "<script>
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Account created successfully!',
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: true
+                    }).then(function() {
+                        window.location.href = 'login.html';
+                    });
+                  </script>";
         } else {
-            $response['success'] = false;
-            $response['message'] = "Error: " . mysqli_error($conn);
+            echo "<script>
+                    Swal.fire({
+                        title: 'Error!',
+                        text: 'Failed to create account: " . mysqli_error($conn) . "',
+                        icon: 'error',
+                        timer: 3000,
+                        showConfirmButton: true
+                    }).then(function() {
+                        window.history.back();
+                    });
+                  </script>";
         }
 
+        echo "</body></html>";
         mysqli_stmt_close($stmt);
-
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        mysqli_close($conn);
+        exit;
     } else {
-        $response['success'] = false;
-        $response['message'] = "Error: " . mysqli_error($conn);
-
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          title: 'Error!',
+                          text: 'Database error: " . mysqli_error($conn) . "',
+                          icon: 'error',
+                          timer: 3000,
+                          showConfirmButton: true
+                      }).then(function() {
+                          window.history.back();
+                      });
+                  </script>
+              </body>
+              </html>";
+        mysqli_close($conn);
+        exit;
     }
 }
 ?>

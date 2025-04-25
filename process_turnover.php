@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 session_start();
 include('config.php');
@@ -72,11 +78,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->bind_param("i", $contract_ID);
         $stmt->execute();
 
-        header("Location: profile.php?success=true&message=Project turnover successful!");
+        echo "<script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Project turnover successful!',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(() => {
+                window.location.href = 'profile.php';
+            });
+        </script>";
         exit();
     } else {
-        header("Location: turnover.php?contract_ID=" . $contract_ID . "&error=true&message=Failed to process turnover");
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Failed to process turnover',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(() => {
+                window.location.href = 'turnover.php?contract_ID=" . $contract_ID . "';
+            });
+        </script>";
         exit();
     }
 }
 ?>
+</body>
+</html>

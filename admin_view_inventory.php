@@ -1,4 +1,4 @@
-    <!DOCTYPE html>
+<!DOCTYPE html>
     <html lang="en">
     <head>
         <meta charset="UTF-8">
@@ -6,6 +6,7 @@
         <title>Inventory Management</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     </head>
     <body>
 
@@ -131,11 +132,20 @@
             $(document).ready(function() {
                 $('.deleteItem').click(function() {
                     var itemId = $(this).data('id');
-                    var confirmation = confirm('Are you sure you want to delete this item?');
                     
-                    if (confirmation) {
-                        window.location.href = 'admin_delete_prematerialsitem.php?id=' + itemId;
-                    }
+                    Swal.fire({
+                        title: 'Are you sure?',
+                        text: "You won't be able to revert this!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#FF8C00',
+                        cancelButtonColor: '#d33',
+                        confirmButtonText: 'Delete'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            window.location.href = 'admin_delete_prematerialsitem.php?id=' + itemId;
+                        }
+                    });
                 });
             });
         </script>

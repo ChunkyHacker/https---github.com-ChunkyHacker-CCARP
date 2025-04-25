@@ -59,6 +59,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Progress</title>
     <style>
         * {
@@ -285,31 +286,48 @@
     </style>
 </head>
 <body>
-    <?php
-    // Check if the success parameter is passed in the URL
-    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
-        // Sanitize the message to prevent XSS
-        $message = htmlspecialchars($_GET['message']);
-        // Output the alert with the message
-        echo "<script>alert('$message');</script>";
-    }
-
-    //Attendance
-    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action'])) {
-        $action = htmlspecialchars($_GET['action']);
-        
-        // Determine the message based on the action
-        if ($action == 'time_in') {
-            echo "<script>alert('Time In recorded successfully!');</script>";
-        } elseif ($action == 'Time_out') {
-            echo "<script>alert('Time Out recorded successfully!');</script>";
+<?php
+        // Check if the success parameter is passed in the URL
+        if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['message'])) {
+            $message = htmlspecialchars($_GET['message']);
+            echo "<script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: '$message',
+                    icon: 'success',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+            </script>";
         }
-    }
 
-    if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action']) && $_GET['action'] == 'Time_out') {
-        echo "<script>alert('Time Out recorded successfully!');</script>";
-    }
-    ?>
+        // Attendance
+        if (isset($_GET['success']) && $_GET['success'] == 'true' && isset($_GET['action'])) {
+            $action = htmlspecialchars($_GET['action']);
+            
+            if ($action == 'time_in') {
+                echo "<script>
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Time In recorded successfully!',
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: true
+                    });
+                </script>";
+            } elseif ($action == 'Time_out') {
+                echo "<script>
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Time Out recorded successfully!',
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: true
+                    });
+                </script>";
+            }
+        }
+?>
 
     <div class="sidebar">
         <div class="profile-section">
@@ -1017,15 +1035,19 @@ function redirectToMoveTask() {
                     });
                 }
 
-                if (updatedTasks.length > 0) {
-                    document.getElementById("saveChangesBtn").style.display = "block";
-                }
+                document.getElementById("saveChangesBtn").style.display = "block";
             });
         });
                 
         document.getElementById("saveChangesBtn").addEventListener("click", function () {
             if (updatedTasks.length === 0) {
-                alert("No tasks selected!");
+                Swal.fire({
+                    title: 'Warning!',
+                    text: 'No tasks selected!',
+                    icon: 'warning',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
                 return;
             }
 
@@ -1036,12 +1058,39 @@ function redirectToMoveTask() {
                 },
                 body: JSON.stringify(updatedTasks)
             })
-            .then(response => response.text())
-            .then(data => {
-                alert(data);
-                location.reload(); // Reload the page to reflect changes
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.text().then(text => {
+                    try {
+                        return JSON.parse(text);
+                    } catch (e) {
+                        throw new Error('Invalid JSON response: ' + text);
+                    }
+                });
             })
-            .catch(error => console.error("Error:", error));
+            .then(data => {
+                Swal.fire({
+                    title: data.title || 'Status',
+                    text: data.message || 'Task updated',
+                    icon: data.status || 'success',
+                    timer: 3000,
+                    showConfirmButton: true
+                }).then(() => {
+                    location.reload();
+                });
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to update tasks. Please try again.',
+                    icon: 'error',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
+            });
         });
     });
 </script>

@@ -50,11 +50,42 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_update = $conn->prepare($sql_update);
     $stmt_update->bind_param("sssssssssi", $firstname, $lastname, $phone, $email, $address, $dob, $experiences, $projects, $specialization, $carpenter_id);
 
+    // Add SweetAlert2 in head section
+    echo "<!DOCTYPE html>
+          <html>
+          <head>
+              <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          </head>
+          <body>";
+
     if ($stmt_update->execute()) {
-        echo "<script>alert('Carpenter updated successfully!'); window.location.href = 'manage_users.php';</script>";
+        echo "<script>
+                  Swal.fire({
+                      icon: 'success',
+                      title: 'Success!',
+                      text: 'Carpenter updated successfully!',
+                      confirmButtonColor: '#FF8C00',
+                      timer: 3000,
+                      timerProgressBar: true
+                  }).then(function() {
+                      window.location.href = 'manage_users.php';
+                  });
+              </script>";
+        exit();
     } else {
-        echo "Error: " . $stmt_update->error;
+        echo "<script>
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error!',
+                      text: 'Failed to update carpenter: " . $stmt_update->error . "',
+                      confirmButtonColor: '#FF8C00',
+                      timer: 3000,
+                      timerProgressBar: true
+                  });
+              </script>";
+        exit();
     }
+    echo "</body></html>";
     $stmt_update->close();
 }
 

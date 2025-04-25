@@ -15,15 +15,50 @@ if (isset($_GET['id'])) {
 
     // Check if the query executed successfully
     if ($stmt->execute()) {
-        // Show alert and redirect back to manage_users.php
-        echo "<script>
-            alert('User deleted successfully!');
-            window.location.href = 'manage_users.php';
-        </script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'Success!',
+                          text: 'User deleted successfully!',
+                          confirmButtonColor: '#FF8C00',
+                          timer: 3000,
+                          timerProgressBar: true
+                      }).then(function() {
+                          window.location.href = 'manage_users.php';
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     } else {
-        echo "Error: " . $stmt->error;
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Error!',
+                          text: 'Error deleting user: " . $stmt->error . "',
+                          confirmButtonColor: '#FF8C00',
+                          timer: 3000,
+                          timerProgressBar: true
+                      }).then(function() {
+                          window.location.href = 'manage_users.php';
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     }
-
     $stmt->close();
 } else {
     echo "No user ID provided.";

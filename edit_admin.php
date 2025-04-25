@@ -44,9 +44,47 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $stmt_update->bind_param("ssssi", $firstname, $lastname, $username, $password, $admin_id);
 
     if ($stmt_update->execute()) {
-        echo "<script>alert('Admin updated successfully!'); window.location.href = 'manage_users.php';</script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'Success!',
+                          text: 'Admin updated successfully!',
+                          confirmButtonColor: '#FF8C00',
+                          timer: 3000,
+                          timerProgressBar: true
+                      }).then(function() {
+                          window.location.href = 'manage_users.php';
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     } else {
-        echo "Error: " . $stmt_update->error;
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Error!',
+                          text: 'Failed to update admin. Please try again.',
+                          confirmButtonColor: '#FF8C00'
+                          timer: 3000,
+                          timerProgressBar: true
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     }
     $stmt_update->close();
 }
@@ -64,6 +102,9 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Admin</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Add SweetAlert2 CSS and JS -->
+    <link href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
     <div class="container mt-5">

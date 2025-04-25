@@ -127,6 +127,7 @@
 <script src="process5\quantityxcost.js"></script>
 <script src="process5\daysofworkxlaborcost.js"></script>
 <script src="process5\additionalcostpluslaborcost.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <style>
     * {
     box-sizing: border-box;
@@ -1276,17 +1277,14 @@
     
     function acceptContract() {
         if (document.getElementById('acceptTerms') && document.getElementById('acceptTerms').checked) {
-            // Get the plan ID from the URL
             const planId = <?php echo $plan_ID; ?>;
             
             console.log('Sending acceptance request for plan ID:', planId);
             
-            // Disable the button to prevent multiple submissions
             const acceptButton = document.getElementById('confirmAcceptBtn');
             acceptButton.disabled = true;
             acceptButton.textContent = 'Processing...';
             
-            // Send AJAX request to update contract status
             fetch('update_contract_status.php', {
                 method: 'POST',
                 headers: {
@@ -1301,54 +1299,69 @@
             .then(data => {
                 console.log('Data received:', data);
                 if (data.success) {
-                    // Update the status badge immediately
                     document.getElementById('contractStatus').textContent = 'Status: Accepted';
                     document.getElementById('contractStatus').style.backgroundColor = '#4CAF50';
                     
-                    // Hide the decision dropdown and show only the close button
                     document.querySelector('.contract-acceptance').innerHTML = 
                         '<button onclick="closeSignedContractModal()" ' +
                         'style="background-color: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">' +
                         'Close</button>';
                     
-                    // Show success message
-                    alert('Contract accepted successfully!');
-                    
-                    // Reload the page to reflect the changes
-                    window.location.reload();
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Contract accepted successfully!',
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: true
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 } else {
-                    alert('Error: ' + (data.message || 'Unknown error'));
-                    // Re-enable the button
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Unknown error',
+                        icon: 'error',
+                        timer: 3000,
+                        showConfirmButton: true
+                    });
                     acceptButton.disabled = false;
                     acceptButton.textContent = 'Confirm Acceptance';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while processing your request: ' + error.message);
-                // Re-enable the button
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while processing your request: ' + error.message,
+                    icon: 'error',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
                 acceptButton.disabled = false;
                 acceptButton.textContent = 'Confirm Acceptance';
             });
         } else {
-            alert('Please check the agreement box before confirming.');
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Please check the agreement box before confirming.',
+                icon: 'warning',
+                timer: 3000,
+                showConfirmButton: true
+            });
         }
     }
     
     function rejectContract() {
         const rejectionReason = document.getElementById('rejectionReason').value;
         if (rejectionReason.trim() !== '') {
-            // Get the plan ID from the URL
             const planId = <?php echo $plan_ID; ?>;
             
             console.log('Sending rejection request for plan ID:', planId, 'with reason:', rejectionReason);
             
-            // Disable the button to prevent multiple submissions
             const rejectButton = document.querySelector('#rejectionForm button');
             rejectButton.disabled = true;
             rejectButton.textContent = 'Processing...';
             
-            // Send AJAX request to update contract status
             fetch('update_contract_status.php', {
                 method: 'POST',
                 headers: {
@@ -1363,43 +1376,61 @@
             .then(data => {
                 console.log('Data received:', data);
                 if (data.success) {
-                    // Update the status badge immediately
                     document.getElementById('contractStatus').textContent = 'Status: Rejected';
                     document.getElementById('contractStatus').style.backgroundColor = '#F44336';
                     
-                    // Add the rejection reason to the display
                     const statusDiv = document.getElementById('contractStatus').parentNode;
                     const reasonDiv = document.createElement('div');
                     reasonDiv.style = 'margin-top: 10px; padding: 10px; background-color: #ffeeee; border-left: 3px solid #F44336; border-radius: 3px;';
                     reasonDiv.innerHTML = '<p><strong>Rejection Reason:</strong> ' + rejectionReason + '</p>';
                     statusDiv.appendChild(reasonDiv);
                     
-                    // Hide the acceptance options
                     document.querySelector('.contract-acceptance').innerHTML = 
                         '<button onclick="closeSignedContractModal()" ' +
                         'style="background-color: #f1f1f1; color: #333; border: 1px solid #ddd; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 16px;">' +
                         'Close</button>';
                     
-                    alert('Contract rejected successfully.');
-                    
-                    // Reload the page to reflect the changes
-                    window.location.reload();
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Contract rejected successfully.',
+                        icon: 'success',
+                        timer: 3000,
+                        showConfirmButton: true
+                    }).then(() => {
+                        window.location.reload();
+                    });
                 } else {
-                    alert('Error: ' + data.message);
-                    // Re-enable the button
+                    Swal.fire({
+                        title: 'Error!',
+                        text: data.message || 'Unknown error',
+                        icon: 'error',
+                        timer: 3000,
+                        showConfirmButton: true
+                    });
                     rejectButton.disabled = false;
                     rejectButton.textContent = 'Submit Rejection';
                 }
             })
             .catch(error => {
                 console.error('Error:', error);
-                alert('An error occurred while processing your request.');
-                // Re-enable the button
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'An error occurred while processing your request.',
+                    icon: 'error',
+                    timer: 3000,
+                    showConfirmButton: true
+                });
                 rejectButton.disabled = false;
                 rejectButton.textContent = 'Submit Rejection';
             });
         } else {
-            alert('Please provide a reason for rejecting the contract.');
+            Swal.fire({
+                title: 'Warning!',
+                text: 'Please provide a reason for rejecting the contract.',
+                icon: 'warning',
+                timer: 3000,
+                showConfirmButton: true
+            });
         }
     }
 </script>

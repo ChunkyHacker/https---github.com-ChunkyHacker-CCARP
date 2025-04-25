@@ -1,3 +1,9 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 // Include the database configuration file
 include 'config.php';
@@ -28,12 +34,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     if ($admin && $admin['password'] === $password) {
         // Store admin ID in session
         $_SESSION['admin_id'] = $admin['admin_id'];
-
-        // Redirect to the admin dashboard
-        header("Location: admindashboard.php");
+        
+        echo "<script>
+            Swal.fire({
+                title: 'Welcome Admin!',
+                text: 'Successfully logged in!',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.location.href = 'admindashboard.php';
+            });
+        </script>";
         exit();
     } else {
-        echo "Invalid username or password.";
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Invalid username or password',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.location.href = 'adminlogin.html';
+            });
+        </script>";
     }
 
     // Close the statement
@@ -43,3 +68,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 // Close the database connection
 $conn->close();
 ?>
+</body>
+</html>

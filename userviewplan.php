@@ -24,6 +24,7 @@ $userDetails = $result->fetch_assoc();
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <title>Plan Details</title>
 <style>
     * {
@@ -435,12 +436,24 @@ if ($row = mysqli_fetch_assoc($result)) {
           border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
           Go back</button>";
     
-    // Delete button
-    echo "<button onclick=\"if(confirm('Are you sure you want to delete this plan?')) 
-          window.location.href='delete_approval.php?plan_ID=" . $plan_ID . "'\" 
-          style='width: 150px; height: 50px; background-color: red; color: white; 
-          border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
-          Delete</button>";
+    // Delete button with SweetAlert2 confirmation
+    echo "<button onclick=\"Swal.fire({
+        title: 'Are you sure?',
+        text: 'Do you want to delete this plan?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#FF8C00',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete',
+        timer:3000,
+        showConfirmButton: true
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href='delete_approval.php?plan_ID=" . $plan_ID . "';
+        }
+    })\" style='width: 150px; height: 50px; background-color: red; color: white; 
+        border: none; border-radius: 5px; cursor: pointer; font-size: 16px;'>
+        Delete</button>";
     
     echo "</div>";
 } else {

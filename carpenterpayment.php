@@ -255,7 +255,7 @@
         </div>
         
         <div>
-            <a href="profile.php">Go back</a>
+            <a href="javascript:history.back()">Go back</a>
         </div>
     </div>
 

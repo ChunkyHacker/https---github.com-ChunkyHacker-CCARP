@@ -16,18 +16,94 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $updateStmt->bind_param("ssdi", $structure, $name, $price, $id);
         
         if ($updateStmt->execute()) {
-            // Display success message and redirect
-            echo "<script>alert('Item updated successfully!'); window.location.href='admin_view_inventory.php';</script>";
+            echo "<!DOCTYPE html>
+                  <html>
+                  <head>
+                      <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+                  </head>
+                  <body>
+                      <script>
+                          Swal.fire({
+                              icon: 'success',
+                              title: 'Success!',
+                              text: 'Item updated successfully!',
+                              confirmButtonColor: '#FF8C00',
+                              timer: 3000,
+                              timerProgressBar: true
+                          }).then(function() {
+                              window.location.href = 'admin_view_inventory.php';
+                          });
+                      </script>
+                  </body>
+                  </html>";
+            exit();
         } else {
-            // Display error message and redirect
-            echo "<script>alert('Error updating item.'); window.location.href='admin_view_inventory.php';</script>";
+            echo "<!DOCTYPE html>
+                  <html>
+                  <head>
+                      <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+                  </head>
+                  <body>
+                      <script>
+                          Swal.fire({
+                              icon: 'error',
+                              title: 'Error!',
+                              text: 'Error updating item.',
+                              confirmButtonColor: '#FF8C00',
+                              timer: 3000,
+                              timerProgressBar: true
+                          }).then(function() {
+                              window.location.href = 'admin_view_inventory.php';
+                          });
+                      </script>
+                  </body>
+                  </html>";
+            exit();
         }
     } else {
-        // Display invalid input message and redirect
-        echo "<script>alert('Invalid input.'); window.location.href='admin_view_inventory.php';</script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Error!',
+                          text: 'Invalid input.',
+                          confirmButtonColor: '#FF8C00',
+                          timer: 3000,
+                          timerProgressBar: true
+                      }).then(function() {
+                          window.location.href = 'admin_view_inventory.php';
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     }
 } else {
-    // Display invalid request method message and redirect
-    echo "<script>alert('Invalid request method.'); window.location.href='admin_view_inventory.php';</script>";
+    echo "<!DOCTYPE html>
+          <html>
+          <head>
+              <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          </head>
+          <body>
+              <script>
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error!',
+                      text: 'Invalid request method.',
+                      confirmButtonColor: '#FF8C00',
+                      timer: 3000,
+                      timerProgressBar: true
+                  }).then(function() {
+                      window.location.href = 'admin_view_inventory.php';
+                  });
+              </script>
+          </body>
+          </html>";
+    exit();
 }
 ?>

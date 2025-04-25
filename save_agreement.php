@@ -1,15 +1,46 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 include('config.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Check kung naa ang mga required fields
     if (!isset($_POST['plan_ID'], $_POST['approval_ID'], $_POST['Carpenter_ID'])) {
-        die("Error: Missing required fields.");
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Missing required fields',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
+        exit();
     }
 
     $Plan_ID = $_POST['plan_ID'];
-    $approval_ID = !empty($_POST['approval_ID']) ? $_POST['approval_ID'] : die("Error: Missing approval_ID.");
-    $Carpenter_ID = !empty($_POST['Carpenter_ID']) ? $_POST['Carpenter_ID'] : die("Error: Missing Carpenter_ID.");
+    $approval_ID = !empty($_POST['approval_ID']) ? $_POST['approval_ID'] : null;
+    $Carpenter_ID = !empty($_POST['Carpenter_ID']) ? $_POST['Carpenter_ID'] : null;
+
+    if (!$approval_ID || !$Carpenter_ID) {
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Missing approval ID or Carpenter ID',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
+        exit();
+    }
 
     // Check if carpenter already has an active contract
     $check_sql = "SELECT COUNT(*) as count FROM contracts WHERE Carpenter_ID = ? AND transaction_ID IS NULL";
@@ -21,13 +52,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($row['count'] > 0) {
         echo "<script>
-                alert('This carpenter already has an active agreement. Cannot create multiple agreements.');
+            Swal.fire({
+                title: 'Warning!',
+                text: 'This carpenter already has an active agreement. Cannot create multiple agreements.',
+                icon: 'warning',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
                 window.history.back();
-              </script>";
+            });
+        </script>";
         exit();
     }
 
-    // Continue with existing code
     $labor_cost = isset($_POST['labor_cost']) ? $_POST['labor_cost'] : '0.00';
     $duration = isset($_POST['duration']) ? $_POST['duration'] : 0;
     $type_of_work = isset($_POST['type_of_work']) ? $_POST['type_of_work'] : 'select type of work';
@@ -51,16 +88,33 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     );
 
     if (mysqli_stmt_execute($stmt)) {
-        // Kuhaa ang last inserted contract_ID
         $contract_ID = mysqli_insert_id($conn);
-
         echo "<script>
-                alert('Contract successfully submitted.');
+            Swal.fire({
+                title: 'Success!',
+                text: 'Contract successfully submitted',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
                 window.location.href = 'viewaddedrequirements.php?contract_ID=$contract_ID';
-              </script>";
+            });
+        </script>";
         exit();
     } else {
-        echo "Error: " . mysqli_error($conn);
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Error: " . mysqli_error($conn) . "',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
     }
 }
 ?>
+</body>
+</html>

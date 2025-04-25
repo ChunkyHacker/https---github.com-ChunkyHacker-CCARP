@@ -20,7 +20,15 @@
 
     // Check if the success parameter is passed in the URL
     if (isset($_GET['success']) && $_GET['success'] == 'true') {
-        echo "<script>alert('Payroll data added successfully!');</script>";
+        echo "<script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Payroll data added successfully!',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: true
+            });
+        </script>";
     }
     
 

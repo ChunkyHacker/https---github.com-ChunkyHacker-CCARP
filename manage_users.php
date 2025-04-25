@@ -64,6 +64,7 @@
             width: 160px;  /* Increased width for buttons */
         }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 </head>
 <body>
 
@@ -119,7 +120,7 @@
                                     <td>" . $admin['password'] . "</td>
                                     <td>
                                         <a href='edit_admin.php?id=" . $admin['admin_id'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                        <a href='delete_admin.php?id=" . $admin['admin_id'] . "' class='btn btn-danger btn-sm'>Delete</a>
+                                        <button onclick='confirmDeleteAdmin(" . $admin['admin_id'] . ")' class='btn btn-danger btn-sm'>Delete</button>
                                     </td>
                                 </tr>";
                             }
@@ -167,7 +168,7 @@
                                         <td>" . $user['Username'] . "</td>
                                         <td>
                                             <a href='edit_user.php?id=" . $user['User_ID'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                            <a href='delete_user.php?id=" . $user['User_ID'] . "' class='btn btn-danger btn-sm'>Delete</a>
+                                            <button onclick='confirmDelete(" . $user['User_ID'] . ")' class='btn btn-danger btn-sm'>Delete</button>
                                         </td>
                                     </tr>";
                                 }
@@ -210,20 +211,20 @@
                             if ($result_carpenters->num_rows > 0) {
                                 while($carpenter = $result_carpenters->fetch_assoc()) {
                                     echo "<tr>
-                                        <td>" . $carpenter['Carpenter_ID'] . "</td>
-                                        <td>" . $carpenter['First_Name'] . "</td>
-                                        <td>" . $carpenter['Last_Name'] . "</td>
-                                        <td>" . $carpenter['Phone_Number'] . "</td>
-                                        <td>" . $carpenter['Email'] . "</td>
-                                        <td>" . $carpenter['Address'] . "</td>
-                                        <td>" . $carpenter['Date_Of_Birth'] . "</td>
-                                        <td>" . $carpenter['Experiences'] . "</td>
-                                        <td>" . $carpenter['Project_Completed'] . "</td>
-                                        <td>" . $carpenter['specialization'] . "</td>
-                                        <td>" . $carpenter['username'] . "</td>
+                                        <td>{$carpenter['Carpenter_ID']}</td>
+                                        <td>{$carpenter['First_Name']}</td>
+                                        <td>{$carpenter['Last_Name']}</td>
+                                        <td>{$carpenter['Phone_Number']}</td>
+                                        <td>{$carpenter['Email']}</td>
+                                        <td>{$carpenter['Address']}</td>
+                                        <td>{$carpenter['Date_Of_Birth']}</td>
+                                        <td>{$carpenter['Experiences']}</td>
+                                        <td>{$carpenter['Project_Completed']}</td>
+                                        <td>{$carpenter['specialization']}</td>
+                                        <td>{$carpenter['username']}</td>
                                         <td class='actions'>
                                             <a href='edit_carpenter.php?id=" . $carpenter['Carpenter_ID'] . "' class='btn btn-warning btn-sm'>Edit</a>
-                                            <a href='delete_carpenter.php?id=" . $carpenter['Carpenter_ID'] . "' class='btn btn-danger btn-sm'>Delete</a>
+                                            <button onclick='confirmDeleteCarpenter(" . $carpenter['Carpenter_ID'] . ")' class='btn btn-danger btn-sm'>Delete</button>
                                         </td>
                                     </tr>";
                                 }
@@ -251,3 +252,57 @@
 // Close the database connection
 $conn->close();
 ?>
+
+<!-- Add this script before the closing body tag -->
+<script>
+function confirmDelete(userId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#FF8C00',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'delete_user.php?id=' + userId;
+        }
+    });
+}
+</script>
+<!-- Fix the script section at the bottom of the file -->
+<script>
+function confirmDeleteCarpenter(carpenterId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#FF8C00',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'delete_carpenter.php?id=' + carpenterId;
+        }
+    });
+}
+</script>
+<script>
+function confirmDeleteAdmin(adminId) {
+    Swal.fire({
+        title: 'Are you sure?',
+        text: "You won't be able to revert this!",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#FF8C00',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Delete'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            window.location.href = 'delete_admin.php?id=' + adminId;
+        }
+    });
+}
+</script>

@@ -1,6 +1,13 @@
 <?php
 include('config.php');
-
+?>
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
+<?php
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $firstname = $_POST['firstname'] ?? '';
     $lastname = $_POST['lastname'] ?? '';
@@ -41,31 +48,52 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
         if (mysqli_stmt_execute($stmtCarpenter)) {
             mysqli_commit($conn);
-
-            $response['success'] = true;
-            $response['message'] = 'Carpenter added successfully';
-
             mysqli_stmt_close($stmtCarpenter);
             mysqli_close($conn);
-            header("Location: login.html");
+            
+            echo "<script>
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Carpenter account created successfully!',
+                    icon: 'success',
+                    timer: 3000,
+                    showConfirmButton: true
+                }).then(function() {
+                    window.location.href = 'login.html';
+                });
+            </script>";
             exit();
         } else {
             mysqli_rollback($conn);
-
-            $response['success'] = false;
-            $response['message'] = "Error adding carpenter: " . mysqli_error($conn);
+            mysqli_stmt_close($stmtCarpenter);
+            
+            echo "<script>
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Failed to create carpenter account: " . mysqli_error($conn) . "',
+                    icon: 'error',
+                    timer: 3000,
+                    showConfirmButton: true
+                }).then(function() {
+                    window.history.back();
+                });
+            </script>";
         }
-
-        mysqli_stmt_close($stmtCarpenter);
-
-        header("Content-Type: application/json");
-        echo json_encode($response);
     } else {
-        $response['success'] = false;
-        $response['message'] = "Error: " . mysqli_error($conn);
-
-        header("Content-Type: application/json");
-        echo json_encode($response);
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Database error: " . mysqli_error($conn) . "',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
     }
+    mysqli_close($conn);
 }
 ?>
+</body>
+</html>

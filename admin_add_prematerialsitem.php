@@ -17,11 +17,71 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["csv_file"])) {
         }
 
         fclose($handle);
-        echo "<script>alert('CSV file imported successfully!'); window.location.href='admin_view_inventory.php';</script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'success',
+                          title: 'Success!',
+                          text: 'CSV file imported successfully!',
+                          confirmButtonColor: '#FF8C00',
+                          timer: 3000,
+                          timerProgressBar: true
+                      }).then(function() {
+                          window.location.href = 'admin_view_inventory.php';
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     } else {
-        echo "<script>alert('Error opening file.'); window.location.href='admin_view_inventory.php';</script>";
+        echo "<!DOCTYPE html>
+              <html>
+              <head>
+                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+              </head>
+              <body>
+                  <script>
+                      Swal.fire({
+                          icon: 'error',
+                          title: 'Error!',
+                          text: 'Error opening file.',
+                          confirmButtonColor: '#FF8C00',
+                          timer: 3000,
+                          timerProgressBar: true
+                      }).then(function() {
+                          window.location.href = 'admin_view_inventory.php';
+                      });
+                  </script>
+              </body>
+              </html>";
+        exit();
     }
 } else {
-    echo "<script>alert('Invalid request.'); window.location.href='admin_view_inventory.php';</script>";
+    echo "<!DOCTYPE html>
+          <html>
+          <head>
+              <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+          </head>
+          <body>
+              <script>
+                  Swal.fire({
+                      icon: 'error',
+                      title: 'Error!',
+                      text: 'Invalid request.',
+                      confirmButtonColor: '#FF8C00',
+                      timer: 3000,
+                      timerProgressBar: true
+                  }).then(function() {
+                      window.location.href = 'admin_view_inventory.php';
+                  });
+              </script>
+          </body>
+          </html>";
+    exit();
 }
 ?>

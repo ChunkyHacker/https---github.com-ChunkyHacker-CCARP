@@ -1,46 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 include('config.php');
 
-// Check if the form was submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get the form data
     $timein = $_POST["Time_in"];
-    $type_of_work = $_POST["type_of_work"]; // Get type_of_work from the form
-    
-    // Set Time_out to an empty string if it's not provided in the form data
+    $type_of_work = $_POST["type_of_work"];
     $timeout = isset($_POST["Time_out"]) ? $_POST["Time_out"] : '';
 
-    // Ensure the existence of the contract_ID field in the form data
-    if (isset($_POST["contract_ID"])) {
-        $requirementID = $_POST["contract_ID"];
-    } else {
-        // Handle the case where contract_ID is not provided
-        echo "Error: contract_ID is missing.";
+    if (!isset($_POST["contract_ID"])) {
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Contract ID is missing.',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
         exit();
     }
 
-    // Determine if it's a "Time In" or "Time Out" action based on the provided data
+    $requirementID = $_POST["contract_ID"];
     $action = empty($timeout) ? 'time_in' : 'time_out';
 
-    // Prepare the SQL query to insert the item into the database
     $sql = "INSERT INTO attendance (Time_in, Time_out, contract_ID, type_of_work) 
             VALUES (?, ?, ?, ?)";
     $stmt = $conn->prepare($sql);
-    // Bind parameters
     $stmt->bind_param("ssis", $timein, $timeout, $requirementID, $type_of_work);
 
     if ($stmt->execute()) {
-        // Item added successfully, redirect back to progress.php with a success message
         $stmt->close();
         $conn->close();
-        header("Location: progress.php?contract_ID=$requirementID&action=$action&success=true");
+        echo "<script>
+            Swal.fire({
+                title: 'Success!',
+                text: 'Attendance recorded successfully!',
+                icon: 'success',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.location.href = 'progress.php?contract_ID=$requirementID&action=$action&success=true';
+            });
+        </script>";
         exit();
     } else {
-        echo "Error: " . $sql . "<br>" . $conn->error;
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Database error: " . addslashes($conn->error) . "',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
     }
 
     $stmt->close();
     $conn->close();
 } else {
-    echo "Error: There was an error uploading the file.";
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Invalid request method.',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.history.back();
+        });
+    </script>";
 }
+?>
+</body>
+</html>

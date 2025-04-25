@@ -1,16 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+</head>
+<body>
 <?php
 include 'config.php';
-session_start(); // Ensure session is started
+session_start();
 
-// Check if the user is logged in
 if (!isset($_SESSION['User_ID'])) {
-    echo "<script>alert('You need to log in first.'); window.location.href='login.php';</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'You need to log in first.',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.location.href = 'login.php';
+        });
+    </script>";
     exit();
 }
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $requirement_ID = $_POST['requirement_ID'];
-    $user_ID = $_SESSION['User_ID']; // Get the logged-in user ID
+    $user_ID = $_SESSION['User_ID'];
 
     // Check if contract already exists
     $check_query = "SELECT * FROM signed_contracts WHERE requirement_ID = ?";
@@ -20,7 +35,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     mysqli_stmt_store_result($check_stmt);
 
     if (mysqli_stmt_num_rows($check_stmt) > 0) {
-        echo "<script>alert('You have already signed this contract.'); window.history.back();</script>";
+        echo "<script>
+            Swal.fire({
+                title: 'Warning!',
+                text: 'You have already signed this contract.',
+                icon: 'warning',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
         exit();
     }
 
@@ -100,21 +125,60 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         if (mysqli_stmt_execute($insert_stmt)) {
             echo "<script>
-                    alert('Contract signed successfully!');
+                Swal.fire({
+                    title: 'Success!',
+                    text: 'Contract signed successfully!',
+                    icon: 'success',
+                    timer: 3000,
+                    showConfirmButton: true
+                }).then(function() {
                     window.location.href = 'usercomputebudget.php?requirement_ID=$requirement_ID';
-                  </script>";
+                });
+            </script>";
         } else {
-            echo "<script>alert('Error signing contract.');</script>";
+            echo "<script>
+                Swal.fire({
+                    title: 'Error!',
+                    text: 'Error signing contract.',
+                    icon: 'error',
+                    timer: 3000,
+                    showConfirmButton: true
+                }).then(function() {
+                    window.history.back();
+                });
+            </script>";
         }
 
-        // Close connection
+        // Close connections
         mysqli_stmt_close($stmt);
         mysqli_stmt_close($insert_stmt);
         mysqli_close($conn);
     } else {
-        echo "<script>alert('Contract not found.');</script>";
+        echo "<script>
+            Swal.fire({
+                title: 'Error!',
+                text: 'Contract not found.',
+                icon: 'error',
+                timer: 3000,
+                showConfirmButton: true
+            }).then(function() {
+                window.history.back();
+            });
+        </script>";
     }
 } else {
-    echo "<script>alert('Invalid request.');</script>";
+    echo "<script>
+        Swal.fire({
+            title: 'Error!',
+            text: 'Invalid request.',
+            icon: 'error',
+            timer: 3000,
+            showConfirmButton: true
+        }).then(function() {
+            window.history.back();
+        });
+    </script>";
 }
 ?>
+</body>
+</html>
