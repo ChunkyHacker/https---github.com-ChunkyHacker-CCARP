@@ -23,8 +23,9 @@ if (isset($_GET['contract_id'])) {
         $stmt->execute();
         $tasks_result = $stmt->get_result();
         
-        // Get Completed Tasks from completed_task table
-        $completed_sql = "SELECT name as Task, timestamp as Time, status as Status 
+        // Get Completed Tasks from completed_task table - Updated column names
+        $completed_sql = "SELECT name as Task, start_time as Start_Time, 
+                         end_time as End_Time, status as Status 
                          FROM completed_task 
                          WHERE contract_ID = ?";
         $stmt = $conn->prepare($completed_sql);

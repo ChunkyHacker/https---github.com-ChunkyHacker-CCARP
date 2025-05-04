@@ -12,18 +12,19 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $plan_ID = $_POST['plan_ID'];
     
     // Validate required fields
-    $required_fields = ['q1', 'q2', 'q3', 'q4', 'q5', 'q6', 'q7', 'q8', 'q9', 'q10'];
+    $required_fields = [
+        'DIS1', 'DIS2', 'DIS3', 'DIS4', 'DIS5',
+        'INN1', 'INN2', 'INN3', 'INN4', 'INN5',
+        'INS1', 'INS2', 'INS3', 'INS4', 'INS5',
+        'OPT1', 'OPT2', 'OPT3', 'OPT4', 'OPT5',
+        'INTB1', 'INTB2', 'INTB3'
+    ];
+    
     foreach ($required_fields as $field) {
         if (!isset($_POST[$field])) {
             die("Error: Missing required field: $field");
         }
     }
-
-    // Prepare the SQL statement
-    $sql = "INSERT INTO job_ratings (Carpenter_ID, plan_ID, q1_rating, q2_rating, q3_rating, 
-            q4_rating, q5_rating, q6_rating, q7_rating, q8_answer, q8_explanation, 
-            q9_answer, q10_answer) 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     // Check if carpenter has already submitted a rating for this plan
     $check_sql = "SELECT * FROM job_ratings WHERE Carpenter_ID = ? AND plan_ID = ?";
@@ -32,7 +33,70 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     $check_stmt->execute();
     $result = $check_stmt->get_result();
     
-    if ($result->num_rows > 0) {
+    if ($result->num_rows == 0) {
+        // Prepare the SQL statement
+        $sql = "INSERT INTO job_ratings (Carpenter_ID, plan_ID, 
+                DIS1, DIS2, DIS3, DIS4, DIS5,
+                INN1, INN2, INN3, INN4, INN5,
+                INS1, INS2, INS3, INS4, INS5,
+                OPT1, OPT2, OPT3, OPT4, OPT5,
+                INTB1, INTB2, INTB3) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        $stmt = $conn->prepare($sql);
+    
+        $stmt->bind_param("iiiiiiiiiiiiiiiiiiiiiiiii", 
+            $Carpenter_ID,
+            $plan_ID,
+            $_POST['DIS1'],
+            $_POST['DIS2'],
+            $_POST['DIS3'],
+            $_POST['DIS4'],
+            $_POST['DIS5'],
+            $_POST['INN1'],
+            $_POST['INN2'],
+            $_POST['INN3'],
+            $_POST['INN4'],
+            $_POST['INN5'],
+            $_POST['INS1'],
+            $_POST['INS2'],
+            $_POST['INS3'],
+            $_POST['INS4'],
+            $_POST['INS5'],
+            $_POST['OPT1'],
+            $_POST['OPT2'],
+            $_POST['OPT3'],
+            $_POST['OPT4'],
+            $_POST['OPT5'],
+            $_POST['INTB1'],
+            $_POST['INTB2'],
+            $_POST['INTB3']
+        );
+    
+        if ($stmt->execute()) {
+            echo "<!DOCTYPE html>
+                  <html>
+                  <head>
+                      <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
+                  </head>
+                  <body>
+                      <script>
+                          Swal.fire({
+                              icon: 'success',
+                              title: 'Thank you!',
+                              text: 'Your feedback has been submitted successfully.',
+                              timer: 2000
+                          }).then(function() {
+                              window.location.href = 'viewapprovedplan.php?plan_ID=" . $plan_ID . "';
+                          });
+                      </script>
+                  </body>
+                  </html>";
+            exit();
+        } else {
+            echo "Error: " . $stmt->error;
+        }
+    } else {
         echo "<!DOCTYPE html>
               <html>
               <head>
@@ -53,55 +117,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
               </html>";
         exit();
     }
-    
-    // If no previous submission, continue with insert
-    $stmt = $conn->prepare($sql);
-    
-    // Get q8_explanation (might be empty if "No" was selected)
-    $q8_explanation = isset($_POST['q8_explain']) ? $_POST['q8_explain'] : '';
-
-    $stmt->bind_param("iiiiiiiiissss", 
-        $Carpenter_ID,
-        $plan_ID,
-        $_POST['q1'],
-        $_POST['q2'],
-        $_POST['q3'],
-        $_POST['q4'],
-        $_POST['q5'],
-        $_POST['q6'],
-        $_POST['q7'],
-        $_POST['q8'],
-        $q8_explanation,
-        $_POST['q9'],
-        $_POST['q10']
-    );
-
-    if ($stmt->execute()) {
-        echo "<!DOCTYPE html>
-              <html>
-              <head>
-                  <script src='https://cdn.jsdelivr.net/npm/sweetalert2@11'></script>
-              </head>
-              <body>
-                  <script>
-                      document.addEventListener('DOMContentLoaded', function() {
-                          Swal.fire({
-                              icon: 'success',
-                              title: 'Thank you!',
-                              text: 'Your feedback has been submitted successfully.',
-                              timer: 2000
-                          }).then(function() {
-                              window.location.href = 'viewapprovedplan.php?plan_ID=" . $_POST['plan_ID'] . "';
-                          });
-                      });
-                  </script>
-              </body>
-              </html>";
-        exit();
-    } else {
-        echo "Error: " . $stmt->error;
-    }
-
     $stmt->close();
     $conn->close();
 } else {

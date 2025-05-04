@@ -147,61 +147,111 @@ $result = $stmt->get_result();
                 <p>Rated by: <?php echo $row['First_Name'] . ' ' . $row['Last_Name']; ?></p>
             </div>
 
+            <!-- SECTION 1: DISCOMFORT -->
+            <h3>DISCOMFORT</h3>
             <div class="rating-item">
-                <span>Navigation Ease:</span>
-                <span class="rating-value"><?php echo $row['q1_rating']; ?>/5</span>
+                <span>I feel overwhelmed when using this recruitment platform:</span>
+                <span class="rating-value"><?php echo $row['DIS1']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>Sometimes, I think this platform is too complicated to use:</span>
+                <span class="rating-value"><?php echo $row['DIS2']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I hesitate to use the platform when I cannot understand the instructions:</span>
+                <span class="rating-value"><?php echo $row['DIS3']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I worry that I might make mistakes while using the system:</span>
+                <span class="rating-value"><?php echo $row['DIS4']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I often feel confused when navigating this platform:</span>
+                <span class="rating-value"><?php echo $row['DIS5']; ?>/5</span>
             </div>
 
+            <!-- SECTION 2: INNOVATIVENESS -->
+            <h3>INNOVATIVENESS</h3>
             <div class="rating-item">
-                <span>Job Relevance:</span>
-                <span class="rating-value"><?php echo $row['q2_rating']; ?>/5</span>
+                <span>I consider myself among the first to try new recruitment platforms:</span>
+                <span class="rating-value"><?php echo $row['INN1']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I like discovering new features on online recruitment systems:</span>
+                <span class="rating-value"><?php echo $row['INN2']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I actively seek out new technologies to improve my job search:</span>
+                <span class="rating-value"><?php echo $row['INN3']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I enjoy using advanced features even before others do:</span>
+                <span class="rating-value"><?php echo $row['INN4']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I prefer platforms that introduce new job-seeking tools:</span>
+                <span class="rating-value"><?php echo $row['INN5']; ?>/5</span>
             </div>
 
+            <!-- SECTION 3: INSECURITY -->
+            <h3>INSECURITY</h3>
             <div class="rating-item">
-                <span>Job Opportunities:</span>
-                <span class="rating-value"><?php echo $row['q3_rating']; ?>/5</span>
+                <span>I am concerned about sharing personal data through this platform:</span>
+                <span class="rating-value"><?php echo $row['INS1']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I feel unsure whether my information is securely protected:</span>
+                <span class="rating-value"><?php echo $row['INS2']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I doubt the trustworthiness of the job postings:</span>
+                <span class="rating-value"><?php echo $row['INS3']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I fear my account or information might be hacked or leaked:</span>
+                <span class="rating-value"><?php echo $row['INS4']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I feel that my privacy might be compromised when using this platform:</span>
+                <span class="rating-value"><?php echo $row['INS5']; ?>/5</span>
             </div>
 
+            <!-- SECTION 4: OPTIMISM -->
+            <h3>OPTIMISM</h3>
             <div class="rating-item">
-                <span>Communication Ease:</span>
-                <span class="rating-value"><?php echo $row['q4_rating']; ?>/5</span>
+                <span>This platform makes job searching faster and easier for me:</span>
+                <span class="rating-value"><?php echo $row['OPT1']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I feel more confident applying for jobs because of this system:</span>
+                <span class="rating-value"><?php echo $row['OPT2']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I believe this web app empowers me to connect better with employers:</span>
+                <span class="rating-value"><?php echo $row['OPT3']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>I believe technology makes recruitment more efficient:</span>
+                <span class="rating-value"><?php echo $row['OPT4']; ?>/5</span>
+            </div>
+            <div class="rating-item">
+                <span>Using this system gives me better control over my job applications:</span>
+                <span class="rating-value"><?php echo $row['OPT5']; ?>/5</span>
             </div>
 
+            <!-- SECTION 5: INTENTION TO USE -->
+            <h3>INTENTION TO USE</h3>
             <div class="rating-item">
-                <span>Engagement Level:</span>
-                <span class="rating-value"><?php echo $row['q5_rating']; ?>/5</span>
+                <span>I intend to continue using this recruitment platform:</span>
+                <span class="rating-value"><?php echo $row['INTB1']; ?>/5</span>
             </div>
-
             <div class="rating-item">
-                <span>Recommendation:</span>
-                <span class="rating-value"><?php echo $row['q6_rating']; ?>/5</span>
+                <span>I would recommend this platform to other job seekers:</span>
+                <span class="rating-value"><?php echo $row['INTB2']; ?>/5</span>
             </div>
-
             <div class="rating-item">
-                <span>Accessibility:</span>
-                <span class="rating-value"><?php echo $row['q7_rating']; ?>/5</span>
-            </div>
-
-            <div class="rating-item">
-                <span>Issues:</span>
-                <div>
-                    <?php 
-                    echo $row['q8_answer'];
-                    if ($row['q8_answer'] == 'yes') {
-                        echo '<br>Explanation: ' . $row['q8_explanation'];
-                    }
-                    ?>
-                </div>
-            </div>
-
-            <div class="rating-item">
-                <span>Additional Features:</span>
-                <div><?php echo $row['q9_answer']; ?></div>
-            </div>
-
-            <div class="rating-item">
-                <span>Feedback:</span>
-                <div><?php echo $row['q10_answer']; ?></div>
+                <span>I will likely use this platform again for future job applications:</span>
+                <span class="rating-value"><?php echo $row['INTB3']; ?>/5</span>
             </div>
 
             <div class="rating-date">

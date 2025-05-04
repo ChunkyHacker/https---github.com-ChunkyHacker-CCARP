@@ -220,11 +220,52 @@ $result = $conn->query($sql);
                                 <thead>
                                     <tr>
                                         <th>Task</th>
-                                        <th>Time</th>
+                                        <th>Start Time</th>
+                                        <th>End Time</th>
                                         <th>Status</th>
                                     </tr>
                                 </thead>
                                 <tbody id="completedTasksTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!--Difference-->
+                        <div class="mb-5">
+                            <h6>Time Analysis</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th rowspan="2">Task</th>
+                                        <th colspan="3">Difference in start time</th>
+                                        <th colspan="3">Difference in end time</th>
+                                    </tr>
+                                    <tr>
+                                        <th><2h</th>
+                                        <th>2-4 h</th>
+                                        <th>>4 h</th>
+                                        <th><2h</th>
+                                        <th>2-4 h</th>
+                                        <th>>4h</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="timeAnalysisTableBody">
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!--Analysis-->
+                        <div class="mb-5">
+                            <h6>Efficiency Analysis</h6>
+                            <table class="table table-bordered">
+                                <thead>
+                                    <tr>
+                                        <th>Task</th>
+                                        <th>Efficiency Status</th>
+                                        <th>Time Saved</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="efficiencyAnalysisTableBody">
                                 </tbody>
                             </table>
                         </div>
@@ -246,9 +287,6 @@ $result = $conn->query($sql);
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#efficiencyModal">
-                            View Efficiency Report
-                        </button>
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
                     </div>
                 </div>
@@ -264,7 +302,7 @@ $result = $conn->query($sql);
                         <button type="button" class="btn-close" data-bs-dismiss="modal" style="margin-right: 0;"></button>
                     </div>
                     <div class="modal-body px-0">
-                        <div class="px-3"> <!-- Container for all content with consistent padding -->
+                        <div class="px-3">
                             <div class="mb-3">
                                 <h6>Rated by:</h6>
                                 <select id="carpenter_selector" class="form-select" style="width: 100%">
@@ -272,53 +310,45 @@ $result = $conn->query($sql);
                                 </select>
                             </div>
                             
+                            <!-- Section Ratings Table -->
+                            <table class="table table-bordered">
+ 
+                            <div class="mt-3">
+                                <h6>Rating Date:</h6>
+                                <p id="rating_date"></p>
+                            </div>
+                            
+                            
+                            <!-- Add Chart Section -->
                             <table class="table table-bordered">
                                 <thead>
                                     <tr>
-                                        <th>Criteria</th>
+                                        <th>Section</th>
                                         <th>Rating</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr><td>1. Website Navigation and Usability</td><td id="q1_rating"></td></tr>
-                                    <tr><td>2. Job Post Relevance to Skills</td><td id="q2_rating"></td></tr>
-                                    <tr><td>3. Available Job Opportunities</td><td id="q3_rating"></td></tr>
-                                    <tr><td>4. Client Communication Platform</td><td id="q4_rating"></td></tr>
-                                    <tr><td>5. User Engagement and Activity</td><td id="q5_rating"></td></tr>
-                                    <tr><td>6. Platform Recommendation Rate</td><td id="q6_rating"></td></tr>
-                                    <tr><td>7. Overall Job Accessibility</td><td id="q7_rating"></td></tr>
+                                    <tr><td>DISCOMFORT (DIS)</td><td id="dis_rating"></td></tr>
+                                    <tr><td>INNOVATIVENESS (INN)</td><td id="inn_rating"></td></tr>
+                                    <tr><td>INSECURITY (INS)</td><td id="ins_rating"></td></tr>
+                                    <tr><td>OPTIMISM (OPT)</td><td id="opt_rating"></td></tr>
+                                    <tr><td>INTENTION TO USE (INTB)</td><td id="intb_rating"></td></tr>
                                 </tbody>
                             </table>
 
-                            <div class="mt-3">
-                                <h6>Issues:</h6>
-                                <p id="q8_answer"></p>
-                                <p id="q8_explanation"></p>
-                            </div>
-                            <div class="mt-3">
-                                <h6>Additional Features:</h6>
-                                <p id="q9_answer"></p>
-                            </div>
-                            <div class="mt-3">
-                                <h6>Feedback:</h6>
-                                <p id="q10_answer"></p>
-                            </div>
-                            <div class="mt-3">
-                                <h6>Rating Date:</h6>
-                                <p id="job_rating_date"></p>
-                            </div>
-                            
-                            <!-- Add Chart Section -->
+                            <!-- Analysis Section -->
+                            <!-- Inside the Plan Ratings Modal, in the Analysis Section -->
                             <div class="mt-4">
                                 <h6>Ratings Analysis:</h6>
                                 <div class="row">
                                     <div class="col-md-8">
-                                        <canvas id="ratingsChart" style="width: 100%; height: 300px;"></canvas>
+                                        <!-- Make sure this canvas exists and has the correct ID -->
+                                        <canvas id="ratingsChart" width="400" height="300"></canvas>
                                     </div>
                                     <div class="col-md-4">
                                         <div class="card">
                                             <div class="card-body">
-                                                <h6>Over all Score</h6>
+                                                <h6>Accessibility Score</h6>
                                                 <h3 id="accessibilityScore" class="text-center"></h3>
                                                 <p id="accessibilityStatus" class="text-center"></p>
                                             </div>
@@ -369,10 +399,100 @@ $result = $conn->query($sql);
                                 document.getElementById('completedTasksTableBody').innerHTML = data.completed_tasks.map(task => `
                                     <tr>
                                         <td>${task.Task}</td>
-                                        <td>${task.Time}</td>
+                                        <td>${task.Start_Time}</td>
+                                        <td>${task.End_Time}</td>
                                         <td>${task.Status}</td>
                                     </tr>
                                 `).join('') || '<tr><td colspan="3">No completed tasks</td></tr>';
+
+                                // Process time analysis for completed tasks
+                                if (data.completed_tasks && data.completed_tasks.length > 0) {
+                                    const taskAnalysis = {};
+                                    
+                                    data.completed_tasks.forEach(task => {
+                                        const startTime = new Date(task.Start_Time);
+                                        const endTime = new Date(task.End_Time);
+                                        const timeDiff = (endTime - startTime) / (1000 * 60 * 60); // Convert to hours
+                                        
+                                        if (!taskAnalysis[task.Task]) {
+                                            taskAnalysis[task.Task] = {
+                                                start: { less2: 0, two_to_4: 0, more4: 0 },
+                                                end: { less2: 0, two_to_4: 0, more4: 0 }
+                                            };
+                                        }
+                                        
+                                        // Categorize start time differences
+                                        if (timeDiff < 2) taskAnalysis[task.Task].start.less2++;
+                                        else if (timeDiff <= 4) taskAnalysis[task.Task].start.two_to_4++;
+                                        else taskAnalysis[task.Task].start.more4++;
+                                        
+                                        // Categorize end time differences
+                                        if (timeDiff < 2) taskAnalysis[task.Task].end.less2++;
+                                        else if (timeDiff <= 4) taskAnalysis[task.Task].end.two_to_4++;
+                                        else taskAnalysis[task.Task].end.more4++;
+                                    });
+                                    
+                                    // Generate table rows
+                                    document.getElementById('timeAnalysisTableBody').innerHTML = 
+                                        Object.entries(taskAnalysis).map(([task, analysis]) => `
+                                            <tr>
+                                                <td>${task}</td>
+                                                <td>${analysis.start.less2}</td>
+                                                <td>${analysis.start.two_to_4}</td>
+                                                <td>${analysis.start.more4}</td>
+                                                <td>${analysis.end.less2}</td>
+                                                <td>${analysis.end.two_to_4}</td>
+                                                <td>${analysis.end.more4}</td>
+                                            </tr>
+                                        `).join('');
+                                } else {
+                                    document.getElementById('timeAnalysisTableBody').innerHTML = 
+                                        '<tr><td colspan="7">No completed tasks available for analysis</td></tr>';
+                                }
+
+                                // Process efficiency analysis
+                                if (data.completed_tasks && data.completed_tasks.length > 0) {
+                                    const efficiencyAnalysis = {};
+                                    
+                                    data.completed_tasks.forEach(task => {
+                                        const startTime = new Date(task.Start_Time);
+                                        const endTime = new Date(task.End_Time);
+                                        const actualHours = (endTime - startTime) / (1000 * 60 * 60);
+                                        const standardHours = 8; // Standard work hours
+                                        
+                                        if (!efficiencyAnalysis[task.Task]) {
+                                            efficiencyAnalysis[task.Task] = {
+                                                totalEfficiency: 0,
+                                                count: 0
+                                            };
+                                        }
+                                        
+                                        const efficiency = ((standardHours - actualHours) / standardHours) * 100;
+                                        efficiencyAnalysis[task.Task].totalEfficiency += efficiency;
+                                        efficiencyAnalysis[task.Task].count++;
+                                    });
+                                    
+                                    document.getElementById('efficiencyAnalysisTableBody').innerHTML = 
+                                        Object.entries(efficiencyAnalysis).map(([task, analysis]) => {
+                                            const avgEfficiency = analysis.totalEfficiency / analysis.count;
+                                            const timeSaved = avgEfficiency > 0 ? 
+                                                `${avgEfficiency.toFixed(1)}% faster` : 
+                                                `${Math.abs(avgEfficiency).toFixed(1)}% slower`;
+                                            
+                                            return `
+                                                <tr>
+                                                    <td>${task}</td>
+                                                    <td class="${avgEfficiency >= 20 ? 'text-success' : 'text-warning'}">
+                                                        ${avgEfficiency >= 20 ? '✓ Target Achieved' : 'Below Target'}
+                                                    </td>
+                                                    <td>${timeSaved}</td>
+                                                </tr>
+                                            `;
+                                        }).join('');
+                                } else {
+                                    document.getElementById('efficiencyAnalysisTableBody').innerHTML = 
+                                        '<tr><td colspan="3">No completed tasks available for analysis</td></tr>';
+                                }
 
                                 // Update Attendance
                                 document.getElementById('attendanceTableBody').innerHTML = data.attendance.map(att => `
@@ -418,265 +538,133 @@ $result = $conn->query($sql);
 </body>
 </html>
 
-<!-- Efficiency Report Modal -->
-<div class="modal fade" id="efficiencyModal" tabindex="-1" data-bs-backdrop="static">
-    <div class="modal-dialog modal-xl"> <!-- Changed from modal-lg to modal-xl -->
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Project Efficiency Report</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive"> <!-- Added table-responsive wrapper -->
-                    <table class="table table-bordered">
-                        <thead>
-                            <tr>
-                                <th>Contract ID</th>
-                                <th>Carpenter ID</th>
-                                <th>Start Date</th>
-                                <th>End Date</th>
-                                <th>Actual Completion Date</th>
-                                <th>Task Completed</th>
-                                <th>Total Days Estimated</th>
-                                <th>Total Days Spent</th>
-                                <th>Efficiency Gain (%)</th>
-                                <th>Status</th>
-                            </tr>
-                        </thead>
-                        <tbody id="efficiencyTableBody">
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
 
 <script>
-// Initialize Select2 and Plan Ratings Modal Handler
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize Select2
-    $('#carpenter_selector').select2({
-        dropdownParent: $('#planRatingsModal'),
-        width: '100%'
-    });
-
-    // Plan Ratings Modal Handler
-    const planRatingsModal = document.getElementById('planRatingsModal');
-    planRatingsModal.addEventListener('show.bs.modal', function(event) {
-        const button = event.relatedTarget;
-        const planId = button.getAttribute('data-plan-id');
-        planRatingsModal.setAttribute('data-plan-id', planId); // Store plan_id directly on modal
-        
-        // Clear previous data
-        $('#carpenter_selector').empty().append('<option value="">Select a carpenter...</option>');
-        
-        if (planId) {
-            // Fetch carpenters who rated this plan
-            fetch('get_plan_raters.php?plan_id=' + planId)
-                .then(response => response.json())
-                .then(data => {
-                    const select = $('#carpenter_selector');
-                    
-                    data.forEach(carpenter => {
-                        select.append(new Option(
-                            carpenter.First_Name + ' ' + carpenter.Last_Name,
-                            carpenter.Carpenter_ID
-                        ));
-                    });
-                })
-                .catch(error => console.error('Error:', error));
-        }
-    });
-
-    // Handle carpenter selection change
-    $('#carpenter_selector').on('change', function() {
-        const carpenterId = $(this).val();
-        const planId = planRatingsModal.getAttribute('data-plan-id'); // Get plan_id directly from modal
-        
-        console.log('Selected carpenter:', carpenterId); // Debug log
-        console.log('Plan ID:', planId); // Debug log
-        
-        // Inside the carpenter selection change handler, in the .then(data => {}) block
-        if (carpenterId && planId) {
-            fetch(`get_job_ratings.php?plan_id=${planId}&carpenter_id=${carpenterId}`)
-                .then(response => response.json())
-                .then(data => {
-                    // Update ratings with descriptions
-                    for (let i = 1; i <= 7; i++) {
-                        $(`#q${i}_rating`).text(data[`q${i}_description`] + ` (${data[`q${i}_rating`]}/5)`);
-                    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Define the updateRatingsChart function at the global scope
+        function updateRatingsChart(ratings) {
+            const ctx = document.getElementById('ratingsChart');
             
-                    // Update additional fields
-                    $('#q8_answer').text(data.q8_answer || 'No issues reported');
-                    $('#q8_explanation').text(data.q8_explanation || '');
-                    $('#q9_answer').text(data.q9_answer || 'No additional features suggested');
-                    $('#q10_answer').text(data.q10_answer || 'No feedback provided');
-                    $('#job_rating_date').text(data.rating_date || 'Not specified');
-                    
-                    // Inside the Plan Ratings Modal section, let's modify the chart initialization code
-                    // Make sure Chart.js is loaded
-                    if (typeof Chart === 'undefined') {
-                        console.error('Chart.js is not loaded!');
-                        return;
-                    }
-                    
-                    // Create chart data
-                    const ctx = document.getElementById('ratingsChart');
-                    if (!ctx) {
-                        console.error('Canvas element not found!', 'ratingsChart');
-                        // Add debugging to check all canvas elements
-                        console.log('All canvas elements:', document.querySelectorAll('canvas'));
-                        return;
-                    }
-                    
-                    const ratings = [];
-                    const labels = [
-                        'Navigation Ease',
-                        'Job Relevance',
-                        'Job Opportunities',
-                        'Communication',
-                        'User Engagement',
-                        'Recommendation',
-                        'Accessibility'
-                    ];
-                    
-                    // Get ratings from q1 to q7
-                    for (let i = 1; i <= 7; i++) {
-                        ratings.push(parseInt(data['q' + i + '_rating']));
-                    }
-                    
-                    // Calculate average accessibility score from all ratings
-                    const totalScore = ratings.reduce((sum, rating) => sum + rating, 0);
-                    const averageScore = (totalScore / (ratings.length * 5)) * 100; // Convert to percentage
-                    document.getElementById('accessibilityScore').textContent = `${averageScore.toFixed(1)}%`;
-                    
-                    // Show status based on 60% goal
-                    const statusElement = document.getElementById('accessibilityStatus');
-                    if (averageScore >= 60) {
-                        statusElement.textContent = '';
-                        statusElement.className = 'text-center text-success';
-                    } else {
-                        statusElement.textContent = '';
-                        statusElement.className = 'text-center text-warning';
-                    }
-                    
-                    // Add debugging to check if chart exists before destroying
-                    console.log('Existing chart:', window.ratingsChart);
-                    
-                    // Destroy existing chart if it exists - FIX THE ERROR HERE
-                    if (window.ratingsChart && typeof window.ratingsChart.destroy === 'function') {
-                        window.ratingsChart.destroy();
-                    } else {
-                        // If chart exists but destroy method doesn't, create a new canvas
-                        if (window.ratingsChart) {
-                            const parent = ctx.parentNode;
-                            parent.removeChild(ctx);
-                            const newCanvas = document.createElement('canvas');
-                            newCanvas.id = 'ratingsChart';
-                            newCanvas.style = 'width: 100%; height: 300px;';
-                            parent.appendChild(newCanvas);
-                            // Use let instead of const for ctx so we can reassign it
+            // Destroy existing chart if it exists
+            if (window.ratingsChart && typeof window.ratingsChart.destroy === 'function') {
+                window.ratingsChart.destroy();
+            }
+            
+            window.ratingsChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['DISCOMFORT', 'INNOVATIVENESS', 'INSECURITY', 'OPTIMISM', 'INTENTION TO USE'],
+                    datasets: [{
+                        label: 'Ratings',
+                        data: ratings,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: 'rgba(54, 162, 235, 1)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        r: {
+                            beginAtZero: true,
+                            max: 5,
+                            ticks: {
+                                stepSize: 1
+                            }
+                        }
+                    },
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'Job Rating Analysis'
                         }
                     }
-                    
-                    // Get the canvas element again after potential recreation
-                    let chartCanvas = document.getElementById('ratingsChart');
-                    
-                    // Create chart with consistent blue color and add debugging
-                    console.log('Creating new chart on canvas:', chartCanvas);
-                    try {
-                        window.ratingsChart = new Chart(chartCanvas, {
-                            type: 'bar',
-                            data: {
-                                labels: labels,
-                                datasets: [{
-                                    label: 'Rating Score',
-                                    data: ratings,
-                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                                    borderColor: 'rgba(54, 162, 235, 1)',
-                                    borderWidth: 1
-                                }]
-                            },
-                            options: {
-                                responsive: true,
-                                maintainAspectRatio: false,
-                                scales: {
-                                    y: {
-                                        beginAtZero: true,
-                                        max: 5,
-                                        ticks: {
-                                            stepSize: 1
-                                        }
-                                    }
-                                },
-                                plugins: {
-                                    title: {
-                                        display: true,
-                                        text: 'Job Accessibility Ratings'
-                                    }
-                                }
-                            }
-                        });
-                        console.log('Chart created successfully:', window.ratingsChart);
-                    } catch (error) {
-                        console.error('Error creating chart:', error);
-                    }
-                    
-                    // Add debugging to confirm chart was created
-                    console.log('Chart created:', window.ratingsChart);
-                })
-                .catch(error => console.error('Error:', error));
+                }
+            });
         }
-    });
-});
-</script>
-<script>
-// Add efficiency modal handler here
-const efficiencyModal = document.getElementById('efficiencyModal');
-efficiencyModal.addEventListener('show.bs.modal', function(event) {
-    console.log('Fetching efficiency data...');
-    
-    fetch('get_efficiency_report.php')
-        .then(response => response.json())
-        .then(data => {
-            console.log('Data received:', data);
-            const tbody = document.getElementById('efficiencyTableBody');
-            // Check if data.data exists (from the new response structure)
-            const reportData = data.data || data;
-            
-            if (reportData && reportData.length > 0) {
-                tbody.innerHTML = reportData.map(row => `
-                    <tr>
-                        <td>Plan_${row.contract_ID}</td>
-                        <td>${row.Carpenter_ID}</td>
-                        <td>${row.start_date}</td>
-                        <td>${row.end_date}</td>
-                        <td>${row.actual_completion_date}</td>
-                        <td>${row.task_completed}</td>
-                        <td>${row.total_days_estimated}</td>
-                        <td>${row.total_days_spent}</td>
-                        <td>${row.efficiency_gain}%</td>
-                        <td>
-                            ${row.efficiency_gain >= 20 ? 
-                                '<span class="text-success">✓ Efficient</span>' : 
-                                '<span class="text-warning">Delayed</span>'}
-                        </td>
-                    </tr>
-                `).join('');
-            } else {
-                tbody.innerHTML = '<tr><td colspan="10" class="text-center">No efficiency data available</td></tr>';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
-            document.getElementById('efficiencyTableBody').innerHTML = 
-                '<tr><td colspan="10" class="text-center">Error loading efficiency data</td></tr>';
+
+        // Initialize Select2
+        $('#carpenter_selector').select2({
+            dropdownParent: $('#planRatingsModal'),
+            width: '100%'
         });
-});
+
+        // Plan Ratings Modal Handler
+        const planRatingsModal = document.getElementById('planRatingsModal');
+        planRatingsModal.addEventListener('show.bs.modal', function(event) {
+            const button = event.relatedTarget;
+            const planId = button.getAttribute('data-plan-id');
+            planRatingsModal.setAttribute('data-plan-id', planId);
+            
+            if (planId) {
+                console.log('Fetching carpenters for plan:', planId);  // Debug log
+                fetch(`get_carpenters_for_plan.php?plan_id=${planId}`)
+                    .then(response => response.json())
+                    .then(carpenters => {
+                        console.log('Received carpenters:', carpenters);  // Debug log
+                        const selector = $('#carpenter_selector');
+                        selector.empty().append('<option value="">Select a carpenter...</option>');
+                        
+                        carpenters.forEach(carpenter => {
+                            selector.append(`<option value="${carpenter.Carpenter_ID}">${carpenter.First_Name} ${carpenter.Last_Name}</option>`);
+                        });
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+
+        // Handle carpenter selection change
+        $('#carpenter_selector').on('change', function() {
+            const carpenterId = $(this).val();
+            const planId = $('#planRatingsModal').attr('data-plan-id');
+            
+            if (carpenterId && planId) {
+                fetch(`get_job_ratings.php?plan_id=${planId}&carpenter_id=${carpenterId}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        // Calculate section averages with 0 decimal places
+                        const disAvg = ((parseFloat(data.DIS1) + parseFloat(data.DIS2) + parseFloat(data.DIS3) + 
+                                    parseFloat(data.DIS4) + parseFloat(data.DIS5)) / 5).toFixed(0);
+                        const innAvg = ((parseFloat(data.INN1) + parseFloat(data.INN2) + parseFloat(data.INN3) + 
+                                    parseFloat(data.INN4) + parseFloat(data.INN5)) / 5).toFixed(0);
+                        const insAvg = ((parseFloat(data.INS1) + parseFloat(data.INS2) + parseFloat(data.INS3) + 
+                                    parseFloat(data.INS4) + parseFloat(data.INS5)) / 5).toFixed(0);
+                        const optAvg = ((parseFloat(data.OPT1) + parseFloat(data.OPT2) + parseFloat(data.OPT3) + 
+                                    parseFloat(data.OPT4) + parseFloat(data.OPT5)) / 5).toFixed(0);
+                        const intbAvg = ((parseFloat(data.INTB1) + parseFloat(data.INTB2) + 
+                                        parseFloat(data.INTB3)) / 3).toFixed(0);
+
+                        // Update section ratings
+                        $('#dis_rating').text(`${disAvg}/5`);
+                        $('#inn_rating').text(`${innAvg}/5`);
+                        $('#ins_rating').text(`${insAvg}/5`);
+                        $('#opt_rating').text(`${optAvg}/5`);
+                        $('#intb_rating').text(`${intbAvg}/5`);
+
+                        // Calculate accessibility score (OPT + INN + INTB average)
+                        const accessibilityScore = (
+                            (parseFloat(optAvg) + parseFloat(innAvg) + parseFloat(intbAvg)) / (3 * 5) * 100
+                        ).toFixed(1);
+
+                        // Update accessibility score display
+                        $('#accessibilityScore').text(`${accessibilityScore}%`);
+                        const statusElement = $('#accessibilityStatus');
+                        if (accessibilityScore >= 30) {
+                            statusElement.text('Target Achieved').removeClass('text-warning').addClass('text-success');
+                        } else {
+                            statusElement.text('Below Target').removeClass('text-success').addClass('text-warning');
+                        }
+
+                        // Update rating date
+                        $('#rating_date').text(data.rating_date);
+
+                        // Update chart
+                        updateRatingsChart([disAvg, innAvg, insAvg, optAvg, intbAvg]);
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        });
+    });
 </script>
 
 <?php

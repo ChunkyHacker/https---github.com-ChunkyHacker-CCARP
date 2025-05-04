@@ -673,7 +673,8 @@
                         echo '<table class="styled-table">';
                         echo '<tr>';
                         echo '<th>Task</th>';
-                        echo '<th>Time</th>';
+                        echo '<th>Start Time</th>';
+                        echo '<th>End Time</th>';
                         echo '<th>Status</th>';
                         echo '</tr>';
 
@@ -681,12 +682,12 @@
                             while ($row = $resultCompleted->fetch_assoc()) {
                                 echo '<tr>';
                                 echo '<td class="table-cell"><h3>' . $row["name"] . '</h3></td>';
-                                echo '<td class="table-cell"><h3>' . $row["timestamp"] . '</h3></td>';
-                                echo '<td class="table-cell"><h3>' . ucfirst($row["status"]) . '</h3></td>';
-                                echo '</tr>';
+                                echo '<td class="table-cell"><h3>' . $row["start_time"] . '</h3></td>';
+                                echo '<td class="table-cell"><h3>' . $row["end_time"] . '</h3></td>';
+                                echo '<td class="table-cell"><h3>' . ucfirst($row["status"]) . '</h3></td>';                                echo '</tr>';
                             }
                         } else {
-                            echo '<tr><td colspan="3">No completed tasks</td></tr>';
+                            echo '<tr><td colspan="4">No completed tasks</td></tr>';
                         }
 
                         echo '</table>';

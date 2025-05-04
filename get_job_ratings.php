@@ -7,60 +7,7 @@ if (isset($_GET['plan_id']) && isset($_GET['carpenter_id'])) {
     
     $sql = "SELECT 
         jr.*,
-        CASE 
-            WHEN q1_rating = 1 THEN 'Very difficult'
-            WHEN q1_rating = 2 THEN 'Difficult'
-            WHEN q1_rating = 3 THEN 'Moderate'
-            WHEN q1_rating = 4 THEN 'Easy'
-            WHEN q1_rating = 5 THEN 'Very Easy'
-        END as q1_description,
-        CASE 
-            WHEN q2_rating = 1 THEN 'Not relevant at all'
-            WHEN q2_rating = 2 THEN 'Slightly relevant'
-            WHEN q2_rating = 3 THEN 'Moderately relevant'
-            WHEN q2_rating = 4 THEN 'Very relevant'
-            WHEN q2_rating = 5 THEN 'Extremely relevant'
-        END as q2_description,
-        CASE 
-            WHEN q3_rating = 1 THEN 'Very Dissatisfied'
-            WHEN q3_rating = 2 THEN 'Dissatisfied'
-            WHEN q3_rating = 3 THEN 'Neutral'
-            WHEN q3_rating = 4 THEN 'Satisfied'
-            WHEN q3_rating = 5 THEN 'Very Satisfied'
-        END as q3_description,
-        CASE 
-            WHEN q4_rating = 1 THEN 'Not easy at all'
-            WHEN q4_rating = 2 THEN 'Slightly easy'
-            WHEN q4_rating = 3 THEN 'Moderately easy'
-            WHEN q4_rating = 4 THEN 'Very easy'
-            WHEN q4_rating = 5 THEN 'Extremely easy'
-        END as q4_description,
-        CASE 
-            WHEN q5_rating = 1 THEN 'Never'
-            WHEN q5_rating = 2 THEN 'Rarely'
-            WHEN q5_rating = 3 THEN 'Sometimes'
-            WHEN q5_rating = 4 THEN 'Often'
-            WHEN q5_rating = 5 THEN 'Very Frequently'
-        END as q5_description,
-        CASE 
-            WHEN q6_rating = 1 THEN 'Not likely at all'
-            WHEN q6_rating = 2 THEN 'Slightly likely'
-            WHEN q6_rating = 3 THEN 'Moderately likely'
-            WHEN q6_rating = 4 THEN 'Very likely'
-            WHEN q6_rating = 5 THEN 'Extremely likely'
-        END as q6_description,
-        CASE 
-            WHEN q7_rating = 1 THEN 'Very Poor'
-            WHEN q7_rating = 2 THEN 'Poor'
-            WHEN q7_rating = 3 THEN 'Fair'
-            WHEN q7_rating = 4 THEN 'Good'
-            WHEN q7_rating = 5 THEN 'Excellent'
-        END as q7_description,
-        q8_answer,
-        q8_explanation,
-        q9_answer,
-        q10_answer,
-        DATE_FORMAT(rating_date, '%M %d, %Y %h:%i %p') as rating_date
+        DATE_FORMAT(rating_date, '%M %d, %Y %h:%i %p') as formatted_date
         FROM job_ratings jr
         WHERE jr.plan_ID = ? AND jr.Carpenter_ID = ?";
 
@@ -71,8 +18,37 @@ if (isset($_GET['plan_id']) && isset($_GET['carpenter_id'])) {
     
     if ($result->num_rows > 0) {
         $data = $result->fetch_assoc();
+        
+        // Format the response to include all rating fields
+        $response = [
+            'DIS1' => $data['DIS1'] ?? 0,
+            'DIS2' => $data['DIS2'] ?? 0,
+            'DIS3' => $data['DIS3'] ?? 0,
+            'DIS4' => $data['DIS4'] ?? 0,
+            'DIS5' => $data['DIS5'] ?? 0,
+            'INN1' => $data['INN1'] ?? 0,
+            'INN2' => $data['INN2'] ?? 0,
+            'INN3' => $data['INN3'] ?? 0,
+            'INN4' => $data['INN4'] ?? 0,
+            'INN5' => $data['INN5'] ?? 0,
+            'INS1' => $data['INS1'] ?? 0,
+            'INS2' => $data['INS2'] ?? 0,
+            'INS3' => $data['INS3'] ?? 0,
+            'INS4' => $data['INS4'] ?? 0,
+            'INS5' => $data['INS5'] ?? 0,
+            'OPT1' => $data['OPT1'] ?? 0,
+            'OPT2' => $data['OPT2'] ?? 0,
+            'OPT3' => $data['OPT3'] ?? 0,
+            'OPT4' => $data['OPT4'] ?? 0,
+            'OPT5' => $data['OPT5'] ?? 0,
+            'INTB1' => $data['INTB1'] ?? 0,
+            'INTB2' => $data['INTB2'] ?? 0,
+            'INTB3' => $data['INTB3'] ?? 0,
+            'rating_date' => $data['formatted_date']
+        ];
+        
         header('Content-Type: application/json');
-        echo json_encode($data);
+        echo json_encode($response);
     } else {
         echo json_encode(['error' => 'No ratings found']);
     }

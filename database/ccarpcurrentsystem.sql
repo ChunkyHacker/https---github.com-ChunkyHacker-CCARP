@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 22, 2025 at 09:28 AM
+-- Generation Time: Apr 25, 2025 at 04:05 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -40,7 +40,8 @@ CREATE TABLE `admin` (
 --
 
 INSERT INTO `admin` (`admin_id`, `firstname`, `lastname`, `username`, `password`) VALUES
-(3, 'francel jean', 'bicbic', 'daidai3', '123');
+(8, 'admin', 'alngog', 'admin', '123'),
+(9, 'john', 'john', 'john', '123');
 
 -- --------------------------------------------------------
 
@@ -55,16 +56,6 @@ CREATE TABLE `attendance` (
   `Time_out` varchar(255) NOT NULL,
   `contract_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `attendance`
---
-
-INSERT INTO `attendance` (`attendance_ID`, `type_of_work`, `Time_in`, `Time_out`, `contract_ID`) VALUES
-(1, 'Per Day', '4/21/2025, 2:21:58 PM', '4/21/2025, 2:22:56 PM', 1),
-(2, 'Per Day', '4/22/2025, 1:35:19 PM', '4/22/2025, 1:35:28 PM', 2),
-(3, 'Per Day', '4/22/2025, 2:18:33 PM', '4/22/2025, 2:18:40 PM', 3),
-(4, 'Per Day', '4/22/2025, 2:46:51 PM', '4/22/2025, 2:46:56 PM', 4);
 
 -- --------------------------------------------------------
 
@@ -93,14 +84,13 @@ CREATE TABLE `carpenters` (
 --
 
 INSERT INTO `carpenters` (`Carpenter_ID`, `First_Name`, `Last_Name`, `Phone_Number`, `Email`, `Address`, `Date_Of_Birth`, `Experiences`, `Project_Completed`, `username`, `password`, `specialization`, `Photo`) VALUES
-(1, 'John Denvier', 'Alngog Carpenter', 9153520025, 'denvieralngog10@gmail.com', 'st jude village daliao toril davao city', '2002-09-10', 'EEnttrryy', 'sasdahsdasad', 'denviercarp', '123', 'Roofer, Tile Setter', 0x6173736574732f63617270656e7465722f706963747572652e6a7067),
+(1, 'John Denviers', 'Alngog Carpenter', 9153520025, 'denvieralngog10@gmail.com', 'st jude village daliao toril davao city', '2002-09-10', 'EEnttrryy', 'sasdahsdasad', 'denviercarp', '123', 'Roofer, Tile Setter', 0x6173736574732f63617270656e7465722f706963747572652e6a7067),
 (2, 'Carpenter', 'One', 9153520025, 'car1@gmail.com', 'asdasd', '2025-02-03', '222', '22', 'car1', '123', 'Roofer, Tile Setter', 0x6173736574732f63617270656e7465722f53637265656e73686f745f35312e6a7067),
 (3, 'Carpenter', 'Two', 9153520025, 'denvieralngog10@gmail.com', 'dasd', '2025-02-20', 'ww', 'ww', 'car2', '123', 'wwww', 0x6173736574732f63617270656e7465722f7764737063732e6a7067),
-(4, 'car3', 'car3', 9153520025, 'car3@gmail.com', 'asdasd', '2025-02-22', 'www', 'wwww', 'car3', '123', '', 0x6173736574732f63617270656e7465722f53637265656e73686f745f35382e6a7067),
-(5, 'car4', 'car4', 9153520025, 'car4@gmail.com', 'wwww', '2025-02-22', 'wwww', 'www', 'car4', '123', '', 0x6173736574732f63617270656e7465722f3437363839323938365f323033353233323535333633313635385f363639363135313432313333333234323636335f6e202831292e706e67),
 (6, 'Angelito', 'Engcoy', 9153520025, 'angelito@gmail.com', 'Blk 1 Prudential Village Daliao Toril', '2002-10-09', '8', '8', 'angelito', '123', '', 0x6173736574732f63617270656e7465722f3430353830393635325f3132323130303031333733303133303833385f3437383638353031393236393037333839395f6e2e6a7067),
 (7, 'Cesar ', 'Peralta', 9153520025, 'cesar@gmail.com', 'bago oshiro', '2002-10-09', '9', '9', 'cesar', '123', '', 0x6173736574732f63617270656e7465722f626c616e6b2d70726f66696c652d706963747572652d3937333436305f313238302e706e67),
-(8, 'Francisco', 'Bicbic', 9153520025, 'francisco@gmail.com', 'Blk 1 Upper Piedad Toril Davao City', '2002-09-10', '8', '8', 'francisco', '123', '', 0x6173736574732f63617270656e7465722f626c616e6b2d70726f66696c652d706963747572652d3937333436305f313238302e706e67);
+(8, 'Francisco', 'Bicbic', 9153520025, 'francisco@gmail.com', 'Blk 1 Upper Piedad Toril Davao City', '2002-09-10', '8', '8', 'francisco', '123', '', 0x6173736574732f63617270656e7465722f626c616e6b2d70726f66696c652d706963747572652d3937333436305f313238302e706e67),
+(9, 'carpenter', 'carpenter', 9153520025, 'denvieralngog10@gmail.com', 'blk 1 st jude village daliao', '2025-04-24', '222', '222', 'carpenter123', '123', '', 0x6173736574732f63617270656e7465722f626c616e6b2d70726f66696c652d706963747572652d3937333436305f313238302e706e67);
 
 -- --------------------------------------------------------
 
@@ -131,16 +121,6 @@ CREATE TABLE `completed_task` (
   `timestamp` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `completed_task`
---
-
-INSERT INTO `completed_task` (`completed_task_id`, `name`, `task_id`, `status`, `contract_ID`, `timestamp`) VALUES
-(1, 'Install door', 1, 'Completed', 1, '4/21/2025, 2:22:16 PM'),
-(2, 'maghalo ug semento', 3, 'Completed', 2, '4/22/2025, 1:36:09 PM'),
-(3, 'nag halo ug semento', 5, 'Completed', 3, '4/22/2025, 2:19:20 PM'),
-(4, 'maghalo ug semento', 7, 'Completed', 4, '4/22/2025, 2:47:39 PM');
-
 -- --------------------------------------------------------
 
 --
@@ -165,15 +145,6 @@ CREATE TABLE `contracts` (
   `User_ID` int(11) DEFAULT NULL,
   `type_of_work` enum('select type of work','Per day','On The Job') DEFAULT 'select type of work'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `contracts`
---
-
-INSERT INTO `contracts` (`contract_ID`, `created_at`, `labor_cost`, `plan_ID`, `approval_ID`, `Carpenter_ID`, `duration`, `status`, `rejection_reason`, `attendance_ID`, `Progress_id`, `task_id`, `completed_task_id`, `transaction_ID`, `User_ID`, `type_of_work`) VALUES
-(2, '2025-04-22 05:31:51', 9600.00, 2, 2, 6, 16, 'completed', '', 0, 0, 0, 0, NULL, 2, 'Per day'),
-(3, '2025-04-22 06:18:23', 11000.00, 3, 4, 7, 22, 'completed', '', 0, 0, 0, 0, NULL, 3, 'Per day'),
-(4, '2025-04-22 06:46:40', 10800.00, 4, 5, 8, 18, 'completed', '', 0, 0, 0, 0, NULL, 4, 'Per day');
 
 -- --------------------------------------------------------
 
@@ -219,15 +190,6 @@ CREATE TABLE `job_ratings` (
   `rating_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `job_ratings`
---
-
-INSERT INTO `job_ratings` (`job_rating_ID`, `Carpenter_ID`, `plan_ID`, `q1_rating`, `q2_rating`, `q3_rating`, `q4_rating`, `q5_rating`, `q6_rating`, `q7_rating`, `q8_answer`, `q8_explanation`, `q9_answer`, `q10_answer`, `rating_date`) VALUES
-(2, 6, 2, 5, 3, 4, 4, 5, 5, 4, 'no', '', 'Kanang Dali ra makakita ug trabaho using this website', 'Unta ma market ni kay para mutaas ang engagement', '2025-04-22 05:31:36'),
-(3, 7, 3, 4, 4, 4, 4, 5, 3, 4, 'no', '', 'Kanang dali ra makakita ug trabaho gamit ani na platform ', 'pataason pa ang engagement', '2025-04-22 06:18:00'),
-(4, 8, 4, 4, 5, 4, 3, 4, 4, 4, 'no', '', 'Gwapo ni nga website kay maka kita jud ka ug trabaho', 'Unta mailhan pani sa mga sumusunod ', '2025-04-22 06:46:23');
-
 -- --------------------------------------------------------
 
 --
@@ -240,26 +202,6 @@ CREATE TABLE `likes` (
   `carpenter_id` int(11) NOT NULL,
   `like_date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `likes`
---
-
-INSERT INTO `likes` (`like_id`, `plan_id`, `carpenter_id`, `like_date`) VALUES
-(1, 1, 1, '2025-04-21 07:11:37'),
-(2, 1, 6, '2025-04-22 05:29:19'),
-(3, 2, 6, '2025-04-22 05:29:20'),
-(4, 1, 7, '2025-04-22 06:13:48'),
-(5, 2, 7, '2025-04-22 06:13:51'),
-(6, 3, 7, '2025-04-22 06:13:53'),
-(7, 2, 8, '2025-04-22 06:43:24'),
-(8, 3, 8, '2025-04-22 06:43:29'),
-(9, 4, 8, '2025-04-22 06:43:31'),
-(10, 2, 2, '2025-04-22 06:58:09'),
-(11, 3, 2, '2025-04-22 06:58:13'),
-(12, 4, 2, '2025-04-22 06:58:14'),
-(14, 3, 3, '2025-04-22 06:58:49'),
-(15, 4, 3, '2025-04-22 06:58:51');
 
 -- --------------------------------------------------------
 
@@ -278,13 +220,6 @@ CREATE TABLE `payment` (
   `Payment_Method` varchar(50) NOT NULL,
   `Payment_Date` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `payment`
---
-
-INSERT INTO `payment` (`Payment_ID`, `Contract_ID`, `User_ID`, `Carpenter_ID`, `Labor_Cost`, `Duration`, `type_of_work`, `Payment_Method`, `Payment_Date`) VALUES
-(1, 1, 1, 1, 8000.00, 16, 'Per day', 'creditcard', '2025-04-20 16:00:00');
 
 -- --------------------------------------------------------
 
@@ -313,15 +248,6 @@ CREATE TABLE `plan` (
   `views` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `plan`
---
-
-INSERT INTO `plan` (`plan_ID`, `User_ID`, `length_lot_area`, `width_lot_area`, `square_meter_lot`, `length_floor_area`, `width_floor_area`, `square_meter_floor`, `initial_budget`, `estimated_cost`, `start_date`, `end_date`, `type`, `more_details`, `Photo`, `carpenter_limit`, `status`, `views`) VALUES
-(2, 2, '12', '2', '24', '12', '1', '12', '80000000', '', '2025-04-22', '2025-05-08', '', 'I want this house to be build', 'assets/plan/how-to-design-a-house.jpg', 0, 'open', 3),
-(3, 3, '40', '32', '1280', '12', '2', '24', '800000', '', '2025-04-22', '2025-05-14', '', 'I want this house to be build', 'assets/plan/how-to-design-a-house.jpg', 0, 'open', 3),
-(4, 4, '14', '2', '28', '10', '2', '20', '800000', '', '2025-04-22', '2025-05-10', '', 'I want this house to be build', 'assets/plan/how-to-design-a-house.jpg', 0, 'open', 3);
-
 -- --------------------------------------------------------
 
 --
@@ -344,16 +270,6 @@ CREATE TABLE `plan_approval` (
   `status` varchar(50) DEFAULT 'pending'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `plan_approval`
---
-
-INSERT INTO `plan_approval` (`approval_ID`, `plan_ID`, `carpenter_ID`, `total_score`, `scope_scores`, `site_scores`, `workforce_scores`, `client_responses`, `client_comments`, `evaluator_name`, `evaluation_date`, `final_decision`, `status`) VALUES
-(1, 1, 1, 70, '[5,5,5,5,5]', '[5,5,5,5,5]', '[5,5,5,5]', '[\"yes\",\"yes\",\"yes\",\"yes\",\"yes\"]', '[\"Yes \",\"Yes\",\"Yes\",\"Yes\",\"Yes\"]', 'John Denvier Alngog Carpenter', '2025-04-21', 'accept', 'approve'),
-(2, 2, 6, 70, '[5,5,5,5,5]', '[5,5,5,5,5]', '[5,5,5,5]', '[\"yes\",\"yes\",\"yes\",\"yes\",\"yes\"]', '[\"Yes\",\"Yes\",\"Yes\",\"Yes\",\"Yes\"]', 'Angelito Engcoy', '2025-04-22', 'accept', 'approve'),
-(4, 3, 7, 70, '[5,5,5,5,5]', '[5,5,5,5,5]', '[5,5,5,5]', '[\"yes\",\"yes\",\"yes\",\"yes\",\"yes\"]', '[\"Yes\",\"Yes\",\"Yes\",\"Yes\",\"Yes\"]', 'Cesar  Peralta', '2025-04-22', 'accept', 'approve'),
-(5, 4, 8, 70, '[5,5,5,5,5]', '[5,5,5,5,5]', '[5,5,5,5]', '[\"yes\",\"yes\",\"yes\",\"yes\",\"yes\"]', '[\"yes\",\"yes\",\"yes\",\"yes\",\"yes\"]', 'Francisco Bicbic', '2025-04-22', 'accept', 'approve');
-
 -- --------------------------------------------------------
 
 --
@@ -368,18 +284,9 @@ CREATE TABLE `prematerials` (
   `quantity` int(11) NOT NULL,
   `price` int(11) NOT NULL,
   `total` int(11) NOT NULL,
-  `estimated_cost` decimal(8,2) DEFAULT NULL
+  `estimated_cost` decimal(8,2) DEFAULT NULL,
+  `User_ID` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `prematerials`
---
-
-INSERT INTO `prematerials` (`prematerials_ID`, `part`, `materials`, `name`, `quantity`, `price`, `total`, `estimated_cost`) VALUES
-(1, 'Bedroom', 'Holcim-Excel - 40 kg / bag', 'Holcim-Excel - 40 kg / bag', 3, 225, 675, 0.00),
-(2, 'Bedroom', 'Mindanao -40 Kg / bag', 'Holcim-Excel - 40 kg / bag', 1, 225, 225, 0.00),
-(3, 'Bedroom', 'Holcim-Excel - 40 kg / bag', 'Holcim-Excel - 40 kg / bag', 1, 225, 225, 0.00),
-(4, 'Bedroom', 'Holcim-Excel - 40 kg / bag', 'Holcim-Excel - 40 kg / bag', 1, 225, 225, 0.00);
 
 -- --------------------------------------------------------
 
@@ -399,18 +306,14 @@ CREATE TABLE `prematerialsinventory` (
 --
 
 INSERT INTO `prematerialsinventory` (`prematerialsinventory_id`, `structure`, `name`, `price`) VALUES
-(3, 'Holcim-Excel - 40 kg / bag', 'Holcim-Excel - 40 kg / bag', 225),
-(4, 'Mindanao -40 Kg / bag', 'Mindanao -40 Kg / bag', 225),
-(5, 'Hollow Blocks (non-load bearing)/piece', 'Hollow Blocks Width 101 mm (4\'\')', 9),
-(6, 'Hollow Blocks (non-load bearing)/piece', 'Hollow Blocks - Width 152 mm (6\")', 9),
-(7, 'GI Sheet, Roofing - Corrugated', 'Ace - 0.2mm Z215 6 ft.', 120),
-(8, 'GI Sheet, Roofing - Corrugated', 'Apo - 0.2mm Z215 6 ft.', 120),
-(9, 'Deformed Regular Steel Bars (Grade 230 or Grade 33)', 'Builders - 10mm x 6m', 145),
-(10, 'Deformed Regular Steel Bars (Grade 230 or Grade 33)', 'Capasco - 10mm x 6m', 145),
-(11, 'Common Wire Nail', 'Fidelity - 50mm (2\")', 60),
-(12, 'Common Wire Nail', 'Highsteel - 50mm (2\")', 60),
-(13, 'Steel Wire', 'Cadiz - 1.65mm', 68),
-(14, 'Steel Wire', 'CBK - 1.65mm', 68);
+(19, 'GI Sheet, Roofing - Corrugated', 'Ace - 0.2mm Z215 6 ft.', 120),
+(20, 'GI Sheet, Roofing - Corrugated', 'Apo - 0.2mm Z215 6 ft.', 120),
+(21, 'Deformed Regular Steel Bars (Grade 230 or Grade 33)', 'Builders - 10mm x 6m', 145),
+(22, 'Deformed Regular Steel Bars (Grade 230 or Grade 33)', 'Capasco - 10mm x 6m', 145),
+(23, 'Common Wire Nail', 'Fidelity - 50mm (2\")', 60),
+(24, 'Common Wire Nail', 'Highsteel - 50mm (2\")', 60),
+(25, 'Steel Wire', 'Cadiz - 1.65mm', 68),
+(26, 'Steel Wire', 'CBK - 1.65mm', 68);
 
 -- --------------------------------------------------------
 
@@ -435,15 +338,6 @@ CREATE TABLE `project_turnover` (
   `approved_at` timestamp NULL DEFAULT NULL,
   `turnedover_by` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `project_turnover`
---
-
-INSERT INTO `project_turnover` (`turnover_id`, `contract_ID`, `plan_ID`, `task_id`, `completed_task_id`, `actual_completion_date`, `client_signature`, `turnover_notes`, `supporting_documents`, `confirmation_status`, `client_feedback`, `created_at`, `approved_by`, `approved_at`, `turnedover_by`) VALUES
-(2, 2, 2, 4, 2, '2025-04-22', 'Angelito Engcoy', 'please check', '', 'confirmed', 'okay nani', '2025-05-02 05:48:00', 2, '2025-04-22 05:48:40', 6),
-(3, 3, 3, 6, 3, '2025-04-22', 'Cesar Peralta', 'Please check', '', 'confirmed', 'Okay nani', '2025-05-03 06:23:34', 3, '2025-04-22 06:24:30', 7),
-(4, 4, 4, 8, 4, '2025-04-22', 'Francisco Bicbic', 'please check', '', 'confirmed', 'Okay nani', '2025-05-03 06:48:48', 4, '2025-04-22 07:04:16', 8);
 
 -- --------------------------------------------------------
 
@@ -471,15 +365,6 @@ CREATE TABLE `ratings` (
   `final_score` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
---
--- Dumping data for table `ratings`
---
-
-INSERT INTO `ratings` (`rating_ID`, `contract_ID`, `plan_ID`, `user_ID`, `Carpenter_ID`, `site_prep_score`, `materials_score`, `foundation_score`, `mep_score`, `exterior_score`, `interior_score`, `windows_score`, `insulation_score`, `comments`, `rating_date`, `landscaping_score`, `final_score`) VALUES
-(2, 2, 2, 2, 6, 4, 5, 4, 4, 5, 5, 5, 5, 'none so far', '2025-04-22 07:46:23', 4, 5),
-(3, 3, 3, 3, 7, 4, 2, 2, 4, 4, 4, 4, 4, 'Goods', '2025-04-22 08:22:18', 4, 4),
-(4, 4, 4, 4, 8, 4, 5, 5, 4, 4, 4, 4, 5, 'GOODS', '2025-04-22 08:56:16', 5, 5);
-
 -- --------------------------------------------------------
 
 --
@@ -492,16 +377,6 @@ CREATE TABLE `report` (
   `Status` enum('Not yet started','Working','Done','') NOT NULL,
   `contract_ID` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `report`
---
-
-INSERT INTO `report` (`Progress_id`, `Name`, `Status`, `contract_ID`) VALUES
-(1, 'Install Door', 'Done', 1),
-(2, 'maghalo ug semento', 'Done', 2),
-(3, 'naghalo ug semento', 'Not yet started', 3),
-(4, 'maghalo ug semento', 'Done', 4);
 
 -- --------------------------------------------------------
 
@@ -516,16 +391,6 @@ CREATE TABLE `task` (
   `contract_ID` int(11) NOT NULL,
   `timestamp` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `task`
---
-
-INSERT INTO `task` (`task_id`, `task`, `status`, `contract_ID`, `timestamp`) VALUES
-(2, 'Put nails in roof', 'Not yet started', 1, '4/21/2025, 2:22:35 PM'),
-(4, 'mag butang ug hollow blocks', 'Not yet started', 2, '4/22/2025, 1:36:05 PM'),
-(6, 'gilansang ang atop', 'Not yet started', 3, '4/22/2025, 2:19:10 PM'),
-(8, 'itaod ang plywood', 'Not yet started', 4, '4/22/2025, 2:47:30 PM');
 
 -- --------------------------------------------------------
 
@@ -564,10 +429,11 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`User_ID`, `First_Name`, `Last_Name`, `Phone_Number`, `Email`, `Address`, `Date_Of_Birth`, `Username`, `Password`, `Photo`) VALUES
-(1, 'John Denvier', 'Alngog', 9153520025, 'denvieralngog10@gmail.com', 'sdsdasadaasadsd', '2024-11-14', 'denvier', '123', 0x6173736574732f757365722f34396234656636352d356636382d343633362d616166662d3136623239306534316232352e77656270),
 (2, 'Cecilia', 'Maglangit', 9153520025, 'cecilia@gmail.com', 'Blk 1 St Jude Village Daliao Toril Davao CIty', '2002-09-10', 'cecilia', '123', 0x6173736574732f757365722f626c616e6b2d70726f66696c652d706963747572652d3937333436305f313238302e706e67),
 (3, 'Mark John', 'Canada', 9153520025, 'markjohn@gmail.com', 'Villarosa Dacoville', '2002-09-10', 'mark', '123', 0x6173736574732f757365722f3439323331363630355f3132323134393133313534323534363531335f363038333538333530303132323431393931385f6e2e6a7067),
-(4, 'Marice', 'Oberez', 9153520025, 'marice@gmail.com', 'Purok 9 Upper Piedad Bato', '2002-10-09', 'marice', '123', 0x6173736574732f757365722f3434383936353832355f313438393435333035313635373038355f313130323438393935383731373538363031395f6e2e6a7067);
+(4, 'Marice', 'Oberez', 9153520025, 'marice@gmail.com', 'Purok 9 Upper Piedad Bato', '2002-10-09', 'marice', '123', 0x6173736574732f757365722f3434383936353832355f313438393435333035313635373038355f313130323438393935383731373538363031395f6e2e6a7067),
+(6, 'alngog', 'alngog', 9153520025, 'alngog10@gmail.com', 'asdasdasd', '2025-04-24', '123', '123', 0x6173736574732f757365722f626c616e6b2d70726f66696c652d706963747572652d3937333436305f313238302e706e67),
+(7, '111', '1111', 9153520025, 'alngog10@gmail.com', 'denvieralgngo10@gmail.com', '2025-04-24', '12322', '123', 0x6173736574732f757365722f626c616e6b2d70726f66696c652d706963747572652d3937333436305f313238302e706e67);
 
 --
 -- Indexes for dumped tables
@@ -670,7 +536,8 @@ ALTER TABLE `plan_approval`
 -- Indexes for table `prematerials`
 --
 ALTER TABLE `prematerials`
-  ADD PRIMARY KEY (`prematerials_ID`);
+  ADD PRIMARY KEY (`prematerials_ID`),
+  ADD KEY `User_ID` (`User_ID`);
 
 --
 -- Indexes for table `prematerialsinventory`
@@ -735,19 +602,19 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `admin`
 --
 ALTER TABLE `admin`
-  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `admin_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `attendance`
 --
 ALTER TABLE `attendance`
-  MODIFY `attendance_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `attendance_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `carpenters`
 --
 ALTER TABLE `carpenters`
-  MODIFY `Carpenter_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `Carpenter_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `comments`
@@ -759,13 +626,13 @@ ALTER TABLE `comments`
 -- AUTO_INCREMENT for table `completed_task`
 --
 ALTER TABLE `completed_task`
-  MODIFY `completed_task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `completed_task_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `contracts`
 --
 ALTER TABLE `contracts`
-  MODIFY `contract_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `contract_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `expenses`
@@ -777,67 +644,67 @@ ALTER TABLE `expenses`
 -- AUTO_INCREMENT for table `job_ratings`
 --
 ALTER TABLE `job_ratings`
-  MODIFY `job_rating_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `job_rating_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `likes`
 --
 ALTER TABLE `likes`
-  MODIFY `like_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=16;
+  MODIFY `like_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `payment`
 --
 ALTER TABLE `payment`
-  MODIFY `Payment_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `Payment_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `plan`
 --
 ALTER TABLE `plan`
-  MODIFY `plan_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `plan_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `plan_approval`
 --
 ALTER TABLE `plan_approval`
-  MODIFY `approval_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `approval_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `prematerials`
 --
 ALTER TABLE `prematerials`
-  MODIFY `prematerials_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `prematerials_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `prematerialsinventory`
 --
 ALTER TABLE `prematerialsinventory`
-  MODIFY `prematerialsinventory_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=15;
+  MODIFY `prematerialsinventory_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT for table `project_turnover`
 --
 ALTER TABLE `project_turnover`
-  MODIFY `turnover_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `turnover_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `ratings`
 --
 ALTER TABLE `ratings`
-  MODIFY `rating_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `rating_ID` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `report`
 --
 ALTER TABLE `report`
-  MODIFY `Progress_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `Progress_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `task`
 --
 ALTER TABLE `task`
-  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
+  MODIFY `task_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `transaction`
@@ -849,7 +716,7 @@ ALTER TABLE `transaction`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `User_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `User_ID` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
@@ -889,7 +756,7 @@ ALTER TABLE `job_ratings`
 -- Constraints for table `payment`
 --
 ALTER TABLE `payment`
-  ADD CONSTRAINT `fk_payment_carpenter` FOREIGN KEY (`Carpenter_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_payment_carpenter` FOREIGN KEY (`Carpenter_ID`) REFERENCES `carpenters` (`Carpenter_ID`) ON DELETE CASCADE,
   ADD CONSTRAINT `payment_ibfk_1` FOREIGN KEY (`Contract_ID`) REFERENCES `contracts` (`contract_ID`) ON DELETE CASCADE,
   ADD CONSTRAINT `payment_ibfk_2` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`) ON DELETE CASCADE;
 
@@ -906,6 +773,12 @@ ALTER TABLE `plan`
 ALTER TABLE `plan_approval`
   ADD CONSTRAINT `plan_approval_ibfk_1` FOREIGN KEY (`plan_ID`) REFERENCES `plan` (`plan_ID`) ON DELETE CASCADE,
   ADD CONSTRAINT `plan_approval_ibfk_2` FOREIGN KEY (`carpenter_ID`) REFERENCES `carpenters` (`Carpenter_ID`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `prematerials`
+--
+ALTER TABLE `prematerials`
+  ADD CONSTRAINT `prematerials_ibfk_1` FOREIGN KEY (`User_ID`) REFERENCES `users` (`User_ID`);
 
 --
 -- Constraints for table `project_turnover`

@@ -1,5 +1,6 @@
 <?php
 include('config.php');
+date_default_timezone_set('Asia/Manila'); // Add this line to set Philippine timezone
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     ob_clean();
@@ -11,7 +12,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         foreach ($data as $task) {
             $task_id = intval($task["task_id"]);
             $task_name = $task["task_name"];
-            $task_timestamp = $task["task_details"];
+            
+            // Get the original timestamp from task table
+            $getTimeQuery = "SELECT timestamp FROM task WHERE task_id = ?";
+            $timeStmt = $conn->prepare($getTimeQuery);
+            $timeStmt->bind_param("i", $task_id);
+            $timeStmt->execute();
+            $timeResult = $timeStmt->get_result();
+            $timeRow = $timeResult->fetch_assoc();
+            $start_time = $timeRow['timestamp']; // Use the original timestamp from task table
+            
+            $end_time = date('m/d/Y, h:i:s A');
             $status = $task["status"];
 
             if ($status === "Done") {
@@ -30,10 +41,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Disable foreign key checks
                     $conn->query("SET FOREIGN_KEY_CHECKS=0");
 
-                    // Insert into completed_task
-                    $sql = "INSERT INTO completed_task (name, task_id, contract_ID, status, timestamp) VALUES (?, ?, ?, 'Completed', ?)";
+                    // Insert into completed_task with start_time and end_time
+                    $sql = "INSERT INTO completed_task (name, task_id, contract_ID, status, start_time, end_time) 
+                           VALUES (?, ?, ?, 'Completed', ?, ?)";
                     $stmt = $conn->prepare($sql);
-                    $stmt->bind_param("siis", $task_name, $task_id, $contract_ID, $task_timestamp);
+                    $stmt->bind_param("siiss", $task_name, $task_id, $contract_ID, $start_time, $end_time);
                     $stmt->execute();
 
                     // Delete from task
