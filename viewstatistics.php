@@ -693,19 +693,77 @@ $conn->close();
                                 <tr>
                                     <th>Criteria</th>
                                     <th>Rating</th>
+                                    <th>Score</th>
+                                    <th>Remarks</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr><td>1. Site Preparation and Safety</td><td id="criteria1_rating"></td></tr>
-                                <tr><td>2. Materials</td><td id="criteria2_rating"></td></tr>
-                                <tr><td>3. Foundations and Structural Framing</td><td id="criteria3_rating"></td></tr>
-                                <tr><td>4. Mechanical, Electrical, and Plumbing (MEP)</td><td id="criteria4_rating"></td></tr>
-                                <tr><td>5. Exterior Cladding and Roofing</td><td id="criteria5_rating"></td></tr>
-                                <tr><td>6. Interior Finishes</td><td id="criteria6_rating"></td></tr>
-                                <tr><td>7. Windows, Doors, and Hardware</td><td id="criteria7_rating"></td></tr>
-                                <tr><td>8. Insulation and Ventilation</td><td id="criteria8_rating"></td></tr>
-                                <tr><td>9. Landscaping and External Works</td><td id="criteria9_rating"></td></tr>
-                                <tr><td>10. Final Inspection</td><td id="criteria10_rating"></td></tr>
+                                <tr>
+                                    <td>1. Site Preparation and Safety</td>
+                                    <td id="criteria1_rating"></td>
+                                    <td id="criteria1_score"></td>
+                                    <td id="criteria1_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>2. Materials</td>
+                                    <td id="criteria2_rating"></td>
+                                    <td id="criteria2_score"></td>
+                                    <td id="criteria2_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>3. Foundations and Structural Framing</td>
+                                    <td id="criteria3_rating"></td>
+                                    <td id="criteria3_score"></td>
+                                    <td id="criteria3_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>4. Mechanical, Electrical, and Plumbing (MEP)</td>
+                                    <td id="criteria4_rating"></td>
+                                    <td id="criteria4_score"></td>
+                                    <td id="criteria4_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>5. Exterior Cladding and Roofing</td>
+                                    <td id="criteria5_rating"></td>
+                                    <td id="criteria5_score"></td>
+                                    <td id="criteria5_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>6. Interior Finishes</td>
+                                    <td id="criteria6_rating"></td>
+                                    <td id="criteria6_score"></td>
+                                    <td id="criteria6_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>7. Windows, Doors, and Hardware</td>
+                                    <td id="criteria7_rating"></td>
+                                    <td id="criteria7_score"></td>
+                                    <td id="criteria7_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>8. Insulation and Ventilation</td>
+                                    <td id="criteria8_rating"></td>
+                                    <td id="criteria8_score"></td>
+                                    <td id="criteria8_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>9. Landscaping and External Works</td>
+                                    <td id="criteria9_rating"></td>
+                                    <td id="criteria9_score"></td>
+                                    <td id="criteria9_remarks"></td>
+                                </tr>
+                                <tr>
+                                    <td>10. Final Inspection</td>
+                                    <td id="criteria10_rating"></td>
+                                    <td id="criteria10_score"></td>
+                                    <td id="criteria10_remarks"></td>
+                                </tr>
+                                <tr class="table-active">
+                                    <td><strong>Total Score</strong></td>
+                                    <td id="total_rating"></td>
+                                    <td id="cronbach_score"></td>
+                                    <td id="final_remarks"></td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>
@@ -748,8 +806,6 @@ $conn->close();
 </div>
 
 <script>
-    // Add this to your existing JavaScript
-    // In the checklistModal event listener
     document.addEventListener('DOMContentLoaded', function() {
         const checklistModal = document.getElementById('checklistratingsmodal');
         checklistModal.addEventListener('show.bs.modal', function(event) {
@@ -763,13 +819,14 @@ $conn->close();
                         // Update carpenter name
                         document.getElementById('carpenter_name').textContent = data.carpenter_name;
                         
-                        // Update criteria ratings (changed from 8 to 10)
                         // Update criteria ratings
+                        const ratings = [];
                         for (let i = 1; i <= 10; i++) {
                             let ratingText = '';
-                            const rating = data['criteria' + i + '_rating'];
+                            const rating = parseInt(data['criteria' + i + '_rating']) || 0;
+                            ratings.push(rating);
                             
-                            switch(parseInt(rating)) {  // Convert to integer for proper comparison
+                            switch(rating) {
                                 case 1: ratingText = 'Not Compliant'; break;
                                 case 2: ratingText = 'Poor'; break;
                                 case 3: ratingText = 'Fair'; break;
@@ -786,94 +843,98 @@ $conn->close();
                         document.getElementById('rating_comments').textContent = data.comments || 'No comments provided';
                         document.getElementById('rating_date').textContent = data.rating_date || 'Not specified';
                         
-                        // Calculate and update overall score (changed from 8 to 10)
-                        // Calculate and update overall score
-                        const ratings = [];
-                        for (let i = 1; i <= 10; i++) {
-                            const rating = parseInt(data['criteria' + i + '_rating']) || 0;
-                            ratings.push(rating);
-                        }
-                        
-                        // Calculate average score (out of 5)
+                        // Calculate scores
                         const totalScore = ratings.reduce((sum, rating) => sum + rating, 0);
-                        const averageScore = (totalScore / (10 * 5)) * 100; // Convert to percentage
+                        const averageScore = (totalScore / (10 * 5)) * 100;
                         
-                        // Update the display with just the percentage
+                        // Calculate Cronbach's Alpha
+                        const k = ratings.length;
+                        const itemMeans = ratings.map(x => x);
+                        const itemVariances = ratings.map(x => {
+                            const mean = x;
+                            return Math.pow(x - mean, 2);
+                        });
+                        const sumVariances = itemVariances.reduce((a, b) => a + b, 0);
+                        const totalVariance = Math.pow(ratings.reduce((a, b) => a + (b - totalScore/k), 0), 2);
+                        
+                        const alpha = (k / (k - 1)) * (1 - (sumVariances / totalVariance));
+                        
+                        // Determine remarks based on Cronbach's Alpha
+                        let remarks = '';
+                        if (alpha >= 0.9) remarks = 'Excellent';
+                        else if (alpha >= 0.8) remarks = 'Good';
+                        else if (alpha >= 0.7) remarks = 'Acceptable';
+                        else if (alpha >= 0.6) remarks = 'Questionable';
+                        else if (alpha >= 0.5) remarks = 'Poor';
+                        else remarks = 'Unacceptable';
+
+                        // Update displays
                         document.getElementById('overallScore').textContent = `${averageScore.toFixed(1)}%`;
+                        document.getElementById('total_rating').textContent = `${totalScore}/50`;
+                        document.getElementById('cronbach_score').textContent = alpha.toFixed(2);
+                        document.getElementById('final_remarks').textContent = remarks;
                         
+                        // Update quality status
                         const qualityStatus = document.getElementById('qualityStatus');
-                        if (averageScore >= 60) {
-                            qualityStatus.textContent = '';
-                            qualityStatus.className = 'text-center text-success';
-                        } else {
-                            qualityStatus.textContent = '';
-                            qualityStatus.className = 'text-center text-warning';
+                        qualityStatus.textContent = averageScore >= 60 ? 'Target Achieved' : 'Below Target';
+                        qualityStatus.className = `text-center ${averageScore >= 60 ? 'text-success' : 'text-warning'}`;
+
+                        // Update individual criteria scores and remarks
+                        for (let i = 1; i <= 10; i++) {
+                            document.getElementById(`criteria${i}_score`).textContent = alpha.toFixed(2);
+                            document.getElementById(`criteria${i}_remarks`).textContent = remarks;
                         }
+
                         // Create/Update chart
-                        const ctx = document.getElementById('evaluationChart');
-                        
-                        // Properly handle chart cleanup
                         if (window.evaluationChart && typeof window.evaluationChart.destroy === 'function') {
                             window.evaluationChart.destroy();
                         }
-                        window.evaluationChart = null;
-                        
-                        // Ensure we have a fresh canvas
-                        const chartContainer = document.querySelector('#checklistratingsmodal .col-md-8');
-                        if (chartContainer) {
-                            chartContainer.innerHTML = '<canvas id="evaluationChart" style="width: 100%; height: 300px;"></canvas>';
-                        }
-                        
-                        const newCtx = document.getElementById('evaluationChart');
-                        
-                        try {
-                            window.evaluationChart = new Chart(newCtx, {
-                                type: 'bar',
-                                data: {
-                                    labels: [
-                                        'Site Prep & Safety',
-                                        'Materials',
-                                        'Foundations',
-                                        'MEP',
-                                        'Exterior',
-                                        'Interior',
-                                        'Windows & Doors',
-                                        'Insulation',
-                                        'Landscaping',
-                                        'Final Inspection'
-                                    ],
-                                    datasets: [{
-                                        label: 'Rating Score',
-                                        data: ratings,
-                                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
-                                        borderColor: 'rgba(54, 162, 235, 1)',
-                                        borderWidth: 1
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    maintainAspectRatio: false,
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true,
-                                            max: 5,
-                                            ticks: {
-                                                stepSize: 1
-                                            }
-                                        }
-                                    },
-                                    plugins: {
-                                        title: {
-                                            display: true,
-                                            text: 'Construction Quality Ratings'
+
+                        const ctx = document.getElementById('evaluationChart');
+                        window.evaluationChart = new Chart(ctx, {
+                            type: 'radar',
+                            data: {
+                                labels: [
+                                    'Site Prep & Safety',
+                                    'Materials',
+                                    'Foundations',
+                                    'MEP',
+                                    'Exterior',
+                                    'Interior',
+                                    'Windows & Doors',
+                                    'Insulation',
+                                    'Landscaping',
+                                    'Final Inspection'
+                                ],
+                                datasets: [{
+                                    label: 'Rating Score',
+                                    data: ratings,
+                                    backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                                    borderColor: 'rgba(54, 162, 235, 1)',
+                                    borderWidth: 1
+                                }]
+                            },
+                            options: {
+                                responsive: true,
+                                maintainAspectRatio: false,
+                                scales: {
+                                    r: {
+                                        beginAtZero: true,
+                                        max: 5,
+                                        min: 0,
+                                        ticks: {
+                                            stepSize: 1
                                         }
                                     }
+                                },
+                                plugins: {
+                                    title: {
+                                        display: true,
+                                        text: 'Construction Quality Ratings'
+                                    }
                                 }
-                            });
-                            console.log('Chart created successfully:', window.evaluationChart);
-                        } catch (error) {
-                            console.error('Error creating chart:', error);
-                        }
+                            }
+                        });
                     })
                     .catch(error => console.error('Error:', error));
             }
