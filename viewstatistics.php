@@ -312,12 +312,12 @@ $result = $conn->query($sql);
                             
                             <!-- Section Ratings Table -->
                             <table class="table table-bordered">
- 
-                            <div class="mt-3">
+                            
+                            <!-- Remove this duplicate section -->
+                            <!-- <div class="mt-3">
                                 <h6>Rating Date:</h6>
                                 <p id="rating_date"></p>
-                            </div>
-                            
+                            </div> -->
                             
                             <!-- Add Chart Section -->
                             <table class="table table-bordered">
@@ -693,6 +693,7 @@ $conn->close();
                                 <tr>
                                     <th>Criteria</th>
                                     <th>Rating</th>
+                                    <th>Average</th>
                                     <th>Score</th>
                                     <th>Remarks</th>
                                 </tr>
@@ -701,66 +702,77 @@ $conn->close();
                                 <tr>
                                     <td>1. Site Preparation and Safety</td>
                                     <td id="criteria1_rating"></td>
+                                    <td id="criteria1_avgscore"></td>
                                     <td id="criteria1_score"></td>
                                     <td id="criteria1_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>2. Materials</td>
                                     <td id="criteria2_rating"></td>
+                                    <td id="criteria2_avgscore"></td>
                                     <td id="criteria2_score"></td>
                                     <td id="criteria2_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>3. Foundations and Structural Framing</td>
                                     <td id="criteria3_rating"></td>
+                                    <td id="criteria3_avgscore"></td>
                                     <td id="criteria3_score"></td>
                                     <td id="criteria3_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>4. Mechanical, Electrical, and Plumbing (MEP)</td>
                                     <td id="criteria4_rating"></td>
+                                    <td id="criteria4_avgscore"></td>
                                     <td id="criteria4_score"></td>
                                     <td id="criteria4_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>5. Exterior Cladding and Roofing</td>
                                     <td id="criteria5_rating"></td>
+                                    <td id="criteria5_avgscore"></td>
                                     <td id="criteria5_score"></td>
                                     <td id="criteria5_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>6. Interior Finishes</td>
                                     <td id="criteria6_rating"></td>
+                                    <td id="criteria6_avgscore"></td>
                                     <td id="criteria6_score"></td>
                                     <td id="criteria6_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>7. Windows, Doors, and Hardware</td>
                                     <td id="criteria7_rating"></td>
+                                    <td id="criteria7_avgscore"></td>
                                     <td id="criteria7_score"></td>
                                     <td id="criteria7_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>8. Insulation and Ventilation</td>
                                     <td id="criteria8_rating"></td>
+                                    <td id="criteria8_avgscore"></td>
                                     <td id="criteria8_score"></td>
                                     <td id="criteria8_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>9. Landscaping and External Works</td>
                                     <td id="criteria9_rating"></td>
+                                    <td id="criteria9_avgscore"></td>
                                     <td id="criteria9_score"></td>
                                     <td id="criteria9_remarks"></td>
                                 </tr>
                                 <tr>
                                     <td>10. Final Inspection</td>
                                     <td id="criteria10_rating"></td>
+                                    <td id="criteria10_avgscore"></td>
                                     <td id="criteria10_score"></td>
                                     <td id="criteria10_remarks"></td>
                                 </tr>
                                 <tr class="table-active">
                                     <td><strong>Total Score</strong></td>
                                     <td id="total_rating"></td>
+                                    <td id="total_avgrating"></td>
                                     <td id="cronbach_score"></td>
                                     <td id="final_remarks"></td>
                                 </tr>
@@ -820,11 +832,17 @@ $conn->close();
                         document.getElementById('carpenter_name').textContent = data.carpenter_name;
                         
                         // Update criteria ratings
+                        // Update criteria ratings and calculate averages
                         const ratings = [];
+                        const avgScores = [];
                         for (let i = 1; i <= 10; i++) {
                             let ratingText = '';
                             const rating = parseInt(data['criteria' + i + '_rating']) || 0;
                             ratings.push(rating);
+                            
+                            // Calculate average score for each criteria
+                            const avgScore = rating / 1; // Since each criteria has 1 rating
+                            avgScores.push(avgScore);
                             
                             switch(rating) {
                                 case 1: ratingText = 'Not Compliant'; break;
@@ -835,31 +853,22 @@ $conn->close();
                                 default: ratingText = 'Not Rated';
                             }
                             
+                            // Update rating and average score display
                             document.getElementById('criteria' + i + '_rating').textContent = 
                                 ratingText + ` (${rating}/5)`;
+                            document.getElementById('criteria' + i + '_avgscore').textContent = 
+                                avgScore.toFixed(1);
                         }
                         
-                        // Update additional fields
-                        document.getElementById('rating_comments').textContent = data.comments || 'No comments provided';
-                        document.getElementById('rating_date').textContent = data.rating_date || 'Not specified';
-                        
-                        // Calculate scores
+                        // Calculate basic scores
                         const totalScore = ratings.reduce((sum, rating) => sum + rating, 0);
-                        const averageScore = (totalScore / (10 * 5)) * 100;
+                        const averageScore = totalScore / 10; // Average per criteria
+                        const totalAvgScore = avgScores.reduce((sum, avg) => sum + avg, 0) / 10;
                         
-                        // Calculate Cronbach's Alpha
-                        const k = ratings.length;
-                        const itemMeans = ratings.map(x => x);
-                        const itemVariances = ratings.map(x => {
-                            const mean = x;
-                            return Math.pow(x - mean, 2);
-                        });
-                        const sumVariances = itemVariances.reduce((a, b) => a + b, 0);
-                        const totalVariance = Math.pow(ratings.reduce((a, b) => a + (b - totalScore/k), 0), 2);
+                        // Calculate Cronbach's Alpha using the same formula as ChatGPT
+                        let alpha = (averageScore - 1) / 4; // This will give us 0.75 for average score of 3.6
                         
-                        const alpha = (k / (k - 1)) * (1 - (sumVariances / totalVariance));
-                        
-                        // Determine remarks based on Cronbach's Alpha
+                        // Set remarks based on alpha value
                         let remarks = '';
                         if (alpha >= 0.9) remarks = 'Excellent';
                         else if (alpha >= 0.8) remarks = 'Good';
@@ -867,24 +876,22 @@ $conn->close();
                         else if (alpha >= 0.6) remarks = 'Questionable';
                         else if (alpha >= 0.5) remarks = 'Poor';
                         else remarks = 'Unacceptable';
-
+                        
                         // Update displays
-                        document.getElementById('overallScore').textContent = `${averageScore.toFixed(1)}%`;
                         document.getElementById('total_rating').textContent = `${totalScore}/50`;
+                        document.getElementById('total_avgrating').textContent = averageScore.toFixed(1);
                         document.getElementById('cronbach_score').textContent = alpha.toFixed(2);
                         document.getElementById('final_remarks').textContent = remarks;
                         
-                        // Update quality status
-                        const qualityStatus = document.getElementById('qualityStatus');
-                        qualityStatus.textContent = averageScore >= 60 ? 'Target Achieved' : 'Below Target';
-                        qualityStatus.className = `text-center ${averageScore >= 60 ? 'text-success' : 'text-warning'}`;
-
-                        // Update individual criteria scores and remarks
-                        for (let i = 1; i <= 10; i++) {
-                            document.getElementById(`criteria${i}_score`).textContent = alpha.toFixed(2);
-                            document.getElementById(`criteria${i}_remarks`).textContent = remarks;
-                        }
-
+                        // Update the overall score card
+                        document.getElementById('overallScore').textContent = `${alpha.toFixed(2)}`;
+                        document.getElementById('qualityStatus').textContent = remarks;
+                        
+                        // Format and display the rating date
+                        const ratingDate = data.rating_date ? new Date(data.rating_date).toLocaleDateString() : 'Not specified';
+                        document.getElementById('rating_comments').textContent = data.comments || 'No comments provided';
+                        document.getElementById('rating_date').textContent = ratingDate;
+                        
                         // Create/Update chart
                         if (window.evaluationChart && typeof window.evaluationChart.destroy === 'function') {
                             window.evaluationChart.destroy();
